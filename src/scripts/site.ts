@@ -109,6 +109,41 @@ if (!reduceMotion && items.length) {
   update()
 }
 
+/* ── Hero highlight orbs (phones): tap to open a label; a one-time hint after the intro ── */
+{
+  const orbs = [...document.querySelectorAll<HTMLButtonElement>('[data-hl]')]
+  if (orbs.length) {
+    let closeTimer: number | undefined
+    let touched = false
+    const set = (orb: HTMLButtonElement | null) => orbs.forEach((o) => o.setAttribute('aria-expanded', String(o === orb)))
+    const open = (orb: HTMLButtonElement, ms = 3500) => {
+      set(orb)
+      clearTimeout(closeTimer)
+      closeTimer = window.setTimeout(() => set(null), ms)
+    }
+    orbs.forEach((orb) =>
+      orb.addEventListener('click', (e) => {
+        e.stopPropagation()
+        touched = true
+        if (orb.getAttribute('aria-expanded') === 'true') set(null)
+        else open(orb)
+      }),
+    )
+    document.addEventListener('click', () => set(null))
+    // Teach the interaction once: open each orb in turn shortly after the headline lands
+    const phone = window.matchMedia('(max-width: 767px)').matches
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (phone && !calm) {
+      orbs.forEach((orb, i) =>
+        window.setTimeout(() => {
+          if (touched || window.scrollY > 120) return
+          open(orb, 1300)
+        }, 2400 + i * 1500),
+      )
+    }
+  }
+}
+
 /* ── Enquire buttons (data-enquire="Annual membership") ───────────────── */
 document.addEventListener('click', (event) => {
   const trigger = (event.target as Element | null)?.closest<HTMLElement>('[data-enquire]')

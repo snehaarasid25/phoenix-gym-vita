@@ -20,10 +20,7 @@ const heroWords = [
 const chip =
   'chip-float flex items-center gap-2 rounded-full border border-bone/10 bg-ash-950/45 py-1.5 pr-3.5 pl-1.5 text-[0.8rem] font-medium whitespace-nowrap text-bone/90 backdrop-blur-md'
 const chipIcon = 'grid size-6 place-items-center rounded-full bg-brand-500/90 text-ink'
-// Phones/tablets: the same three highlights, stacked beside the headline so the right side isn't empty
-const chipSm =
-  'chip-float flex items-center gap-1.5 rounded-full border border-bone/10 bg-ash-950/55 py-1 pr-3 pl-1 text-[0.7rem] font-medium whitespace-nowrap text-bone/90 backdrop-blur-md sm:text-xs'
-const chipSmIcon = 'grid size-5 place-items-center rounded-full bg-brand-500/90 text-ink'
+// Phones: the same three highlights as tappable gold orbs (label slides out on tap; see scripts/site.ts)
 const highlights = [
   { label: 'HYROX Training', Icon: Lightning },
   { label: 'Steam Bath', Icon: Thermometer },
@@ -108,10 +105,10 @@ const highlights = [
           {
             highlights.map(({ label, Icon }, i) => (
               <li class="enter-up" style={`--d:${(1.1 + i * 0.15).toFixed(2)}s`}>
-                <span class={chipSm} style={`--float-d:${-i * 2}s`}>
-                  <span class={chipSmIcon}><Icon className="size-3" weight="fill" /></span>
-                  {label}
-                </span>
+                <button type="button" data-hl class="hl-orb chip-float" aria-expanded="false" aria-label={label} style={`--float-d:${-i * 2}s; --ping-d:${(i * 0.85).toFixed(2)}s`}>
+                  <span class="hl-icon" aria-hidden="true"><Icon className="size-4" weight="fill" /></span>
+                  <span class="hl-label" aria-hidden="true">{label}</span>
+                </button>
               </li>
             ))
           }
