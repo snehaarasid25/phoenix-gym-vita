@@ -47,7 +47,7 @@ const highlights = [
             decoding="sync"
             width="3200"
             height="2133"
-            class="size-full animate-kenburns object-cover object-[59%_30%] md:object-[58%_0%]"
+            class="size-full animate-kenburns object-cover object-[50%_30%] md:object-[58%_0%]"
           />
         </picture>
       </div>
@@ -104,7 +104,7 @@ const highlights = [
         <ul class="absolute top-0 -right-1 bottom-[0.04em] grid grid-rows-3 items-center justify-items-end md:hidden" aria-label="Highlights">
           {
             highlights.map(({ label, Icon }, i) => (
-              <li class="enter-up" style={`--d:${(1.1 + i * 0.15).toFixed(2)}s`}>
+              <li class:list={['enter-up', i === 1 && 'mr-3 min-[360px]:mr-7']} style={`--d:${(1.1 + i * 0.15).toFixed(2)}s`}>
                 <button type="button" data-hl class="hl-orb chip-float" aria-expanded="false" aria-label={label} style={`--float-d:${-i * 2}s; --ping-d:${(i * 0.85).toFixed(2)}s`}>
                   <span class="hl-icon" aria-hidden="true"><Icon className="size-4" weight="fill" /></span>
                   <span class="hl-label" aria-hidden="true">{label}</span>
