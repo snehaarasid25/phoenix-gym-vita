@@ -1,0 +1,40 @@
+---
+/** Differentiators: sticky header + image, numbered pillars. */
+import { images } from '../config/images'
+import { pillars } from '../data/content'
+import SectionHeader from '../components/SectionHeader.astro'
+import { Img } from '../components/ui/Img'
+---
+
+<section id="why" aria-labelledby="why-title" class="section-y relative overflow-hidden bg-ash-900">
+  <div class="gold-rule absolute inset-x-0 top-0" aria-hidden="true" />
+  <div class="glow-orb -bottom-56 -left-56 size-[48rem]" aria-hidden="true" />
+  <div class="glow-orb-soft -top-32 right-[-10rem] size-[34rem]" aria-hidden="true" />
+  <div class="container-x relative grid gap-14 lg:grid-cols-12 lg:gap-10">
+    <div class="lg:col-span-5">
+      <div class="lg:sticky lg:top-28">
+        <SectionHeader id="why-title" index="04" eyebrow="Why choose Phoenix Gym" lines={['Why train', { text: 'with us.', class: 'text-brand-gradient' }]} align="left" />
+        <div class="relative mt-10 hidden overflow-hidden rounded-[1.75rem] lg:block">
+          <div data-parallax data-parallax-scale="1.15,1" class="aspect-[5/4]">
+            <Img image={images.why} sizes="40vw" width={1080} className="size-full object-cover" />
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-tr from-brand-700/40 via-transparent to-transparent mix-blend-multiply" aria-hidden="true" />
+        </div>
+      </div>
+    </div>
+
+    <ol class="lg:col-span-6 lg:col-start-7">
+      {pillars.map((p, i) => (
+        <li class="reveal group grid grid-cols-[auto_1fr] gap-x-6 border-t hairline py-9 last:border-b sm:gap-x-10 sm:py-12">
+          <span class="font-display text-6xl leading-none text-outline-faint transition-all duration-500 group-hover:text-brand-500 group-hover:[-webkit-text-stroke-color:transparent] sm:text-8xl">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <div class="pt-1 sm:pt-3">
+            <h3 class="text-2xl font-semibold tracking-tight sm:text-3xl">{p.title}</h3>
+            <p class="mt-3 max-w-md leading-relaxed text-ash-300">{p.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

@@ -1,0 +1,59 @@
+---
+/**
+ * Editorial section header: numbered eyebrow + masked line-reveal headline.
+ * SEO: the eyebrow is part of the <h2> and should describe the topic in plain
+ * words (e.g. "Gym facilities in Vita"), while the display lines carry the brand voice.
+ * Zero JavaScript of its own: reveals are CSS classes toggled by scripts/site.ts.
+ *
+ * Lines: plain strings, or { text, class } for styled lines (e.g. gold gradient).
+ * Intro: the `intro` prop, or a named <slot name="intro"> for rich content.
+ */
+import { cn } from '../utils/cn'
+
+type Line = string | { text: string; class?: string }
+
+interface Props {
+  index: string
+  eyebrow: string
+  lines: Line[]
+  intro?: string
+  align?: 'left' | 'split'
+  id?: string
+  class?: string
+}
+
+const { index, eyebrow, lines, intro, align = 'split', id, class: className } = Astro.props
+const hasIntroSlot = Astro.slots.has('intro')
+const norm = (l: Line) => (typeof l === 'string' ? { text: l, class: '' } : { class: '', ...l })
+---
+
+<header class={cn('grid gap-8 lg:gap-12', align === 'split' && 'lg:grid-cols-12 lg:items-end', className)}>
+  <div class={cn(align === 'split' && 'lg:col-span-7')}>
+    <h2 id={id} class="reveal-lines display-lg text-balance">
+      <!-- Descriptive eyebrow lives INSIDE the heading: visible, and tells search engines what the section is about -->
+      <span class="reveal eyebrow mb-6 flex items-center gap-4 leading-normal text-brand-400">
+        <span aria-hidden="true">{index}</span>
+        <span class="h-px w-10 bg-brand-500/60" aria-hidden="true"></span>
+        <span class="text-ash-300">{eyebrow}</span>
+      </span>
+      {
+        lines.map(norm).map((line, i) => (
+          <span class="line" style={`--i:${i}`}>
+            <span class={line.class}>{line.text}</span>
+          </span>
+        ))
+      }
+    </h2>
+  </div>
+  {
+    (intro || hasIntroSlot) && (
+      <div
+        class={cn('reveal max-w-md text-base leading-relaxed text-pretty text-ash-300 sm:text-lg', align === 'split' && 'lg:col-span-4 lg:col-start-9 lg:pb-3')}
+        style="--d:0.15s"
+      >
+        {intro}
+        <slot name="intro" />
+      </div>
+    )
+  }
+</header>

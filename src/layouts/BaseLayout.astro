@@ -1,0 +1,136 @@
+---
+/**
+ * Page shell: <head> SEO, theme bootstrapping, nav/footer, global script.
+ * Everything renders to static HTML; only the components marked client:*
+ * ship JavaScript (React islands).
+ */
+import '../styles/index.css'
+import { absoluteUrl, ogImage, type PageMeta } from '../config/seo'
+import { site } from '../config/site'
+import { faqSchema, localBusinessSchema, websiteSchema } from '../utils/structuredData'
+import Footer from '../components/Footer.astro'
+import Navbar from '../components/islands/Navbar'
+import MobileActionBar from '../components/islands/MobileActionBar'
+// Preloaded so the first paint already uses the real typefaces (no fallback-font flash)
+import bebasWoff2 from '@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2?url'
+import manropeWoff2 from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url'
+
+interface Props {
+  meta: PageMeta
+  /** Emit LocalBusiness/WebSite JSON-LD (home page only). */
+  structuredData?: boolean
+  /** Responsive srcset of the above-the-fold hero image to preload. */
+  preloadImage?: string
+  /** Show the branded intro curtain (home page, first visit per session). */
+  intro?: boolean
+}
+
+const { meta, structuredData = false, preloadImage, intro = false } = Astro.props
+const canonical = absoluteUrl(meta.path)
+const image = absoluteUrl(ogImage)
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/'
+const jsonLd = structuredData ? JSON.stringify([localBusinessSchema(), websiteSchema(), faqSchema()]).replace(/</g, '\\u003c') : null
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f3ec" />
+    {intro && <meta name="phoenix-intro" content="1" />}
+
+    <!-- Before first paint: mark JS on, apply saved theme (default: light "Ivory luxury"). Key shared with src/utils/theme.ts -->
+    <script is:inline>
+      ;(function () {
+        var root = document.documentElement
+        root.classList.add('js')
+        var introOn = false
+        try {
+          // Intro at most once every 12h per browser (returning visitors go straight in)
+          var seen = Number(localStorage.getItem('phoenix-intro') || 0)
+          introOn = !!document.querySelector('meta[name="phoenix-intro"]') && Date.now() - seen > 432e5 && !matchMedia('(prefers-reduced-motion: reduce)').matches
+          if (introOn) localStorage.setItem('phoenix-intro', String(Date.now()))
+        } catch (e) {}
+        root.classList.add(introOn ? 'intro' : 'is-ready')
+        var t
+        try {
+          t = localStorage.getItem('phoenix-theme')
+        } catch (e) {}
+        var theme = t === 'dark' ? 'dark' : 'light'
+        root.setAttribute('data-theme', theme)
+        if (theme === 'dark') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#070605')
+      })()
+    </script>
+
+    <title>{meta.title}</title>
+    <meta name="description" content={meta.description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={meta.noindex ? 'noindex' : 'index, follow, max-image-preview:large'} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.legalName} />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:title" content={meta.title} />
+    <meta property="og:description" content={meta.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={meta.title} />
+    <meta name="twitter:description" content={meta.description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content={`${site.location.city}, ${site.location.state}`} />
+
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="preload" href={bebasWoff2} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={manropeWoff2} as="font" type="font/woff2" crossorigin />
+    {preloadImage && <link rel="preload" as="image" imagesrcset={preloadImage} imagesizes="100vw" fetchpriority="high" />}
+
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only z-[100] rounded-full bg-brand-500 px-5 py-3 font-semibold text-ink focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
+    >
+      Skip to content
+    </a>
+
+    <!-- Branded intro curtain: only when <html> has .intro (first visit, motion allowed); lifted by scripts/site.ts -->
+    {
+      intro && (
+        <div id="intro" aria-hidden="true">
+          <div class="intro-mark">
+            <img src="/brand/phoenix-emblem.png" alt="" width="171" height="218" />
+            <span>Phoenix</span>
+            <i class="intro-bar" />
+          </div>
+        </div>
+      )
+    }
+
+    <div id="scroll-progress" aria-hidden="true"></div>
+
+    <!-- Hydrates when the browser is idle: its HTML is already on the page, so nothing waits on it -->
+    <Navbar client:idle pathname={pathname} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer pathname={pathname} />
+
+    <MobileActionBar client:idle />
+
+    <script>
+      import '../scripts/site.ts'
+    </script>
+  </body>
+</html>

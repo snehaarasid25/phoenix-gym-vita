@@ -1,0 +1,60 @@
+---
+/**
+ * Sample testimonials are visible ONLY in development (clearly badged).
+ * Production renders only real ones (`isSample: false`); with none yet, it
+ * shows a founding-member invitation, so no fictional reviews reach visitors.
+ */
+import { Quotes } from '@phosphor-icons/react'
+import { SHOW_PLACEHOLDER_BADGES, site } from '../config/site'
+import { testimonials } from '../data/content'
+import ButtonLink from '../components/ButtonLink.astro'
+import SectionHeader from '../components/SectionHeader.astro'
+import { PlaceholderBadge } from '../components/ui/PlaceholderBadge'
+
+const visible = testimonials.filter((t) => !t.isSample || SHOW_PLACEHOLDER_BADGES)
+---
+
+<section id="testimonials" aria-labelledby="testimonials-title" class="section-y relative overflow-hidden bg-ash-900">
+  <div class="gold-rule absolute inset-x-0 top-0" aria-hidden="true" />
+  <div class="glow-orb top-1/2 left-1/2 h-[32rem] w-[70rem] -translate-x-1/2 -translate-y-1/2" aria-hidden="true" />
+  <div class="container-x relative">
+    <SectionHeader
+      id="testimonials-title"
+      index="07"
+      eyebrow="Member stories"
+      lines={visible.length ? ['Heard on', 'the floor.'] : ['Your story', { text: 'starts here.', class: 'text-brand-gradient' }]}
+      intro={
+        visible.length
+          ? 'Real words from the people who train at Phoenix.'
+          : `We're just getting started in ${site.location.city}. Join as one of our first members and your transformation could be the first story told here.`
+      }
+    />
+
+    {visible.length > 0 ? (
+      <div class="mt-14 grid gap-4 sm:mt-20 md:grid-cols-3">
+        {visible.map((t, i) => (
+          <article class="reveal card-lux flex flex-col rounded-[1.75rem] p-7 sm:p-9" style={`--d:${i * 0.1}s`}>
+            <div class="flex items-start justify-between">
+              <Quotes className="size-10 text-brand-500" weight="fill" />
+              {t.isSample && <PlaceholderBadge label="Sample — not real" />}
+            </div>
+            <blockquote class="mt-6 flex-1 text-lg leading-relaxed text-bone/90">“{t.quote}”</blockquote>
+            <footer class="mt-8 flex items-center gap-3 border-t hairline pt-6">
+              <span class="grid size-11 place-items-center rounded-full bg-ash-700 font-display text-xl text-brand-300">{t.name.charAt(0)}</span>
+              <span>
+                <span class="block font-semibold">{t.name}</span>
+                <span class="block text-sm text-ash-400">{t.detail}</span>
+              </span>
+            </footer>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="reveal mt-12">
+        <ButtonLink href="#membership" size="lg">
+          Become a founding member
+        </ButtonLink>
+      </div>
+    )}
+  </div>
+</section>

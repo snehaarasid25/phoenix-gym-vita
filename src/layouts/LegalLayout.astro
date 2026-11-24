@@ -1,0 +1,28 @@
+---
+/**
+ * ⚠️ TEMPLATE LEGAL TEXT: must be reviewed (ideally by a legal professional)
+ * and adapted before launch. It describes how the CURRENT static site works.
+ */
+import BaseLayout from './BaseLayout.astro'
+import type { PageMeta } from '../config/seo'
+import { PlaceholderBadge } from '../components/ui/PlaceholderBadge'
+
+interface Props {
+  meta: PageMeta
+  title: string
+  updated: string
+}
+const { meta, title, updated } = Astro.props
+---
+
+<BaseLayout meta={meta}>
+  <article class="container-x max-w-3xl pt-40 pb-32">
+    <a href="/" class="eyebrow text-brand-400 hover:text-brand-300">← Back to home</a>
+    <h1 class="display-lg mt-6 uppercase">{title}</h1>
+    <p class="mt-4 text-sm text-ash-400">Last updated: {updated}</p>
+    <PlaceholderBadge label="Template — review before launch" className="mt-4" />
+    <div class="mt-12 space-y-6 leading-relaxed text-ash-300 [&_h2]:mt-12 [&_h2]:font-display [&_h2]:text-3xl [&_h2]:text-bone [&_h2]:uppercase">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

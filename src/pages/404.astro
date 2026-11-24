@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { site } from '../config/site'
+
+const meta = {
+  path: '/404',
+  title: `Page not found | ${site.name} Vita`,
+  description: `This page doesn't exist. Head back to ${site.name} Vita.`,
+  noindex: true,
+}
+---
+
+<BaseLayout meta={meta}>
+  <section class="container-x flex min-h-[80svh] flex-col items-start justify-center pt-32 pb-20">
+    <p class="eyebrow text-brand-400">404</p>
+    <h1 class="display-xl mt-4 uppercase">Lost the <span class="text-brand-gradient">path?</span></h1>
+    <p class="mt-6 max-w-md text-ash-300">This page doesn't exist, but your fitness journey still can.</p>
+    <a
+      href="/"
+      class="btn-primary mt-10 inline-flex h-14 items-center rounded-full px-8 font-mono text-xs font-semibold tracking-[0.14em] uppercase"
+    >
+      Back to Phoenix
+    </a>
+  </section>
+</BaseLayout>

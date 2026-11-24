@@ -1,0 +1,30 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro'
+import { pages } from '../config/seo'
+import { site } from '../config/site'
+---
+
+<LegalLayout meta={pages.privacy} title="Privacy Policy" updated="To be confirmed">
+  <p>
+    This policy explains how {site.legalName} ("we", "us") handles information when you use this website.
+  </p>
+  <h2>Information we collect</h2>
+  <p>
+    This website does not store your personal data on our servers. When you use the enquiry form, your details are placed into a
+    message that opens in WhatsApp or Instagram on your device. Nothing is sent until you choose to send that message yourself.
+    Information you share with us there is governed by those platforms' policies and used only to respond to your enquiry.
+  </p>
+  <h2>Third-party services</h2>
+  <p>
+    This site loads images from Unsplash, displays an embedded Google Map, shows posts from our Instagram account using Instagram's official embeds (loaded only when you scroll to that section), and links to Instagram and WhatsApp. These services
+    may collect technical data (such as your IP address) under their own privacy policies.
+  </p>
+  <h2>Analytics</h2>
+  <p>If analytics are added in future, this section will describe what is measured and how to opt out.</p>
+  <h2>Contact</h2>
+  <p>
+    For any privacy question, call us on{' '}
+    <a class="text-brand-300 underline" href={`tel:${site.contact.phone}`}>{site.contact.phoneDisplay}</a> or message us on Instagram at{' '}
+    <a class="text-brand-300 underline" href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer">@{site.social.instagramHandle}</a>.
+  </p>
+</LegalLayout>

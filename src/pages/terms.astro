@@ -1,0 +1,27 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro'
+import { pages } from '../config/seo'
+import { site } from '../config/site'
+---
+
+<LegalLayout meta={pages.terms} title="Terms & Conditions" updated="To be confirmed">
+  <p>By using this website you agree to these terms. Please read them carefully.</p>
+  <h2>Website content</h2>
+  <p>
+    Content on this site is for general information. Programmes, facilities, plans and pricing may change and are confirmed
+    only at the gym. Images may be illustrative.
+  </p>
+  <h2>Membership</h2>
+  <p>Membership terms, fees, refunds and gym rules are provided at the time of joining and form a separate agreement.</p>
+  <h2>Health & safety</h2>
+  <p>
+    Please consult a qualified medical professional before starting any exercise programme. Nothing on this website is medical
+    advice.
+  </p>
+  <h2>Contact</h2>
+  <p>
+    Questions about these terms? Call{' '}
+    <a class="text-brand-300 underline" href={`tel:${site.contact.phone}`}>{site.contact.phoneDisplay}</a> or reach us on Instagram at{' '}
+    <a class="text-brand-300 underline" href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer">@{site.social.instagramHandle}</a>.
+  </p>
+</LegalLayout>

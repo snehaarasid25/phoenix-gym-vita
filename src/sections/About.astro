@@ -1,0 +1,94 @@
+---
+/** Brand story: editorial copy, parallax photography, the three bio values. */
+import { images } from '../config/images'
+import { site } from '../config/site'
+import RotatingBadge from '../components/RotatingBadge.astro'
+import SectionHeader from '../components/SectionHeader.astro'
+import { Img } from '../components/ui/Img'
+import { PlaceholderBadge } from '../components/ui/PlaceholderBadge'
+
+const principles = [
+  { word: site.values[0], copy: 'Strength is a skill. Build it with intent, with technique and with patience.' },
+  { word: site.values[1], copy: 'Motivation fades, but discipline keeps you coming back on the hard days.' },
+  { word: site.values[2], copy: 'Real transformation comes from small efforts, repeated every single week.' },
+]
+---
+
+<section id="about" aria-labelledby="about-title" class="section-y relative isolate overflow-hidden">
+  <div class="bg-dots pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+  <!-- Giant drifting wordmark -->
+  <div data-parallax data-parallax-x="4,-8" class="pointer-events-none absolute top-24 left-0 font-display text-[28vw] leading-none whitespace-nowrap text-outline-ghost select-none" aria-hidden="true">
+    PHOENIX
+  </div>
+
+  <div class="glow-orb-soft top-1/3 -right-60 size-[44rem]" aria-hidden="true" />
+  <div class="container-x relative">
+    <SectionHeader
+      id="about-title"
+      index="01"
+      eyebrow="About Phoenix Gym, Vita"
+      lines={['More than a gym.', { text: 'A place to rise.', class: 'text-brand-gradient' }]}
+    >
+      <Fragment slot="intro">
+        <span class="font-serif text-bone">{site.brandLine}.</span> Established in {site.foundingYear}, Phoenix Gym brings a premium training experience to {site.location.city}, with strength,
+        conditioning, recovery and calm under one roof.
+      </Fragment>
+    </SectionHeader>
+
+    <div class="mt-16 grid gap-6 sm:mt-24 lg:grid-cols-12 lg:gap-8">
+      <!-- Primary image -->
+      <div class="relative lg:col-span-7">
+      <div data-theme="dark" class="reveal-img relative aspect-[4/3] overflow-hidden rounded-[1.75rem] lg:aspect-[7/6]">
+        <div data-parallax data-parallax-y="6,-6" class="absolute inset-x-0 -inset-y-[8%]">
+          <Img image={images.aboutPrimary} sizes="(min-width:1024px) 58vw, 100vw" className="size-full object-cover" />
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-ash-950/70 via-transparent to-transparent" aria-hidden="true" />
+        <figure class="absolute right-5 bottom-5 left-5 sm:right-8 sm:bottom-8 sm:left-8">
+          <blockquote class="font-display text-4xl leading-[0.95] uppercase sm:text-6xl">
+            “{site.tagline}.”
+          </blockquote>
+          <figcaption class="eyebrow mt-3 text-brand-300">— The Phoenix creed</figcaption>
+        </figure>
+      </div>
+      <div class="absolute -top-8 -right-4 hidden sm:block lg:-right-8">
+        <RotatingBadge tone="ink" />
+      </div>
+      </div>
+
+      <!-- Text + secondary image -->
+      <div class="flex flex-col gap-10 lg:col-span-5 lg:pl-6">
+        <div class="reveal space-y-5 text-lg leading-relaxed text-ash-300">
+          <PlaceholderBadge label="Draft copy — confirm with owner" />
+          <p>
+            <span class="text-bone">The name says it all.</span> Every session is a chance to burn away who you were yesterday and rise a little stronger. Phoenix Gym exists to give {site.location.city} a place where that kind of serious training feels at home.
+          </p>
+          <p>
+            It doesn't matter if you're picking up a barbell for the first time or chasing a new personal best. The approach is the same: show up, train with intent, repeat. No shortcuts and no noise.
+          </p>
+        </div>
+
+        <div class="relative ml-auto w-3/4 sm:w-2/3 lg:w-full">
+          <div class="absolute -inset-3 -z-10 rounded-[1.75rem] border border-brand-500/30" aria-hidden="true" />
+          <div class="reveal-img relative aspect-[4/5] overflow-hidden rounded-[1.5rem]" style="--d:0.15s">
+            <div data-parallax data-parallax-y="12,-12" class="absolute inset-x-0 -inset-y-[16%]">
+              <Img image={images.aboutSecondary} sizes="(min-width:1024px) 34vw, 66vw" className="size-full object-cover grayscale-[35%]" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Three principles — straight from the brand's own words -->
+    <ol class="mt-20 grid border-t hairline sm:mt-28 md:grid-cols-3">
+      {principles.map((p, i) => (
+        <li class="reveal group border-b hairline py-8 md:border-r md:border-b-0 md:px-8 md:first:pl-0 md:last:border-r-0" style={`--d:${i * 0.1}s`}>
+          <div class="flex items-baseline justify-between">
+            <h3 class="font-display text-5xl uppercase transition-colors duration-500 group-hover:text-brand-400 sm:text-6xl">{p.word}</h3>
+            <span class="font-mono text-xs text-ash-400">0{i + 1}</span>
+          </div>
+          <p class="mt-4 max-w-xs text-ash-300">{p.copy}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

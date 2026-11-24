@@ -1,0 +1,22 @@
+---
+/** High-energy tilted ticker between hero and story: the brand's mantra. */
+import { site } from '../config/site'
+import { Marquee } from '../components/ui/Marquee'
+
+const words = [...site.values, site.brandLine, site.brandCall]
+---
+
+<div class="relative z-10 overflow-hidden py-6 sm:py-10" aria-hidden="true">
+  <div data-theme="dark" class="-mx-4 -rotate-2 bg-brand-500 py-3 text-ink shadow-[0_20px_80px_-20px_rgba(196,159,110,0.6)] sm:py-4">
+    <span data-velocity-skew>
+    <Marquee>
+      {words.map((w) => (
+        <span class="flex items-center">
+          <span class="px-6 font-display text-3xl tracking-wide whitespace-nowrap uppercase sm:px-10 sm:text-5xl">{w}</span>
+          <span class="text-xl sm:text-2xl">✦</span>
+        </span>
+      ))}
+    </Marquee>
+    </span>
+  </div>
+</div>

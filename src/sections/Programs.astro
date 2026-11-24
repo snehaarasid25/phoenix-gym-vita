@@ -1,0 +1,24 @@
+---
+/** Programmes: static header + interactive showcase island. */
+import SectionHeader from '../components/SectionHeader.astro'
+import ProgramsShowcase from '../components/islands/ProgramsShowcase'
+---
+
+<section id="programs" aria-labelledby="programs-title" class="section-y relative isolate overflow-hidden">
+  <div class="bg-dots pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="glow-orb top-1/4 -right-72 size-[48rem]" aria-hidden="true"></div>
+  <div class="glow-orb-soft -bottom-40 -left-40 size-[36rem]" aria-hidden="true"></div>
+  <div class="container-x relative">
+    <SectionHeader
+      id="programs-title"
+      index="03"
+      eyebrow="Training programmes in Vita"
+      lines={['Choose your', { text: 'fire.', class: 'text-outline' }]}
+      intro="From weight training and HYROX to yoga, meditation and family batches, every goal needs its own approach. Pick the path that fits where you are now and where you want to go."
+    />
+    <div class="mt-14 sm:mt-20">
+      <!-- SSR'd for SEO; becomes interactive once scrolled into view -->
+      <ProgramsShowcase client:visible />
+    </div>
+  </div>
+</section>

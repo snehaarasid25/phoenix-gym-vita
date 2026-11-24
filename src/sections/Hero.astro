@@ -1,0 +1,130 @@
+---
+/**
+ * Hero: an inset, rounded cinematic card on the ivory page (always dark).
+ * Gymshark/Equinox-style: one crisp full-bleed HD photo on true black, the
+ * athlete on the right facing a big headline on the left, minimal UI.
+ * Mobile: photo on top fading into black, copy below.
+ */
+import { ArrowDown, FlowerLotus, Lightning, MapPin, Thermometer } from '@phosphor-icons/react'
+import { images } from '../config/images'
+import { cta, site } from '../config/site'
+import ButtonLink from '../components/ButtonLink.astro'
+import { sized, srcSet } from '../utils/image'
+
+// Per-letter animation can't use background-clip gradients reliably, so RISE. is solid champagne gold
+const heroWords = [
+  { text: 'Burn.', class: 'text-outline' },
+  { text: 'Build.', class: 'text-bone' },
+  { text: 'Rise.', class: 'text-[#e6c999]' },
+]
+const chip =
+  'chip-float flex items-center gap-2 rounded-full border border-bone/10 bg-ash-950/45 py-1.5 pr-3.5 pl-1.5 text-[0.8rem] font-medium whitespace-nowrap text-bone/90 backdrop-blur-md'
+const chipIcon = 'grid size-6 place-items-center rounded-full bg-brand-500/90 text-ink'
+---
+
+<section id="home" aria-labelledby="hero-title" class="relative p-2 sm:p-3 lg:p-4">
+  <div
+    data-theme="dark"
+    class="relative isolate flex min-h-[calc(100svh-1rem)] flex-col overflow-hidden rounded-[2rem] bg-ash-950 shadow-[0_40px_120px_-40px_rgba(21,17,13,0.55)] sm:min-h-[calc(100svh-1.5rem)] sm:rounded-[2.5rem] lg:min-h-[calc(100svh-2rem)] lg:rounded-[3rem]"
+  >
+    <!-- ── Full-bleed HD photo: athlete + barbell centre-right, deep black space left for the copy ── -->
+    <div class="absolute inset-x-0 top-20 -z-20 h-[54%] [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] md:inset-0 md:h-auto md:[mask-image:none]">
+      <div data-parallax data-parallax-mode="exit" data-parallax-y="0,8" class="absolute inset-0">
+        <picture>
+          <source media="(max-width: 767px)" srcset={srcSet(images.heroMobile.src)} sizes="100vw" />
+          <img
+            src={sized(images.hero.src, 1920)}
+            srcset={srcSet(images.hero.src)}
+            sizes="100vw"
+            alt={images.hero.alt}
+            fetchpriority="high"
+            decoding="sync"
+            width="3200"
+            height="2133"
+            class="size-full animate-kenburns object-cover object-[59%_30%] md:object-[58%_0%]"
+          />
+        </picture>
+      </div>
+    </div>
+    <!-- Keep the copy side true black; nothing sits over the athlete -->
+    <div class="absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgb(7_6_5/0.92)_0%,rgb(7_6_5/0.7)_28%,rgb(7_6_5/0.15)_46%,transparent_56%)] md:block" aria-hidden="true"></div>
+    <div class="absolute inset-x-0 bottom-0 -z-10 h-1/3 bg-gradient-to-t from-ash-950 to-transparent" aria-hidden="true"></div>
+
+    <!-- Floating chips in the open black space to the athlete's right (verified facilities) -->
+    <ul class="pointer-events-none absolute inset-0 hidden lg:block" aria-label="Highlights">
+      <li class="enter-up absolute top-[28%] right-[13%]" style="--d:1.1s">
+        <span class={chip} style="--float-d:0s"><span class={chipIcon}><Lightning className="size-3.5" weight="fill" /></span>HYROX Training</span>
+      </li>
+      <li class="enter-up absolute top-[46%] right-[8%]" style="--d:1.25s">
+        <span class={chip} style="--float-d:-2s"><span class={chipIcon}><Thermometer className="size-3.5" weight="fill" /></span>Steam Bath</span>
+      </li>
+      <li class="enter-up absolute top-[64%] right-[12%]" style="--d:1.4s">
+        <span class={chip} style="--float-d:-4s"><span class={chipIcon}><FlowerLotus className="size-3.5" weight="fill" /></span>Yoga &amp; Meditation</span>
+      </li>
+    </ul>
+
+
+    <!-- ── Copy ── -->
+    <div
+      data-parallax
+      data-parallax-mode="exit"
+      data-parallax-fade="0.35,0.8"
+      class="container-x relative flex flex-1 flex-col justify-end pt-28 pb-8 sm:pb-12 md:justify-center md:pt-24 md:pb-10"
+    >
+      <div class="max-w-[34rem] md:max-w-[44%] lg:max-w-[36rem]">
+        <h1 id="hero-title" aria-label={`Phoenix Gym, ${site.location.city}: Burn. Build. Rise.`}>
+          <span class="enter-up eyebrow mb-5 flex items-center gap-3 text-brand-300 sm:mb-6" style="--d:0.15s">
+            <span class="h-px w-8 bg-brand-400/70" aria-hidden="true"></span>
+            Phoenix Gym · {site.location.city}{site.foundingYear && <> · Est. {site.foundingYear}</>}
+          </span>{' '}
+          <!-- One word per line; letters rise in one by one (held until the intro curtain lifts) -->
+          <span class="display-hero block uppercase">
+            {
+              heroWords.map((word, w) => (
+                <span class="block overflow-hidden pb-[0.04em]">
+                  <span class={word.class}>
+                    {[...word.text].map((ch, c) => (
+                      <span class="char" style={`--d:${(0.3 + w * 0.14 + c * 0.045).toFixed(3)}s`}>
+                        {ch}
+                      </span>
+                    ))}
+                  </span>
+                </span>
+              )).flatMap((el) => [el, ' '])
+            }
+          </span>
+        </h1>
+
+        <div class="enter-up mt-4 sm:mt-5" style="--d:0.75s">
+          <p class="font-serif text-[0.8rem] font-medium tracking-[0.16em] text-brand-300 uppercase sm:text-sm">{site.brandLine}</p>
+          <p class="mt-2.5 max-w-lg text-base leading-relaxed text-pretty text-bone/80 sm:text-[1.0625rem]">
+            <span class="font-semibold text-bone">{site.claim ? `${site.claim}.` : `${site.tagline}.`}</span> HYROX training, a steam bath and a dedicated yoga &amp; meditation
+            space, all under one roof.
+          </p>
+        </div>
+
+        <div class="enter-up mt-6 sm:mt-7" style="--d:0.9s">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <ButtonLink href="#membership" size="lg" sheen>{cta.long}</ButtonLink>
+            <ButtonLink href="#facilities" size="lg" variant="ghost">
+              Explore Gym
+              <Fragment slot="icon"><ArrowDown className="size-4" weight="bold" /></Fragment>
+            </ButtonLink>
+          </div>
+          <!-- Status sits right under the CTA it explains, together with the location -->
+          <p class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-bone/65">
+            <span class="inline-flex items-center gap-2 font-medium text-bone/85">
+              <span class="live-dot" aria-hidden="true"></span>
+              {cta.status}
+            </span>
+            <span class="hidden h-3.5 w-px bg-bone/20 sm:block" aria-hidden="true"></span>
+            <span class="inline-flex items-center gap-1.5">
+              <MapPin className="size-4 text-brand-400" weight="duotone" />
+              Nevari Road, {site.location.city}
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

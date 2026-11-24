@@ -1,0 +1,42 @@
+---
+/** Closing cinematic call-to-action (always dark). */
+import { images } from '../config/images'
+import { cta, site } from '../config/site'
+import ButtonLink from '../components/ButtonLink.astro'
+import { Img } from '../components/ui/Img'
+import { primaryEnquiry } from '../utils/contact'
+
+const enquiry = primaryEnquiry()
+---
+
+<!-- Mobile: the whole flex + sun as a band on top, copy below (a 16:9 photo can't cover a tall phone section without
+     blowing up into a blurry crop). sm+: full-bleed cinematic background. -->
+<section data-theme="dark" aria-labelledby="final-cta-title" class="panel grain relative bg-ash-950 pt-[80vw] pb-24 sm:py-48">
+  <div class="absolute inset-x-0 top-0 -z-20 aspect-[4/3] [mask-image:linear-gradient(to_bottom,black_78%,transparent)] sm:-inset-y-[15%] sm:aspect-auto sm:[mask-image:none]">
+    <div data-parallax data-parallax-y="-12,12" class="size-full max-sm:!transform-none">
+      <Img image={images.finalCta} sizes="100vw" width={1920} className="size-full object-cover object-[54%_100%] sm:object-[60%_50%]" style={{ objectPosition: undefined }} />
+    </div>
+  </div>
+  <div class="absolute inset-0 -z-10 hidden bg-ash-950/55 sm:block" aria-hidden="true" />
+  <div class="absolute inset-0 -z-10 hidden bg-gradient-to-t from-ash-950 via-transparent to-ash-950 sm:block" aria-hidden="true" />
+  <div class="glow-orb bottom-[-12rem] left-1/2 -z-10 h-[30rem] w-[70rem] -translate-x-1/2" aria-hidden="true" />
+
+  <div class="container-x text-center">
+    <p class="relative font-serif text-sm font-medium tracking-[0.2em] text-brand-300 uppercase">{site.brandCall}</p>
+    <h2 id="final-cta-title" class="reveal-lines display-xl mt-6 uppercase">
+      <span class="line" style="--i:0"><span>Ready to</span></span>
+      <span class="line" style="--i:1"><span class="text-brand-gradient">rise?</span></span>
+    </h2>
+    <p class="mx-auto mt-8 max-w-lg text-lg text-bone/80">
+      {site.journeyLine}. The hardest rep is walking through the door, so take the first step today.
+    </p>
+    <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+      <ButtonLink href="#membership" size="lg" sheen>
+        {cta.long}
+      </ButtonLink>
+      <ButtonLink href={enquiry.href} size="lg" variant="ghost">
+        {enquiry.label}
+      </ButtonLink>
+    </div>
+  </div>
+</section>

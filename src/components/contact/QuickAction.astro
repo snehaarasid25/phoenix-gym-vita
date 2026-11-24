@@ -1,0 +1,30 @@
+---
+/** Large tap target for the primary contact channels. Icon via <Fragment slot="icon">. */
+interface Props {
+  href: string
+  label: string
+  value: string
+  accent?: boolean
+}
+const { href, label, value, accent = false } = Astro.props
+const external = href.startsWith('http')
+---
+
+<a
+  href={href}
+  data-theme={accent ? 'dark' : undefined}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  class:list={[
+    'group flex items-center gap-4 rounded-[1.5rem] p-5 transition-[transform,background-color,box-shadow] duration-300 ease-[var(--ease-out-quint)] hover:-translate-y-0.5',
+    accent ? 'bg-brand-500 text-ink shadow-[0_20px_50px_-20px_rgba(196,159,110,0.7)] hover:bg-brand-400' : 'card-lux',
+  ]}
+>
+  <span class:list={['grid size-12 shrink-0 place-items-center rounded-full', accent ? 'bg-ash-950 text-brand-400' : 'bg-brand-500/15 text-brand-400']}>
+    <slot name="icon" />
+  </span>
+  <span class="min-w-0">
+    <span class:list={['block font-mono text-[0.62rem] tracking-[0.16em] uppercase', accent ? 'text-ink/70' : 'text-ash-400']}>{label}</span>
+    <span class="block truncate font-semibold">{value}</span>
+  </span>
+</a>

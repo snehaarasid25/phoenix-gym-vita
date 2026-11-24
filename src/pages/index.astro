@@ -1,0 +1,39 @@
+---
+/**
+ * Home. Section order follows an Instagram visitor's journey:
+ * hook → story → proof (facilities, programmes) → trust → offer → act.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { images } from '../config/images'
+import { pages } from '../config/seo'
+import { srcSet } from '../utils/image'
+import About from '../sections/About.astro'
+import Contact from '../sections/Contact.astro'
+import Facilities from '../sections/Facilities.astro'
+import Faq from '../sections/Faq.astro'
+import FinalCta from '../sections/FinalCta.astro'
+import Gallery from '../sections/Gallery.astro'
+import Hero from '../sections/Hero.astro'
+import InstagramFeed from '../sections/InstagramFeed.astro'
+import MantraBand from '../sections/MantraBand.astro'
+import Membership from '../sections/Membership.astro'
+import Programs from '../sections/Programs.astro'
+import Testimonials from '../sections/Testimonials.astro'
+import WhyPhoenix from '../sections/WhyPhoenix.astro'
+---
+
+<BaseLayout meta={pages.home} structuredData intro preloadImage={srcSet(images.hero.src)}>
+  <Hero />
+  <MantraBand />
+  <About />
+  <Facilities />
+  <Programs />
+  <WhyPhoenix />
+  <Gallery />
+  <Membership />
+  <Testimonials />
+  <InstagramFeed />
+  <Faq />
+  <Contact />
+  <FinalCta />
+</BaseLayout>

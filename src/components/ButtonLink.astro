@@ -1,0 +1,42 @@
+---
+/**
+ * Static link-button for .astro pages (zero JS). Same classes as the React
+ * <ButtonLink> used inside islands (see buttonClasses in ui/Button.tsx).
+ * Pass a custom icon via <Fragment slot="icon">…</Fragment>; `icon={false}` hides it.
+ */
+import { ArrowUpRight } from '@phosphor-icons/react'
+import { buttonClasses, type ButtonSize, type ButtonVariant } from './ui/buttonStyles'
+
+interface Props {
+  href: string
+  variant?: ButtonVariant
+  size?: ButtonSize
+  sheen?: boolean
+  icon?: boolean
+  class?: string
+  [attr: string]: unknown
+}
+
+const { href, variant = 'primary', size = 'md', sheen = false, icon = true, class: className, ...rest } = Astro.props
+const external = href.startsWith('http')
+const hasIcon = Astro.slots.has('icon')
+---
+
+<a href={href} class={buttonClasses(variant, size, className)} {...external ? { target: '_blank', rel: 'noopener noreferrer' } : {}} {...rest}>
+  {sheen && <span class="sheen motion-reduce:hidden" aria-hidden="true" />}
+  <span class="relative z-10"><slot /></span>
+  {
+    icon && (
+      hasIcon ? (
+        <span class="relative z-10 grid size-6 place-items-center transition-transform duration-300 group-hover:translate-y-0.5" aria-hidden="true">
+          <slot name="icon" />
+        </span>
+      ) : (
+        <span class="arrow-swap relative z-10 size-6 place-items-center" aria-hidden="true">
+          <ArrowUpRight className="size-4" weight="bold" />
+          <ArrowUpRight className="size-4" weight="bold" />
+        </span>
+      )
+    )
+  }
+</a>

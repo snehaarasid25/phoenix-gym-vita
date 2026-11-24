@@ -1,0 +1,89 @@
+---
+/** Membership plans. Featured plan = same card, gold edge + lift + overhanging badge. */
+import { Check, Info } from '@phosphor-icons/react'
+import { membershipNote, plans } from '../data/membership'
+import SectionHeader from '../components/SectionHeader.astro'
+import { Button } from '../components/ui/Button'
+import { PlaceholderBadge } from '../components/ui/PlaceholderBadge'
+import { cn } from '../utils/cn'
+import { formatINR } from '../utils/contact'
+
+const anyUnverified = plans.some((p) => !p.verified)
+---
+
+<section id="membership" aria-labelledby="membership-title" class="section-y relative isolate overflow-hidden">
+  <div class="bg-dots pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="glow-orb -bottom-56 left-1/2 h-[40rem] w-[80rem] -translate-x-1/2" aria-hidden="true" />
+  <div class="glow-orb-soft -top-40 -right-40 size-[34rem]" aria-hidden="true" />
+  <div class="container-x relative">
+    <SectionHeader
+      id="membership-title"
+      index="06"
+      eyebrow="Gym membership in Vita"
+      lines={['Commit to', { text: 'the climb.', class: 'text-brand-gradient' }]}
+      intro="Choose the gym membership that matches your ambition. Longer plans give you the time consistency needs to pay off, and pre-booking for Vita is opening soon."
+    />
+
+    <div class="mt-16 grid gap-x-4 gap-y-10 sm:mt-24 md:grid-cols-2 xl:grid-cols-4">
+      {plans.map((plan, i) => (
+        <article
+          class={"reveal " + cn(
+            /* Featured plan = same object, chosen: same surface, gold edge + lift. Never a different fill. */
+            'card-lux group flex flex-col rounded-[1.75rem] p-7 hover:-translate-y-1.5 sm:p-8',
+            plan.highlight && 'card-featured',
+          )}
+          style={`--d:${i * 0.08}s`}
+        >
+          {plan.highlight && plan.highlightLabel && (
+            <span class="badge-gold absolute -top-3.5 left-1/2 -translate-x-1/2">
+              <span class="sheen" aria-hidden="true" />
+              <span class="relative">{plan.highlightLabel}</span>
+            </span>
+          )}
+
+          <p class="eyebrow whitespace-nowrap text-ash-400">{plan.duration}</p>
+          <h3 class="mt-2 font-display text-5xl leading-none uppercase">{plan.name}</h3>
+
+          <div class="my-8 border-y hairline py-6">
+            {plan.price !== null ? (
+              <p class="flex items-baseline gap-2">
+                <span class="font-display text-6xl leading-none tracking-[-0.01em] tabular-nums">{formatINR(plan.price)}</span>
+                {plan.priceNote && <span class="eyebrow text-ash-400">{plan.priceNote}</span>}
+              </p>
+            ) : (
+              <>
+                <p class={cn('font-display text-4xl leading-none uppercase', plan.highlight && 'text-brand-gradient')}>Price on enquiry</p>
+                <p class="mt-2 text-sm text-ash-400">Message us for current rates.</p>
+              </>
+            )}
+          </div>
+
+          <ul class="flex-1 space-y-3.5">
+            {plan.benefits.map((b, j) => (
+              <li class="reveal flex gap-3 text-sm" style={`--reveal-y:10px; --d:${(0.25 + i * 0.06 + j * 0.1).toFixed(2)}s`}>
+                <span class="icon-well mt-0.5 size-5 rounded-full">
+                  <Check className="size-3" weight="bold" />
+                </span>
+                <span class={plan.highlight ? 'font-medium text-bone' : 'text-ash-300'}>{b}</span>
+              </li>
+            ))}
+          </ul>
+
+          {!plan.verified && <PlaceholderBadge label="Inclusions TBC" className="mt-6 self-start" />}
+
+          <!-- Handled by scripts/site.ts: pre-fills the enquiry form and scrolls to it -->
+          <Button data-enquire={`${plan.name} membership`} variant={plan.highlight ? 'primary' : 'outline'} className="mt-8 w-full">
+            Enquire now
+          </Button>
+        </article>
+      ))}
+    </div>
+
+    {anyUnverified && (
+      <div class="reveal mt-10 flex items-start gap-3 text-sm text-ash-400 sm:items-center sm:justify-center">
+        <Info className="mt-0.5 size-4 shrink-0 text-brand-400 sm:mt-0" weight="duotone" />
+        <p>{membershipNote}</p>
+      </div>
+    )}
+  </div>
+</section>

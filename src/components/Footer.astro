@@ -1,0 +1,147 @@
+---
+/** Site footer (static HTML, zero JS). */
+import { ArrowUp, GithubLogo, FacebookLogo, InstagramLogo, MapPin, Phone, WhatsappLogo, YoutubeLogo } from '@phosphor-icons/react'
+import { navItems, site } from '../config/site'
+import { whatsappLink } from '../utils/contact'
+import { Logo } from './ui/Logo'
+import { Marquee } from './ui/Marquee'
+
+interface Props {
+  pathname: string
+}
+
+const { pathname } = Astro.props
+const resolve = (href: string) => (pathname === '/' ? href : `/${href}`)
+const wa = whatsappLink()
+const YEAR = new Date().getFullYear()
+const credit = { name: 'Sneha', url: 'https://github.com/snehaarasid25' }
+---
+
+<footer data-theme="dark" class="panel relative mt-2 mb-2 bg-ash-950 pb-28 sm:mt-3 sm:mb-3 sm:pb-0 lg:mt-4 lg:mb-4">
+  <div class="gold-rule absolute inset-x-0 top-0" aria-hidden="true" />
+  <div class="glow-orb -bottom-72 left-1/2 h-[36rem] w-[70rem] -translate-x-1/2 opacity-70" aria-hidden="true" />
+  <Marquee className="border-b hairline py-6 select-none">
+    {site.values.map((v) => (
+      <span class="flex items-center">
+        <span class="px-8 font-display text-6xl text-outline-faint sm:text-8xl">{v}</span>
+        <span class="text-3xl text-brand-500">✦</span>
+      </span>
+    ))}
+  </Marquee>
+
+  <div class="container-x grid gap-14 py-20 lg:grid-cols-12 lg:gap-8">
+    <div class="lg:col-span-4">
+      <Logo />
+      <p class="mt-6 max-w-xs text-sm leading-relaxed text-ash-400">
+        {site.brandLine}. A premium gym in {site.location.city}, {site.location.state}, built on {site.values.join(', ').toLowerCase()}.
+      </p>
+      <div class="mt-8 flex gap-3">
+        <a href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on Instagram" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+          <InstagramLogo className="size-5" />
+        </a>
+        <a href={site.social.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on Facebook" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+          <FacebookLogo className="size-5" />
+        </a>
+        <a href={site.social.youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on YouTube" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+          <YoutubeLogo className="size-5" />
+        </a>
+        {wa && (
+          <a href={wa} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+            <WhatsappLogo className="size-5" />
+          </a>
+        )}
+      </div>
+    </div>
+
+    <nav aria-label="Footer" class="lg:col-span-2 lg:col-start-6">
+      <p class="eyebrow mb-6 text-ash-400">Explore</p>
+      <ul class="space-y-3">
+        {navItems.map((n) => (
+          <li>
+            <a href={resolve(n.href)} class="text-sm text-ash-300 transition-colors hover:text-brand-300">
+              {n.label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href={resolve('#faq')} class="text-sm text-ash-300 transition-colors hover:text-brand-300">FAQ</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="lg:col-span-3">
+      <p class="eyebrow mb-6 text-ash-400">Visit</p>
+      <ul class="space-y-4 text-sm text-ash-300">
+        <li class="flex gap-3">
+          <MapPin className="mt-0.5 size-4 shrink-0 text-brand-400" weight="duotone" />
+          <span>
+            {site.location.streetAddress && (
+              <>
+                {site.location.streetAddress}
+                <br />
+              </>
+            )}
+            {site.location.city}, {site.location.district} District, {site.location.state}
+            {site.location.postalCode && <> {site.location.postalCode}</>}
+            <br />
+            <a href={site.location.mapsUrl} target="_blank" rel="noopener noreferrer" class="text-bone underline decoration-brand-500/60 underline-offset-4 hover:text-brand-300">
+              Get directions
+            </a>
+          </span>
+        </li>
+        {site.contact.phone && (
+          <li class="flex gap-3">
+            <Phone className="mt-0.5 size-4 shrink-0 text-brand-400" weight="duotone" />
+            <a href={`tel:${site.contact.phone}`} class="hover:text-bone">{site.contact.phoneDisplay ?? site.contact.phone}</a>
+          </li>
+        )}
+        <li class="flex gap-3">
+          <InstagramLogo className="mt-0.5 size-4 shrink-0 text-brand-400" />
+          <a href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer" class="hover:text-bone">@{site.social.instagramHandle}</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="lg:col-span-2">
+      <p class="eyebrow mb-6 text-ash-400">Hours</p>
+      {site.hours ? (
+        <ul class="space-y-2 text-sm text-ash-300">
+          {site.hours.map((h) => (
+            <li class="flex justify-between gap-4">
+              <span>{h.days}</span>
+              <span class="text-bone">{h.hours}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-sm text-ash-400">Timings announced soon. Message us for today's hours.</p>
+      )}
+    </div>
+  </div>
+
+  <div class="container-x flex flex-col gap-4 border-t hairline py-8 text-xs text-ash-400 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-5">
+      <p>© {YEAR} {site.legalName}{site.foundingYear && <> · Est. {site.foundingYear}</>}. All rights reserved.</p>
+      <span class="hidden h-3 w-px bg-bone/15 sm:block" aria-hidden="true"></span>
+      <p>
+        Designed &amp; developed by
+        <a
+          href={credit.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group/credit inline-flex items-center gap-1 font-semibold text-brand-300 transition-colors hover:text-brand-400"
+        >
+          {credit.name}
+          <GithubLogo className="size-3.5 transition-transform duration-300 group-hover/credit:-translate-y-px" weight="fill" />
+        </a>
+      </p>
+    </div>
+    <div class="flex items-center gap-6">
+      <a href="/privacy" class="hover:text-bone">Privacy Policy</a>
+      <a href="/terms" class="hover:text-bone">Terms &amp; Conditions</a>
+      <a href={resolve('#home')} aria-label="Back to top" class="grid size-9 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+        <ArrowUp className="size-4" weight="bold" />
+      </a>
+    </div>
+  </div>
+</footer>

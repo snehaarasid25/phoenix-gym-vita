@@ -1,0 +1,696 @@
+@import '@fontsource/bebas-neue/400.css';
+@import '@fontsource/cinzel/500.css';
+@import '@fontsource/cinzel/700.css';
+@import '@fontsource-variable/manrope';
+@import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────
+ *  PHOENIX DESIGN TOKENS
+ *  "Gilded Phoenix" palette: near-black ash, warm charcoal, one champagne-gold
+ *  accent taken from the official emblem ("Where Fitness Meets Refinement").
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+@theme {
+  --color-ash-950: #070605;
+  --color-ash-900: #0c0a09;
+  --color-ash-850: #12100e;
+  --color-ash-800: #1a1714;
+  --color-ash-700: #26221e;
+  --color-ash-600: #3a342e;
+  --color-ash-400: #8a8178;
+  --color-ash-300: #b5aca2;
+  --color-bone: #f4efe8;
+
+  /* Champagne-gold sampled from the official Phoenix Gym emblem */
+  --color-brand-300: #ead6b4;
+  --color-brand-400: #dbba8d;
+  --color-brand-500: #c49f6e;
+  --color-brand-600: #a6825a;
+  --color-brand-700: #7b5835;
+  --color-gold: #f3e2c2;
+  /* Always-dark ink for text on gold (identical in both themes) */
+  --color-ink: #0c0a09;
+
+  --font-display: 'Bebas Neue', 'Oswald', Impact, sans-serif;
+  --font-sans: 'Manrope Variable', 'Manrope', system-ui, sans-serif;
+  --font-serif: 'Cinzel', Georgia, serif;
+  /* Labels/buttons use the body family (one text voice). Kept as a token so classes stay stable. */
+  --font-mono: 'Manrope Variable', 'Manrope', system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* House easing for UI state changes (hover, press, toggles), ~260ms */
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-kenburns: kenburns 24s ease-out forwards;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes chip-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+  /* Sweep once, then rest: continuous motion reads as "loading" */
+  @keyframes sheen {
+    0% { transform: translateX(-120%); }
+    32%, 100% { transform: translateX(120%); }
+  }
+  /* Live-status dot: expanding ring */
+  @keyframes live-pulse {
+    0% { box-shadow: 0 0 0 0 rgb(219 186 141 / 0.7); }
+    100% { box-shadow: 0 0 0 7px rgb(219 186 141 / 0); }
+  }
+  @keyframes kenburns {
+    from { transform: scale(1.12); }
+    to { transform: scale(1); }
+  }
+}
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────
+ *  THEMES
+ *  Every utility reads these variables, so switching data-theme on <html>
+ *  re-skins the whole site. Light mode takes its cue from the launch poster:
+ *  ivory and marble with deep gold.
+ *
+ *  Any element can opt into the dark palette with data-theme="dark" (the
+ *  hero, photo cards and the gallery viewer stay cinematic in both themes).
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+[data-theme='dark'] {
+  --color-ash-950: #070605;
+  --color-ash-900: #0c0a09;
+  --color-ash-850: #12100e;
+  --color-ash-800: #1a1714;
+  --color-ash-700: #26221e;
+  --color-ash-600: #3a342e;
+  --color-ash-400: #8a8178;
+  --color-ash-300: #b5aca2;
+  --color-bone: #f4efe8;
+  --color-brand-300: #ead6b4;
+  --color-brand-400: #dbba8d;
+  --color-brand-500: #c49f6e;
+  --color-brand-600: #a6825a;
+  --color-brand-700: #7b5835;
+  --color-gold: #f3e2c2;
+  /* Atmosphere */
+  --glow: rgb(196 159 110 / 0.2);
+  --glow-strong: rgb(214 170 104 / 0.34);
+  --outline-faint: color-mix(in srgb, var(--color-bone) 18%, transparent);
+  --outline-ghost: color-mix(in srgb, var(--color-bone) 9%, transparent);
+  --card-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 24px 60px -36px rgb(0 0 0 / 0.9);
+  --card-shadow-hover: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 30px 80px -30px rgb(196 159 110 / 0.35);
+  /* Primary button: champagne gold on dark */
+  --btn-bg: linear-gradient(180deg, #dbba8d, #c49f6e);
+  --btn-fg: #0c0a09;
+  --btn-shadow: 0 10px 30px -12px rgb(196 159 110 / 0.7);
+  --btn-shadow-hover: 0 16px 48px -10px rgb(214 170 104 / 0.85);
+  color-scheme: dark;
+}
+/* "Ivory luxury": the default. :root covers no-JS visitors; dark scopes opt out. */
+:root:not([data-theme='dark']),
+[data-theme='light'] {
+  --color-ash-950: #f7f3ec; /* ivory page */
+  --color-ash-900: #ede6da; /* warm stone band */
+  --color-ash-850: #fefcf8; /* card surface */
+  --color-ash-800: #e5dccd;
+  --color-ash-700: #d8cdbb;
+  --color-ash-600: #b4a895;
+  --color-ash-400: #6f6457;
+  --color-ash-300: #4f463d;
+  --color-bone: #15110d; /* ink */
+  --color-brand-300: #8a6a40;
+  --color-brand-400: #8f6a3a;
+  --color-brand-500: #b8915c;
+  --color-brand-600: #8f6a3c;
+  --color-brand-700: #6b4c2a;
+  --color-gold: #c39558;
+  /* Atmosphere: soft, warm daylight glows (kept subtle on ivory) */
+  --glow: rgb(222 182 120 / 0.2);
+  --glow-strong: rgb(226 184 118 / 0.32);
+  --outline-faint: color-mix(in srgb, var(--color-brand-500) 62%, transparent);
+  --outline-ghost: color-mix(in srgb, var(--color-brand-500) 22%, transparent);
+  --card-shadow: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 18px 50px -30px rgb(110 75 35 / 0.32);
+  --card-shadow-hover: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 30px 70px -28px rgb(184 145 92 / 0.55);
+  /* Primary button: deep ink on ivory (gold stays for details) */
+  --btn-bg: linear-gradient(180deg, #2b241d, #15110d);
+  --btn-fg: #f7f3ec;
+  --btn-shadow: 0 12px 30px -14px rgb(21 17 13 / 0.55);
+  --btn-shadow-hover: 0 18px 44px -14px rgb(21 17 13 / 0.6);
+  color-scheme: light;
+}
+
+/* `theme-light:` variant, keyed to the GLOBAL theme (ignores local dark scopes) */
+@custom-variant theme-light (:root[data-theme='light'] &);
+
+/* Theme switch: circular reveal via the View Transitions API (see ThemeToggle) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@layer base {
+  /* Scoped theme regions reset inherited text colour. Kept in the base layer
+     so text-* utilities on the same element still win. */
+  [data-theme] {
+    color: var(--color-bone);
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-ash-950 font-sans text-bone antialiased;
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--color-brand-500);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-400);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  img {
+    -webkit-user-drag: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Fluid display type — scales smoothly from phone to 4K */
+  .display-xl { font-family: var(--font-display); line-height: 0.86; letter-spacing: 0.005em; font-size: clamp(4rem, min(19vw, 19svh), 13.5rem); }
+  /* Hero headline: bounded by width AND height so the whole hero fits short/wide screens */
+  .display-hero { font-family: var(--font-display); line-height: 0.84; letter-spacing: 0.005em; font-size: clamp(3.8rem, min(8.4vw, 13.5svh), 11rem); }
+  .display-lg { font-family: var(--font-display); line-height: 0.9; letter-spacing: 0.01em; font-size: clamp(3rem, 8.5vw, 7.5rem); }
+  .display-md { font-family: var(--font-display); line-height: 0.92; letter-spacing: 0.01em; font-size: clamp(2.25rem, 5vw, 4.25rem); }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    @apply text-[0.7rem] font-medium tracking-[0.28em] uppercase sm:text-xs;
+  }
+
+  .text-brand-gradient {
+    background: linear-gradient(100deg, var(--color-gold) 0%, var(--color-brand-400) 30%, var(--color-brand-500) 60%, var(--color-brand-700) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px color-mix(in srgb, var(--color-bone) 85%, transparent);
+  }
+  .text-outline-faint {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--outline-faint);
+  }
+  /* Background watermark: texture, never competing with real text */
+  .text-outline-ghost {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--outline-ghost);
+  }
+
+  /* Film grain overlay for cinematic texture */
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  .glass {
+    background: color-mix(in srgb, var(--color-ash-850) 60%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid color-mix(in srgb, var(--color-bone) 9%, transparent);
+  }
+
+  /* ── Atmosphere ─────────────────────────────────────────────────────── */
+  /* Soft ambient light. Radial gradient (not filter: blur) so it's cheap to paint. */
+  .glow-orb {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 9999px;
+    background: radial-gradient(closest-side, var(--glow-strong), var(--glow) 45%, transparent 100%);
+  }
+  .glow-orb-soft {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 9999px;
+    background: radial-gradient(closest-side, var(--glow), transparent 100%);
+  }
+
+  /* Luxe surface: layered shadow, gold edge + glow on hover */
+  .card-lux {
+    position: relative;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--color-bone) 3%, transparent), transparent 40%),
+      var(--color-ash-850);
+    border: 1px solid color-mix(in srgb, var(--color-bone) 9%, transparent);
+    box-shadow: var(--card-shadow);
+    transition: box-shadow 0.32s var(--ease-out-quint), border-color 0.26s var(--ease-out-quint), transform 0.32s var(--ease-out-quint);
+  }
+  .card-lux:hover {
+    border-color: color-mix(in srgb, var(--color-brand-500) 45%, transparent);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  /* Featured card: same surface, chosen by edge + lift */
+  .card-featured {
+    border-color: color-mix(in srgb, var(--color-brand-500) 60%, transparent);
+    box-shadow: var(--card-shadow), 0 30px 80px -34px color-mix(in srgb, var(--color-brand-500) 70%, transparent);
+  }
+  .card-featured:hover {
+    border-color: color-mix(in srgb, var(--color-brand-500) 85%, transparent);
+    box-shadow: var(--card-shadow), 0 36px 90px -30px color-mix(in srgb, var(--color-brand-500) 85%, transparent);
+  }
+
+  /* Overhanging gold pill with an inner top highlight + paused sheen */
+  .badge-gold {
+    position: absolute;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 9999px;
+    padding: 0.45rem 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    background: linear-gradient(180deg, #ead6b4, #c49f6e);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), 0 8px 20px -8px rgb(196 159 110 / 0.8);
+  }
+  .sheen {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.65) 50%, transparent 70%);
+    animation: sheen 6s ease-in-out 0.9s infinite;
+    transform: translateX(-120%);
+    pointer-events: none;
+  }
+
+  /* One icon-tile treatment everywhere */
+  .icon-well {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    color: var(--color-brand-400);
+    background: color-mix(in srgb, var(--color-brand-500) 14%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-brand-500) 22%, transparent);
+  }
+
+  .live-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: var(--color-brand-400);
+    animation: live-pulse 2s ease-out infinite;
+  }
+
+  /* Instagram embeds: our placeholder card before load, softened official iframe after */
+  blockquote.ig-embed {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 100%;
+  }
+  [data-instagram-embeds] iframe.instagram-media-rendered {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 1.6rem !important;
+    background: #fff;
+  }
+
+  /* ── Premium layout & interaction layer ───────────────────────────── */
+
+  /* Dark "moments" sit as inset rounded panels on the ivory page */
+  .panel {
+    margin-inline: 0.5rem;
+    border-radius: 2rem;
+    overflow: hidden;
+    isolation: isolate;
+    @media (width >= 40rem) { margin-inline: 0.75rem; border-radius: 2.5rem; }
+    @media (width >= 64rem) { margin-inline: 1rem; border-radius: 3rem; }
+  }
+
+  /* Subtle dot texture so light sections never feel flat */
+  .bg-dots {
+    background-image: radial-gradient(color-mix(in srgb, var(--color-bone) 9%, transparent) 1px, transparent 1.2px);
+    background-size: 22px 22px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 75%);
+  }
+
+  /* Image wipe reveal (driven by site.ts like .reveal) */
+  .js .reveal-img {
+    clip-path: inset(100% 0 0 0 round 1.75rem);
+    transition: clip-path 1.3s var(--ease-out-expo) var(--d, 0s);
+  }
+  .js .reveal-img.is-in {
+    clip-path: inset(0 0 0 0 round 1.75rem);
+  }
+
+  /* Cursor-follow spotlight on cards (vars set by site.ts) */
+  .spotlight {
+    position: relative;
+  }
+  .spotlight::before,
+  .card-lux::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out-quint);
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--color-brand-400) 22%, transparent), transparent 60%);
+  }
+  .spotlight:hover::before,
+  .card-lux:hover::before {
+    opacity: 1;
+  }
+
+  /* Floating glass chips over photography */
+  .chip-float {
+    animation: chip-float 6s ease-in-out infinite;
+    animation-delay: var(--float-d, 0s);
+  }
+
+  /* Rotating circular text badge */
+  .spin-slow {
+    animation: spin-slow 22s linear infinite;
+  }
+
+  .embers {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  /* One consistent photo grade across all imagery (warm, slightly muted, crisp) */
+  .photo-grade { filter: saturate(0.82) contrast(1.06) sepia(0.1); }
+
+  /* Gold hairline that fades out at both ends */
+  .gold-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-brand-500) 70%, transparent), transparent);
+  }
+
+  .btn-primary {
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    box-shadow: var(--btn-shadow), inset 0 1px 0 rgb(255 255 255 / 0.22);
+  }
+  .btn-primary:hover {
+    box-shadow: var(--btn-shadow-hover), inset 0 1px 0 rgb(255 255 255 / 0.32);
+    filter: brightness(1.08);
+  }
+
+  /* Light sweep across primary buttons on hover */
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%) skewX(-20deg);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
+    transition: transform 0.9s var(--ease-out-expo);
+    pointer-events: none;
+  }
+  .btn-shine:hover::after { transform: translateX(120%) skewX(-20deg); }
+
+  /* Light glass needs more body to stay legible over dark photography */
+  :root[data-theme='light'] .glass:not([data-theme='dark'] .glass) {
+    background: color-mix(in srgb, var(--color-ash-850) 86%, transparent);
+  }
+
+  .hairline { border-color: color-mix(in srgb, var(--color-bone) 10%, transparent); }
+
+  /* Google Map tint: dark luxury in dark mode, warm and muted in light mode */
+  .map-tint { filter: grayscale(1) invert(0.92) contrast(0.9) hue-rotate(180deg); }
+  :root[data-theme='light'] .map-tint { filter: grayscale(0.7) sepia(0.18) contrast(0.95); }
+
+}
+
+/* Custom utilities (declared with @utility so responsive variants work, e.g. lg:container-x) */
+@utility container-x {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1440px;
+  padding-inline: 1.25rem;
+  @media (width >= 40rem) { padding-inline: 2rem; }
+  @media (width >= 64rem) { padding-inline: 3rem; }
+}
+@utility section-y {
+  padding-block: 5rem;
+  @media (width >= 40rem) { padding-block: 6.5rem; }
+  @media (width >= 64rem) { padding-block: 8rem; }
+}
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────
+ *  MOTION WITHOUT A FRAMEWORK (Astro static sections)
+ *  Driven by src/scripts/site.ts. Content is only hidden once <html> has the
+ *  `js` class, so it stays visible with JavaScript disabled and for crawlers.
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 32px));
+  transition:
+    opacity 0.9s var(--ease-out-expo) var(--d, 0s),
+    transform 0.9s var(--ease-out-expo) var(--d, 0s);
+}
+.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Masked line-by-line headline reveal */
+.reveal-lines > .line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+.reveal-lines > .line > span {
+  display: block;
+}
+.js .reveal-lines > .line > span {
+  transform: translateY(105%);
+  transition: transform 1s var(--ease-out-expo);
+  transition-delay: calc(var(--d, 0s) + var(--i, 0) * 90ms);
+}
+.js .reveal-lines.is-in > .line > span {
+  transform: none;
+}
+
+/* Page-load entrances (hero) */
+@keyframes enter-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes line-rise {
+  from { transform: translateY(105%); }
+  to { transform: none; }
+}
+.enter-up {
+  animation: enter-up 0.9s var(--ease-out-expo) var(--d, 0s) both;
+}
+.enter-line {
+  display: block;
+  overflow: hidden;
+}
+.enter-line > span {
+  display: block;
+  animation: line-rise 1.1s var(--ease-out-expo) var(--d, 0s) both;
+}
+
+[data-parallax] {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal-img {
+    clip-path: none;
+    transition: none;
+  }
+  .js .reveal,
+  .js .reveal-lines > .line > span {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Carousel edge fades: shown only on a side that has more content to scroll to */
+[data-carousel] {
+  --fade-l: 0px;
+  --fade-r: 3rem;
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-l), black calc(100% - var(--fade-r)), transparent 100%);
+}
+[data-carousel][data-at-start='false'] {
+  --fade-l: 3rem;
+}
+[data-carousel][data-at-end='true'] {
+  --fade-r: 0px;
+}
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────
+ *  LOAD CHOREOGRAPHY + TRENDY MOTION
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+
+/* Branded intro curtain (first visit only; see BaseLayout + scripts/site.ts) */
+#intro {
+  display: none;
+}
+.intro #intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: #070605;
+  transition: transform 0.9s var(--ease-out-expo), border-radius 0.9s var(--ease-out-expo);
+}
+.intro.is-ready #intro {
+  transform: translateY(-100%);
+  border-bottom-left-radius: 50% 12%;
+  border-bottom-right-radius: 50% 12%;
+  pointer-events: none;
+}
+.intro-mark {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  animation: enter-up 0.7s var(--ease-out-expo) both;
+}
+.intro-mark img {
+  height: 4.5rem;
+  width: auto;
+}
+.intro-mark span {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  color: #f4efe8;
+  font-size: 1.1rem;
+  padding-left: 0.4em;
+}
+.intro-bar {
+  display: block;
+  width: 7rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #7b5835, #f3e2c2, #7b5835);
+  background-size: 200% 100%;
+  animation: intro-bar 1s linear infinite;
+}
+@keyframes intro-bar {
+  to { background-position: -200% 0; }
+}
+/* Hold the hero entrance until the curtain lifts, so it plays on cue */
+.intro:not(.is-ready) .enter-up,
+.intro:not(.is-ready) .enter-line > span,
+.intro:not(.is-ready) .char {
+  animation-play-state: paused;
+}
+
+/* Hero headline: letters rise in one by one */
+.char {
+  display: inline-block;
+  animation: char-rise 0.95s var(--ease-out-expo) var(--d, 0s) both;
+  will-change: transform;
+}
+@keyframes char-rise {
+  from { transform: translateY(105%) rotate(5deg); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+/* Scroll reveals now focus in from a soft blur (trendy, still subtle) */
+.js .reveal:not(.is-in) {
+  filter: blur(10px);
+}
+.js .reveal {
+  transition:
+    opacity 0.9s var(--ease-out-expo) var(--d, 0s),
+    transform 0.9s var(--ease-out-expo) var(--d, 0s),
+    filter 0.9s var(--ease-out-expo) var(--d, 0s);
+}
+
+/* Thin gold scroll-progress line */
+#scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 2px;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #7b5835, #dbba8d, #f3e2c2);
+  pointer-events: none;
+}
+
+/* Velocity skew: the mantra band leans with scroll speed */
+[data-velocity-skew] {
+  display: block;
+  transform: skewX(var(--skew, 0deg));
+  transition: transform 0.35s var(--ease-out-quint);
+}
+
+/* Button arrow swap: the arrow exits top-right and a fresh one enters from bottom-left */
+.arrow-swap {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+}
+.arrow-swap > * {
+  grid-area: 1 / 1;
+  transition: transform 0.45s var(--ease-out-quint);
+}
+.arrow-swap > :last-child {
+  transform: translate(-130%, 130%);
+}
+.group:hover .arrow-swap > :first-child {
+  transform: translate(130%, -130%);
+}
+.group:hover .arrow-swap > :last-child {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal:not(.is-in) { filter: none; }
+  .char { animation: none; }
+  [data-velocity-skew] { transform: none; }
+}

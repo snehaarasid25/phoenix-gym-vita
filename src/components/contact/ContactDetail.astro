@@ -1,0 +1,15 @@
+---
+/** One row of the contact details list (icon tile + term + content). */
+interface Props {
+  term: string
+}
+const { term } = Astro.props
+---
+
+<div class="flex gap-4">
+  <span class="icon-well size-11 rounded-2xl"><slot name="icon" /></span>
+  <div class="min-w-0 flex-1">
+    <dt class="eyebrow text-ash-400">{term}</dt>
+    <dd class="mt-2 text-ash-300"><slot /></dd>
+  </div>
+</div>

@@ -1,0 +1,145 @@
+---
+/** Visit & contact: enquiry form island, quick actions, details, map. */
+import { Clock, InstagramLogo, MapPin, NavigationArrow, Phone, WhatsappLogo } from '@phosphor-icons/react'
+import { site } from '../config/site'
+import ButtonLink from '../components/ButtonLink.astro'
+import SectionHeader from '../components/SectionHeader.astro'
+import ContactDetail from '../components/contact/ContactDetail.astro'
+import QuickAction from '../components/contact/QuickAction.astro'
+import EnquiryForm from '../components/islands/EnquiryForm'
+import { PlaceholderBadge } from '../components/ui/PlaceholderBadge'
+import { telLink, whatsappLink } from '../utils/contact'
+
+const tel = telLink()
+const wa = whatsappLink()
+const cityMapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(`${site.location.city}, ${site.location.state}, India`)}&z=14&output=embed`
+---
+
+<section id="contact" aria-labelledby="contact-title" class="section-y relative isolate overflow-hidden">
+  <div class="bg-dots pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="glow-orb -top-48 -left-48 size-[44rem]" aria-hidden="true" />
+  <div class="glow-orb-soft right-[-10rem] bottom-0 size-[36rem]" aria-hidden="true" />
+  <div class="container-x relative">
+    <SectionHeader
+      id="contact-title"
+      index="10"
+      eyebrow="Visit our gym in Vita"
+      lines={['Your first rep', { text: 'starts here.', class: 'text-brand-gradient' }]}
+      intro={`Find us at ${site.location.streetAddress ?? site.location.city}, ${site.location.city}. Come and see the floor, ask about membership, or just say hello.`}
+    />
+
+    <div class="mt-14 grid gap-4 sm:mt-20 lg:grid-cols-12">
+      <!-- ── Enquiry form (no backend: composes a WhatsApp / Instagram message) ── -->
+      <div class="reveal card-lux rounded-[1.75rem] p-6 sm:p-10 lg:col-span-7">
+        <EnquiryForm client:idle />
+      </div>
+
+      <!-- ── Quick contact + details ── -->
+      <div class="grid gap-4 lg:col-span-5">
+        <div class="reveal grid gap-3 sm:grid-cols-2 lg:grid-cols-1" style="--d:0.1s">
+          {wa ? (
+            <QuickAction href={wa}  label="WhatsApp" value="Chat instantly" accent>
+              <Fragment slot="icon"><WhatsappLogo className="size-6" weight="fill" /></Fragment>
+            </QuickAction>
+          ) : (
+            <QuickAction href={site.social.instagramDmUrl}  label="Instagram DM" value={`@${site.social.instagramHandle}`} accent>
+              <Fragment slot="icon"><InstagramLogo className="size-6" /></Fragment>
+            </QuickAction>
+          )}
+          {tel ? (
+            <QuickAction href={tel}  label="Call us" value={site.contact.phoneDisplay ?? site.contact.phone!}>
+              <Fragment slot="icon"><Phone className="size-5" weight="duotone" /></Fragment>
+            </QuickAction>
+          ) : (
+            <QuickAction href={site.location.mapsUrl}  label="Directions" value="Open in Google Maps">
+              <Fragment slot="icon"><NavigationArrow className="size-5" weight="duotone" /></Fragment>
+            </QuickAction>
+          )}
+        </div>
+
+        <div class="reveal card-lux rounded-[1.75rem] p-6 sm:p-8" style="--d:0.15s">
+          <dl class="space-y-6">
+            <ContactDetail term="Location">
+              <Fragment slot="icon"><MapPin className="size-5" weight="duotone" /></Fragment>
+              <address class="not-italic">
+                {site.location.streetAddress ? (
+                  <span class="block text-bone">{site.location.streetAddress},</span>
+                ) : (
+                  <PlaceholderBadge label="Street address needed" className="mb-2" />
+                )}
+                <span class="block">
+                  {site.location.city}, {site.location.district} District, {site.location.state}
+                  {site.location.postalCode && <> {site.location.postalCode}</>}
+                </span>
+              </address>
+              <a href={site.location.mapsUrl} target="_blank" rel="noopener noreferrer" class="mt-2 inline-block text-sm text-brand-300 underline underline-offset-4 hover:text-brand-400">
+                Get directions →
+              </a>
+            </ContactDetail>
+            <ContactDetail term="Opening hours">
+              <Fragment slot="icon"><Clock className="size-5" weight="duotone" /></Fragment>
+              {site.hours ? (
+                <ul class="space-y-1">
+                  {site.hours.map((h) => (
+                    <li class="flex justify-between gap-6">
+                      <span>{h.days}</span>
+                      <span class="text-bone">{h.hours}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <>
+                  <span class="block">Timings to be announced. Message us for today's hours.</span>
+                  <PlaceholderBadge label="Hours needed" className="mt-2" />
+                </>
+              )}
+            </ContactDetail>
+            <ContactDetail term="Phone">
+              <Fragment slot="icon"><Phone className="size-5" weight="duotone" /></Fragment>
+              {tel ? (
+                <>
+                  <a href={tel} class="text-bone underline-offset-4 hover:text-brand-300 hover:underline">
+                    {site.contact.phoneDisplay ?? site.contact.phone}
+                  </a>
+                  {!wa && (
+                    <div class="mt-2">
+                      <PlaceholderBadge label="WhatsApp number needed" />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <span class="block">Reach us on Instagram for now.</span>
+                  <PlaceholderBadge label="Phone / WhatsApp needed" className="mt-2" />
+                </>
+              )}
+            </ContactDetail>
+          </dl>
+        </div>
+      </div>
+
+      <!-- ── Map ── -->
+      <div class="reveal relative overflow-hidden rounded-[1.75rem] border hairline lg:col-span-12" style="--d:0.1s">
+        <iframe
+          title={`Map of ${site.name}, ${site.location.city}`}
+          src={site.location.mapEmbedUrl ?? cityMapEmbed}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          class="block h-[22rem] w-full map-tint sm:h-[28rem]"
+        />
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ash-950/70 via-transparent to-transparent" aria-hidden="true" />
+        <div class="absolute right-4 bottom-4 left-4 flex flex-col gap-3 sm:right-6 sm:bottom-6 sm:left-6 sm:flex-row sm:items-end sm:justify-between">
+          <div class="glass rounded-2xl px-5 py-4">
+            <p class="font-display text-3xl leading-none uppercase">{site.name}</p>
+            <p class="mt-1 text-sm text-ash-300">{site.location.city}, {site.location.state}</p>
+            {!site.location.mapEmbedUrl && <PlaceholderBadge label="City view — exact pin pending" className="mt-2" />}
+          </div>
+          <ButtonLink href={site.location.mapsUrl}>
+            <Fragment slot="icon"><NavigationArrow className="size-4" weight="bold" /></Fragment>
+            Get directions
+          </ButtonLink>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

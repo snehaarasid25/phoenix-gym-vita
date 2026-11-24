@@ -1,0 +1,117 @@
+---
+/**
+ * Latest posts from @phoenix_gym_03 via OFFICIAL Instagram embeds (real
+ * thumbnails, playable on the site). The list itself is curated in
+ * data/content.ts; a fully automatic feed would need the Instagram Graph API.
+ */
+import { CaretLeft, CaretRight, FacebookLogo, InstagramLogo, Play, YoutubeLogo } from '@phosphor-icons/react'
+import { site } from '../config/site'
+import { INSTAGRAM_EMBED_COUNT, instagramPosts } from '../data/content'
+import ButtonLink from '../components/ButtonLink.astro'
+import SectionHeader from '../components/SectionHeader.astro'
+
+const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
+---
+
+<section id="instagram" aria-labelledby="instagram-title" class="section-y relative overflow-hidden">
+  <div class="glow-orb top-1/3 -left-60 size-[44rem]" aria-hidden="true" />
+  <div class="glow-orb-soft -bottom-40 right-[-8rem] size-[34rem]" aria-hidden="true" />
+  <div class="container-x">
+    <SectionHeader
+      id="instagram-title"
+      index="08"
+      eyebrow="Phoenix Gym on Instagram"
+      lines={[`@${site.social.instagramHandle}`]}
+    >
+      <Fragment slot="intro">
+        The latest reels and posts from the floor, straight from our Instagram. Follow along and be part of the journey from day one.
+      </Fragment>
+    </SectionHeader>
+  </div>
+
+  <!--
+    ALL latest posts as official Instagram embeds in a swipeable carousel.
+    Each <blockquote> is a styled placeholder + link (works without JS);
+    Instagram's embed.js (loaded by scripts/site.ts only when this section is
+    near) upgrades it to the real, playable post. Instagram's own card UI
+    can't be restyled, so the presentation lives in the frame around it.
+  -->
+  <div class="container-x mt-12 flex items-end justify-between gap-6 sm:mt-16">
+    <p class="eyebrow flex items-center gap-3 text-ash-400">
+      <InstagramLogo className="size-4 text-brand-400" />
+      Latest from @{site.social.instagramHandle}
+      <span class="text-brand-400 tabular-nums" data-carousel-count="ig-track">01 / {String(featured.length).padStart(2, '0')}</span>
+    </p>
+    <div class="hidden gap-2 sm:flex">
+      <button type="button" data-carousel-prev="ig-track" aria-label="Previous posts" class="grid size-12 place-items-center rounded-full border border-bone/15 text-bone transition-colors hover:border-brand-400 hover:text-brand-400 disabled:opacity-30 disabled:hover:border-bone/15 disabled:hover:text-bone">
+        <CaretLeft className="size-5" weight="bold" />
+      </button>
+      <button type="button" data-carousel-next="ig-track" aria-label="Next posts" class="grid size-12 place-items-center rounded-full border border-bone/15 text-bone transition-colors hover:border-brand-400 hover:text-brand-400 disabled:opacity-30 disabled:hover:border-bone/15 disabled:hover:text-bone">
+        <CaretRight className="size-5" weight="bold" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Track stays inside the page's content width (clips at the column edges, never the window) -->
+  <div class="container-x mt-6">
+    <div
+      id="ig-track"
+      data-instagram-embeds
+      data-carousel
+      class="flex snap-x snap-mandatory items-start gap-5 overflow-x-auto pt-2 pb-6 no-scrollbar"
+    >
+    {
+      featured.map((post, i) => (
+        <article class="reveal w-[326px] shrink-0 snap-start" style={`--d:${(Math.min(i, 3) * 0.08).toFixed(2)}s`}>
+          <p class="eyebrow mb-3 flex items-center gap-3 text-ash-400">
+            <span class="text-brand-400">{String(i + 1).padStart(2, '0')}</span>
+            <span class="h-px w-6 bg-brand-500/50" aria-hidden="true" />
+            {post.type === 'reel' ? 'Reel' : 'Post'}
+          </p>
+          <!-- Gold-edged frame: our presentation around Instagram's (unmodified) embed -->
+          <div class="rounded-[1.9rem] bg-[linear-gradient(160deg,color-mix(in_srgb,var(--color-brand-400)_55%,transparent),transparent_45%,color-mix(in_srgb,var(--color-brand-500)_35%,transparent))] p-[5px] shadow-[0_30px_70px_-40px_rgba(21,17,13,0.6)]">
+            <blockquote class="instagram-media ig-embed" data-instgrm-permalink={`${post.url}?utm_source=ig_embed`} data-instgrm-version="14">
+              <a
+                href={post.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="card-lux group flex aspect-[4/5] w-full flex-col items-center justify-center gap-4 rounded-[1.5rem] p-6 text-center"
+              >
+                <span class="icon-well size-14 rounded-2xl">
+                  {post.type === 'reel' ? <Play className="size-6" weight="fill" /> : <InstagramLogo className="size-6" />}
+                </span>
+                <span class="font-display text-3xl leading-none uppercase">{post.caption}</span>
+                <span class="eyebrow text-brand-400 group-hover:underline">View on Instagram</span>
+              </a>
+            </blockquote>
+          </div>
+        </article>
+      ))
+    }
+    </div>
+  </div>
+
+  <div class="container-x mt-16 flex flex-col items-start gap-6 sm:mt-24 sm:flex-row sm:items-center sm:justify-between">
+    <p class="max-w-md text-ash-300">
+      Have questions? Send us a DM on Instagram. It's the fastest way to reach the team right now.
+    </p>
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <ButtonLink href={site.social.instagramUrl} size="lg" class="bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af] text-bone hover:shadow-[0_10px_40px_-8px_rgba(221,42,123,0.6)]">
+        Follow Phoenix
+        <Fragment slot="icon"><InstagramLogo className="size-4" /></Fragment>
+      </ButtonLink>
+      <ButtonLink href={site.social.instagramDmUrl} size="lg" variant="outline">
+        Send a DM
+      </ButtonLink>
+    </div>
+  </div>
+  <div class="container-x mt-6 flex flex-wrap items-center gap-3 border-t hairline pt-6">
+    <span class="eyebrow mr-2 text-ash-400">Also on</span>
+    <a href={site.social.youtubeUrl} target="_blank" rel="noopener noreferrer" class="inline-flex h-11 items-center gap-2 rounded-full border border-bone/15 px-4 text-sm text-ash-300 transition-colors hover:border-brand-400 hover:text-bone">
+      <YoutubeLogo className="size-5 text-[#ff0033]" weight="fill" /> YouTube <span class="text-ash-400">{site.social.youtubeHandle}</span>
+    </a>
+    <a href={site.social.facebookUrl} target="_blank" rel="noopener noreferrer" class="inline-flex h-11 items-center gap-2 rounded-full border border-bone/15 px-4 text-sm text-ash-300 transition-colors hover:border-brand-400 hover:text-bone">
+      <FacebookLogo className="size-5 text-[#1877f2]" weight="fill" /> Facebook
+    </a>
+  </div>
+</section>
