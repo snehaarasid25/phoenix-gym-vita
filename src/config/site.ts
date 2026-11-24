@@ -48,7 +48,7 @@ export const site = {
 
   // ⚠️ TODO — production domain. Used for canonical URLs and OG tags.
   //    Keep in sync with SITE_URL in astro.config.mjs (sitemap + robots.txt).
-  url: 'https://www.phoenixgymvita.in',
+  url: 'https://phoenixgymvita.netlify.app', // temporary Netlify address; switch to the real domain once bought
 
   location: {
     // ✅ VERIFIED

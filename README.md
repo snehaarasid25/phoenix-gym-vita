@@ -180,7 +180,7 @@ with like counts and a "View profile" button. No API token is needed.
 - Descriptive alt text on all images, lazy loading below the fold, responsive `srcset`, high-priority hero image
 - Semantic landmarks, skip link, keyboard-accessible menu/lightbox/tabs, visible focus rings, reduced-motion support
 
-⚠️ The domain is a **placeholder** (`phoenixgymvita.in`). Set the real one in **both** `astro.config.mjs` (`SITE_URL`) and
+⚠️ The site currently uses the temporary Netlify address (`https://phoenixgymvita.netlify.app`). When a real domain is bought, set it in **both** `astro.config.mjs` (`SITE_URL`) and
 `src/config/site.ts` (`site.url`) before deploying.
 
 ---

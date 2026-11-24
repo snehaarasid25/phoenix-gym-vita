@@ -5,7 +5,8 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
 
 // ⚠️ Keep in sync with `site.url` in src/config/site.ts (used for canonical URLs + sitemap)
-const SITE_URL = 'https://www.phoenixgymvita.in'
+// Temporary Netlify address; switch to the real domain (e.g. https://www.phoenixgymvita.in) once bought
+const SITE_URL = 'https://phoenixgymvita.netlify.app'
 
 // https://astro.build/config
 export default defineConfig({
