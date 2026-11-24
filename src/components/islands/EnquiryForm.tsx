@@ -1,16 +1,18 @@
 import { useState, useSyncExternalStore, type FormEvent } from 'react'
-import { CaretDown, PaperPlaneTilt } from '@phosphor-icons/react'
+import { PaperPlaneTilt } from '@phosphor-icons/react'
 import { plans } from '../../data/membership'
 import { programs } from '../../data/programs'
 import { getEnquiry, setEnquiry, subscribeEnquiry } from '../../utils/enquiry'
 import { primaryEnquiry } from '../../utils/contact'
 import { Button } from '../ui/Button'
+import { Select, type SelectGroup } from '../ui/Select'
 
-const interestOptions = [
-  ...plans.map((p) => `${p.name} membership`),
-  ...programs.map((p) => p.title),
-  'Just visiting / general question',
+const interestGroups: SelectGroup[] = [
+  { label: 'Membership', options: plans.map((p) => `${p.name} membership`) },
+  { label: 'Programmes', options: programs.map((p) => p.title) },
+  { label: 'Other', options: ['Just visiting / general question'] },
 ]
+const knownOptions = interestGroups.flatMap((g) => g.options)
 
 /**
  * Enquiry form (React island). No backend: composes a WhatsApp message
@@ -75,15 +77,17 @@ export default function EnquiryForm() {
           <label htmlFor="enquiry-phone" className={label}>Phone</label>
         </div>
         <div className="relative sm:col-span-2">
-          <select id="enquiry-interest" value={interest} onChange={(e) => setEnquiry(e.target.value)} className={`${field} appearance-none`}>
-            <option value="">Choose one (optional)</option>
-            {interestOptions.map((o) => (
-              <option key={o} value={o}>{o}</option>
-            ))}
-            {interest && !interestOptions.includes(interest) && <option value={interest}>{interest}</option>}
-          </select>
-          <label htmlFor="enquiry-interest" className={label}>I'm interested in</label>
-          <CaretDown className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-ash-400" weight="bold" aria-hidden />
+          <Select
+            id="enquiry-interest"
+            label="I'm interested in"
+            placeholder="Choose one (optional)"
+            value={interest}
+            onChange={setEnquiry}
+            // A value set by an "Enquire" button elsewhere that isn't in the list still shows as selected
+            groups={interest && !knownOptions.includes(interest) ? [...interestGroups.slice(0, 2), { label: 'Other', options: [interest, ...interestGroups[2].options] }] : interestGroups}
+            fieldClassName={field}
+            labelClassName={label}
+          />
         </div>
         <div className="relative sm:col-span-2">
           <textarea id="enquiry-message" rows={4} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message" className={`${field} resize-none`} />

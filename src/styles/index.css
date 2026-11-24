@@ -293,6 +293,85 @@
     box-shadow: var(--card-shadow), 0 36px 90px -30px color-mix(in srgb, var(--color-brand-500) 85%, transparent);
   }
 
+  /* Social pills: the brand colour rises in on hover, logo flips to white; press + ripple on tap */
+  .social-chip {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    padding-inline: 0.95rem 1.1rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--color-bone) 15%, transparent);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-ash-300);
+    transition: color 0.35s, border-color 0.35s, transform 0.35s var(--ease-out-expo), box-shadow 0.35s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .social-chip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--brand);
+    transform: translateY(102%);
+    transition: transform 0.45s var(--ease-out-expo);
+  }
+  .social-chip::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: -1;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 0.45);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .social-icon {
+    transition: transform 0.45s var(--ease-out-expo);
+  }
+  .social-icon .si-bg,
+  .social-icon .si-fg {
+    transition: fill 0.3s;
+  }
+  .social-chip:hover,
+  .social-chip:focus-visible {
+    color: #fff;
+    border-color: var(--brand);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px -12px var(--brand);
+  }
+  .social-chip:hover::before,
+  .social-chip:focus-visible::before {
+    transform: translateY(0);
+  }
+  .social-chip:hover .social-icon,
+  .social-chip:focus-visible .social-icon {
+    transform: scale(1.12) rotate(-8deg);
+  }
+  .social-chip:hover .si-bg,
+  .social-chip:focus-visible .si-bg {
+    fill: #fff;
+  }
+  .social-chip:hover .si-fg,
+  .social-chip:focus-visible .si-fg {
+    fill: var(--brand);
+  }
+  .social-chip:active {
+    transform: translateY(0) scale(0.95);
+  }
+  .social-chip:active::after {
+    animation: chip-ripple 0.5s ease-out;
+  }
+
   /* Gold text with a slow light sweep (launch status) */
   .text-shimmer {
     color: transparent;
@@ -504,6 +583,10 @@
 }
 @keyframes ring-spin {
   to { --ring-angle: 360deg; }
+}
+@keyframes chip-ripple {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(30); }
 }
 @keyframes text-shimmer {
   from { background-position: 100% 0; }

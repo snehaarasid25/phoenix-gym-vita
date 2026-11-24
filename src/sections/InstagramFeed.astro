@@ -4,7 +4,7 @@
  * thumbnails, playable on the site). The list itself is curated in
  * data/content.ts; a fully automatic feed would need the Instagram Graph API.
  */
-import { CaretLeft, CaretRight, FacebookLogo, InstagramLogo, Play, YoutubeLogo } from '@phosphor-icons/react'
+import { CaretLeft, CaretRight, InstagramLogo, Play } from '@phosphor-icons/react'
 import { site } from '../config/site'
 import { INSTAGRAM_EMBED_COUNT, instagramPosts } from '../data/content'
 import ButtonLink from '../components/ButtonLink.astro'
@@ -105,13 +105,21 @@ const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
       </ButtonLink>
     </div>
   </div>
-  <div class="container-x mt-6 flex flex-wrap items-center gap-3 border-t hairline pt-6">
-    <span class="eyebrow mr-2 text-ash-400">Also on</span>
-    <a href={site.social.youtubeUrl} target="_blank" rel="noopener noreferrer" class="inline-flex h-11 items-center gap-2 rounded-full border border-bone/15 px-4 text-sm text-ash-300 transition-colors hover:border-brand-400 hover:text-bone">
-      <YoutubeLogo className="size-5 text-[#ff0033]" weight="fill" /> YouTube <span class="text-ash-400">{site.social.youtubeHandle}</span>
+  <div class="container-x mt-6 flex flex-nowrap items-center gap-2.5 border-t hairline pt-6 sm:gap-3">
+    <span class="eyebrow mr-1 shrink-0 text-ash-400 max-[359px]:hidden sm:mr-2">Also on</span>
+    <a href={site.social.youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on YouTube" class="social-chip" style="--brand:#ff0000">
+      <svg viewBox="0 0 24 24" class="social-icon size-5" aria-hidden="true">
+        <path class="si-bg" fill="#ff0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z" />
+        <path class="si-fg" fill="#fff" d="M9.6 15.6V8.4l6.3 3.6-6.3 3.6z" />
+      </svg>
+      YouTube
     </a>
-    <a href={site.social.facebookUrl} target="_blank" rel="noopener noreferrer" class="inline-flex h-11 items-center gap-2 rounded-full border border-bone/15 px-4 text-sm text-ash-300 transition-colors hover:border-brand-400 hover:text-bone">
-      <FacebookLogo className="size-5 text-[#1877f2]" weight="fill" /> Facebook
+    <a href={site.social.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on Facebook" class="social-chip" style="--brand:#1877f2">
+      <svg viewBox="0 0 24 24" class="social-icon size-5" aria-hidden="true">
+        <circle class="si-bg" fill="#1877f2" cx="12" cy="12" r="12" />
+        <path class="si-fg" fill="#fff" d="M16.67 15.47 17.2 12h-3.33V9.75c0-.95.47-1.88 1.95-1.88h1.51V4.92s-1.37-.23-2.68-.23c-2.74 0-4.53 1.66-4.53 4.66V12H7.08v3.47h3.04V24a12.1 12.1 0 0 0 3.75 0v-8.53h2.8z" />
+      </svg>
+      Facebook
     </a>
   </div>
 </section>
