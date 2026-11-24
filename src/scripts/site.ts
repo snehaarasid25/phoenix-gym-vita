@@ -217,7 +217,20 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((track) => {
   const prev = document.querySelector<HTMLButtonElement>(`[data-carousel-prev="${id}"]`)
   const next = document.querySelector<HTMLButtonElement>(`[data-carousel-next="${id}"]`)
   const count = document.querySelector<HTMLElement>(`[data-carousel-count="${id}"]`)
+  const dotsBox = document.querySelector<HTMLElement>(`[data-carousel-dots="${id}"]`)
   const items = () => [...track.children] as HTMLElement[]
+  // Optional position dots (phones): one per card, the active one stretches into a pill
+  const dots = dotsBox
+    ? items().map((el, i) => {
+        const b = document.createElement('button')
+        b.type = 'button'
+        b.className = 'carousel-dot'
+        b.setAttribute('aria-label', `Go to card ${i + 1}`)
+        b.addEventListener('click', () => track.scrollTo({ left: el.offsetLeft - items()[0].offsetLeft, behavior: 'smooth' }))
+        dotsBox.append(b)
+        return b
+      })
+    : []
   const step = () => {
     const [a, b] = items()
     return a && b ? b.offsetLeft - a.offsetLeft : track.clientWidth * 0.8
@@ -229,6 +242,16 @@ document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((track) => {
     // Edge fades only where there's more to scroll (see [data-carousel] in index.css)
     track.dataset.atStart = String(track.scrollLeft <= 4)
     track.dataset.atEnd = String(track.scrollLeft >= max)
+    track.dataset.scrollable = String(track.scrollWidth > track.clientWidth + 4)
+    if (dots.length) {
+      const list = items()
+      const start = list[0].offsetLeft
+      // at the very end the last card may never reach the left edge, so treat "end" as the last card
+      const active = track.scrollLeft >= max
+        ? list.length - 1
+        : list.reduce((best, el, i) => (Math.abs(el.offsetLeft - start - track.scrollLeft) < Math.abs(list[best].offsetLeft - start - track.scrollLeft) ? i : best), 0)
+      dots.forEach((d, i) => d.setAttribute('aria-current', String(i === active)))
+    }
     if (count) {
       // Show the range actually in view, e.g. "01–04 / 05"
       const list = items()

@@ -24,12 +24,17 @@ const anyUnverified = plans.some((p) => !p.verified)
       intro="Choose the gym membership that matches your ambition. Longer plans give you the time consistency needs to pay off, and pre-booking for Vita is opening soon."
     />
 
-    <div class="mt-16 grid gap-x-4 gap-y-10 sm:mt-24 md:grid-cols-2 xl:grid-cols-4">
+    <!-- Phones: swipeable row (next card peeks in) + dots; md+: grid -->
+    <div
+      id="plans-track"
+      data-carousel
+      class="no-scrollbar -mx-5 mt-12 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pt-5 pb-2 sm:-mx-8 sm:mt-16 sm:scroll-px-8 sm:px-8 md:mx-0 md:mt-24 md:grid md:snap-none md:grid-cols-2 md:gap-x-4 md:gap-y-10 md:overflow-visible md:px-0 md:pt-0 md:pb-0 xl:grid-cols-4"
+    >
       {plans.map((plan, i) => (
         <article
           class={"reveal " + cn(
             /* Featured plan = same object, chosen: same surface, gold edge + lift. Never a different fill. */
-            'card-lux group flex flex-col rounded-[1.75rem] p-7 hover:-translate-y-1.5 sm:p-8',
+            'card-lux group flex w-[84%] shrink-0 snap-start flex-col rounded-[1.75rem] p-7 hover:-translate-y-1.5 sm:w-[70%] sm:p-8 md:w-auto',
             plan.highlight && 'card-featured',
           )}
           style={`--d:${i * 0.08}s`}
@@ -78,6 +83,7 @@ const anyUnverified = plans.some((p) => !p.verified)
         </article>
       ))}
     </div>
+    <div data-carousel-dots="plans-track" class="mt-5 flex justify-center gap-2 md:hidden" aria-label="Choose a plan"></div>
 
     {anyUnverified && (
       <div class="reveal mt-10 flex items-start gap-3 text-sm text-ash-400 sm:items-center sm:justify-center">
