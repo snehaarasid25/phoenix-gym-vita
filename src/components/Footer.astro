@@ -1,6 +1,6 @@
 ---
 /** Site footer (static HTML, zero JS). */
-import { ArrowUp, GithubLogo, FacebookLogo, InstagramLogo, MapPin, Phone, WhatsappLogo, YoutubeLogo } from '@phosphor-icons/react'
+import { ArrowUp, ArrowUpRight, CaretRight, Clock, GithubLogo, FacebookLogo, InstagramLogo, MapPin, Phone, WhatsappLogo, YoutubeLogo } from '@phosphor-icons/react'
 import { navItems, site } from '../config/site'
 import { whatsappLink } from '../utils/contact'
 import { Logo } from './ui/Logo'
@@ -15,6 +15,10 @@ const resolve = (href: string) => (pathname === '/' ? href : `/${href}`)
 const wa = whatsappLink()
 const YEAR = new Date().getFullYear()
 const credit = { name: 'Sneha', url: 'https://github.com/snehaarasid25' }
+// Contact rows: full-width tap targets inside a soft card
+const card = 'overflow-hidden rounded-2xl border border-bone/10 bg-bone/[0.03]'
+const row = 'flex items-center gap-3.5 px-4 py-3.5 text-sm text-ash-300 transition-colors hover:bg-bone/[0.04] hover:text-bone'
+const rowIcon = 'grid size-9 shrink-0 place-items-center rounded-full bg-brand-500/12 text-brand-400'
 ---
 
 <footer data-theme="dark" class="panel relative mt-2 mb-2 bg-ash-950 pb-28 sm:mt-3 sm:mb-3 sm:pb-0 lg:mt-4 lg:mb-4">
@@ -29,7 +33,7 @@ const credit = { name: 'Sneha', url: 'https://github.com/snehaarasid25' }
     ))}
   </Marquee>
 
-  <div class="container-x grid gap-14 py-20 lg:grid-cols-12 lg:gap-8">
+  <div class="container-x grid gap-10 py-14 sm:gap-14 sm:py-20 lg:grid-cols-12 lg:gap-8">
     <div class="lg:col-span-4">
       <Logo />
       <p class="mt-6 max-w-xs text-sm leading-relaxed text-ash-400">
@@ -53,9 +57,9 @@ const credit = { name: 'Sneha', url: 'https://github.com/snehaarasid25' }
       </div>
     </div>
 
-    <nav aria-label="Footer" class="lg:col-span-2 lg:col-start-6">
-      <p class="eyebrow mb-6 text-ash-400">Explore</p>
-      <ul class="space-y-3">
+    <nav aria-label="Footer" class="lg:col-span-2 lg:col-start-5">
+      <p class="eyebrow mb-5 text-ash-400 sm:mb-6">Explore</p>
+      <ul class="grid grid-cols-2 gap-x-6 gap-y-3.5 lg:grid-cols-1 lg:gap-y-3">
         {navItems.map((n) => (
           <li>
             <a href={resolve(n.href)} class="text-sm text-ash-300 transition-colors hover:text-brand-300">
@@ -70,42 +74,49 @@ const credit = { name: 'Sneha', url: 'https://github.com/snehaarasid25' }
     </nav>
 
     <div class="lg:col-span-3">
-      <p class="eyebrow mb-6 text-ash-400">Visit</p>
-      <ul class="space-y-4 text-sm text-ash-300">
-        <li class="flex gap-3">
-          <MapPin className="mt-0.5 size-4 shrink-0 text-brand-400" weight="duotone" />
-          <span>
-            {site.location.streetAddress && (
-              <>
-                {site.location.streetAddress}
-                <br />
-              </>
-            )}
-            {site.location.city}, {site.location.district} District, {site.location.state}
-            {site.location.postalCode && <> {site.location.postalCode}</>}
-            <br />
-            <a href={site.location.mapsUrl} target="_blank" rel="noopener noreferrer" class="text-bone underline decoration-brand-500/60 underline-offset-4 hover:text-brand-300">
-              Get directions
-            </a>
-          </span>
+      <p class="eyebrow mb-5 text-ash-400 sm:mb-6">Visit</p>
+      <ul class={`${card} divide-y divide-bone/10`}>
+        <li class="px-4 py-4">
+          <div class="flex gap-3.5">
+            <span class={rowIcon}><MapPin className="size-[1.125rem]" weight="duotone" /></span>
+            <p class="text-sm leading-relaxed text-pretty text-ash-300">
+              {site.location.streetAddress && <>{site.location.streetAddress}, </>}
+              {site.location.city}, {site.location.district} District, {site.location.state}
+              {site.location.postalCode && <> {site.location.postalCode}</>}
+            </p>
+          </div>
+          <a
+            href={site.location.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-3.5 ml-[3.125rem] inline-flex items-center gap-1.5 rounded-full border border-brand-500/40 px-3.5 py-1.5 font-mono text-[0.68rem] font-semibold tracking-[0.14em] text-brand-300 uppercase transition-colors hover:border-brand-400 hover:bg-brand-500/10"
+          >
+            Get directions <ArrowUpRight className="size-3.5" weight="bold" />
+          </a>
         </li>
         {site.contact.phone && (
-          <li class="flex gap-3">
-            <Phone className="mt-0.5 size-4 shrink-0 text-brand-400" weight="duotone" />
-            <a href={`tel:${site.contact.phone}`} class="hover:text-bone">{site.contact.phoneDisplay ?? site.contact.phone}</a>
+          <li>
+            <a href={`tel:${site.contact.phone}`} class={row}>
+              <span class={rowIcon}><Phone className="size-[1.125rem]" weight="duotone" /></span>
+              <span class="flex-1">{site.contact.phoneDisplay ?? site.contact.phone}</span>
+              <CaretRight className="size-4 text-ash-400" />
+            </a>
           </li>
         )}
-        <li class="flex gap-3">
-          <InstagramLogo className="mt-0.5 size-4 shrink-0 text-brand-400" />
-          <a href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer" class="hover:text-bone">@{site.social.instagramHandle}</a>
+        <li>
+          <a href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer" class={row}>
+            <span class={rowIcon}><InstagramLogo className="size-[1.125rem]" /></span>
+            <span class="flex-1">@{site.social.instagramHandle}</span>
+            <CaretRight className="size-4 text-ash-400" />
+          </a>
         </li>
       </ul>
     </div>
 
-    <div class="lg:col-span-2">
-      <p class="eyebrow mb-6 text-ash-400">Hours</p>
+    <div class="lg:col-span-3">
+      <p class="eyebrow mb-5 text-ash-400 sm:mb-6">Hours</p>
       {site.hours ? (
-        <ul class="space-y-2 text-sm text-ash-300">
+        <ul class={`${card} space-y-2 p-4 text-sm text-ash-300`}>
           {site.hours.map((h) => (
             <li class="flex justify-between gap-4">
               <span>{h.days}</span>
@@ -114,7 +125,19 @@ const credit = { name: 'Sneha', url: 'https://github.com/snehaarasid25' }
           ))}
         </ul>
       ) : (
-        <p class="text-sm text-ash-400">Timings announced soon. Message us for today's hours.</p>
+        <div class={`${card} flex gap-3.5 p-4`}>
+          <span class={rowIcon}><Clock className="size-[1.125rem]" weight="duotone" /></span>
+          <div class="text-sm">
+            <p class="font-medium text-bone">Timings announced soon</p>
+            {wa ? (
+              <a href={wa} target="_blank" rel="noopener noreferrer" class="mt-1 inline-flex items-center gap-1.5 text-brand-300 transition-colors hover:text-brand-400">
+                <WhatsappLogo className="size-4" weight="fill" /> Ask on WhatsApp
+              </a>
+            ) : (
+              <p class="mt-1 text-ash-400">Message us for today's hours.</p>
+            )}
+          </div>
+        </div>
       )}
     </div>
   </div>
@@ -124,7 +147,7 @@ const credit = { name: 'Sneha', url: 'https://github.com/snehaarasid25' }
       <p>© {YEAR} {site.legalName}{site.foundingYear && <> · Est. {site.foundingYear}</>}. All rights reserved.</p>
       <span class="hidden h-3 w-px bg-bone/15 sm:block" aria-hidden="true"></span>
       <p>
-        Designed &amp; developed by
+        Designed &amp; developed by{' '}
         <a
           href={credit.url}
           target="_blank"
