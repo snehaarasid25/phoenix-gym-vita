@@ -37,7 +37,7 @@ const highlights = [
     class="relative isolate flex min-h-[calc(100svh-1rem)] flex-col overflow-hidden rounded-[2rem] bg-ash-950 shadow-[0_40px_120px_-40px_rgba(21,17,13,0.55)] sm:min-h-[calc(100svh-1.5rem)] sm:rounded-[2.5rem] lg:min-h-[calc(100svh-2rem)] lg:rounded-[3rem]"
   >
     <!-- ── Full-bleed HD photo: athlete + barbell centre-right, deep black space left for the copy ── -->
-    <div class="absolute inset-x-0 top-20 -z-20 h-[min(52svh,112vw)] [mask-image:linear-gradient(to_bottom,black_68%,transparent_100%)] md:inset-0 md:h-auto md:[mask-image:none]">
+    <div class="absolute inset-x-0 top-20 -z-20 h-[54%] [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] md:inset-0 md:h-auto md:[mask-image:none]">
       <div data-parallax data-parallax-mode="exit" data-parallax-y="0,8" class="absolute inset-0">
         <picture>
           <source media="(max-width: 767px)" srcset={srcSet(images.heroMobile.src)} sizes="100vw" />
@@ -78,7 +78,7 @@ const highlights = [
       data-parallax
       data-parallax-mode="exit"
       data-parallax-fade="0.35,0.8"
-      class="container-x relative flex flex-1 flex-col justify-end pt-[calc(min(52svh,112vw)-2.5rem)] pb-8 sm:pb-12 md:justify-center md:pt-24 md:pb-10"
+      class="container-x relative flex flex-1 flex-col justify-end pt-28 pb-8 sm:pb-12 md:justify-center md:pt-24 md:pb-10"
     >
       <div class="max-w-[34rem] md:max-w-[44%] lg:max-w-[36rem]">
         <div class="relative">
@@ -104,7 +104,7 @@ const highlights = [
             }
           </span>
         </h1>
-        <ul class="absolute right-0 bottom-[0.2em] flex flex-col items-end gap-2 md:hidden" aria-label="Highlights">
+        <ul class="absolute right-0 bottom-[0.2em] flex flex-col items-end gap-3.5 md:hidden" aria-label="Highlights">
           {
             highlights.map(({ label, Icon }, i) => (
               <li class="enter-up" style={`--d:${(1.1 + i * 0.15).toFixed(2)}s`}>
