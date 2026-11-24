@@ -104,6 +104,7 @@
   --glow: rgb(196 159 110 / 0.2);
   --glow-strong: rgb(214 170 104 / 0.34);
   --outline-faint: color-mix(in srgb, var(--color-bone) 18%, transparent);
+  --outline-num: color-mix(in srgb, var(--color-brand-400) 80%, transparent);
   --outline-ghost: color-mix(in srgb, var(--color-bone) 9%, transparent);
   --card-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 24px 60px -36px rgb(0 0 0 / 0.9);
   --card-shadow-hover: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 30px 80px -30px rgb(196 159 110 / 0.35);
@@ -136,6 +137,7 @@
   --glow: rgb(222 182 120 / 0.2);
   --glow-strong: rgb(226 184 118 / 0.32);
   --outline-faint: color-mix(in srgb, var(--color-brand-500) 62%, transparent);
+  --outline-num: var(--color-brand-600);
   --outline-ghost: color-mix(in srgb, var(--color-brand-500) 22%, transparent);
   --card-shadow: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 18px 50px -30px rgb(110 75 35 / 0.32);
   --card-shadow-hover: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 30px 70px -28px rgb(184 145 92 / 0.55);
@@ -221,6 +223,11 @@
   .text-outline-faint {
     color: transparent;
     -webkit-text-stroke: 1px var(--outline-faint);
+  }
+  /* Numbered lists: clearly legible gold outline in both themes */
+  .text-outline-num {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--outline-num);
   }
   /* Background watermark: texture, never competing with real text */
   .text-outline-ghost {

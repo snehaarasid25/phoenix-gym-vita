@@ -9,16 +9,13 @@ import { primaryEnquiry } from '../utils/contact'
 const enquiry = primaryEnquiry()
 ---
 
-<!-- Mobile: the whole flex + sun as a band on top, copy below (a 16:9 photo can't cover a tall phone section without
-     blowing up into a blurry crop). sm+: full-bleed cinematic background. -->
-<section data-theme="dark" aria-labelledby="final-cta-title" class="panel grain relative bg-ash-950 pt-[80vw] pb-24 sm:py-48">
-  <div class="absolute inset-x-0 top-0 -z-20 aspect-[4/3] [mask-image:linear-gradient(to_bottom,black_78%,transparent)] sm:-inset-y-[15%] sm:aspect-auto sm:[mask-image:none]">
-    <div data-parallax data-parallax-y="-12,12" class="size-full max-sm:!transform-none">
-      <Img image={images.finalCta} sizes="100vw" width={1920} className="size-full object-cover object-[54%_100%] sm:object-[60%_50%]" style={{ objectPosition: undefined }} />
-    </div>
+<!-- Full-bleed cinematic background on every screen; phones crop to the athlete's head + the sun -->
+<section data-theme="dark" aria-labelledby="final-cta-title" class="panel grain relative bg-ash-950 py-28 sm:py-48">
+  <div data-parallax data-parallax-y="-12,12" class="absolute -inset-y-[15%] inset-x-0 -z-20">
+    <Img image={images.finalCta} sizes="100vw" width={1920} className="size-full object-cover object-[55%_50%] sm:object-[60%_50%]" style={{ objectPosition: undefined }} />
   </div>
-  <div class="absolute inset-0 -z-10 hidden bg-ash-950/55 sm:block" aria-hidden="true" />
-  <div class="absolute inset-0 -z-10 hidden bg-gradient-to-t from-ash-950 via-transparent to-ash-950 sm:block" aria-hidden="true" />
+  <div class="absolute inset-0 -z-10 bg-ash-950/55" aria-hidden="true" />
+  <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ash-950 via-transparent to-ash-950" aria-hidden="true" />
   <div class="glow-orb bottom-[-12rem] left-1/2 -z-10 h-[30rem] w-[70rem] -translate-x-1/2" aria-hidden="true" />
 
   <div class="container-x text-center">
