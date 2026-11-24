@@ -24,9 +24,6 @@ const chipIcon = 'grid size-6 place-items-center rounded-full bg-brand-500/90 te
 const chipSm =
   'chip-float flex items-center gap-1.5 rounded-full border border-bone/10 bg-ash-950/55 py-1 pr-3 pl-1 text-[0.7rem] font-medium whitespace-nowrap text-bone/90 backdrop-blur-md sm:text-xs'
 const chipSmIcon = 'grid size-5 place-items-center rounded-full bg-brand-500/90 text-ink'
-// Launch status: glowing gold pill with a pulsing dot + shimmer (display set per placement)
-const statusPill =
-  'relative items-center gap-2 overflow-hidden rounded-full border border-brand-400/50 bg-brand-500/15 py-1.5 pr-3.5 pl-2.5 text-[0.7rem] font-semibold tracking-[0.14em] text-brand-300 uppercase shadow-[0_0_28px_-6px_rgba(214,170,104,0.6)] backdrop-blur-md'
 const highlights = [
   { label: 'HYROX Training', Icon: Lightning },
   { label: 'Steam Bath', Icon: Thermometer },
@@ -81,20 +78,9 @@ const highlights = [
       data-parallax
       data-parallax-mode="exit"
       data-parallax-fade="0.35,0.8"
-      class="container-x relative flex flex-1 flex-col justify-start pt-24 pb-8 sm:pb-12 md:justify-center md:pt-24 md:pb-10"
+      class="container-x relative flex flex-1 flex-col justify-start pt-28 pb-8 sm:pb-12 md:justify-center md:pt-24 md:pb-10"
     >
       <div class="flex max-w-[34rem] flex-1 flex-col md:block md:max-w-[44%] md:flex-none lg:max-w-[36rem]">
-        <!-- Phones: launch status sits right under the header -->
-        <p class="enter-up mb-5 md:hidden" style="--d:0.2s">
-          <span class={`inline-flex ${statusPill}`}>
-            <span class="sheen" aria-hidden="true"></span>
-            <span class="relative flex size-2" aria-hidden="true">
-              <span class="absolute inline-flex size-full animate-ping rounded-full bg-brand-400 opacity-75"></span>
-              <span class="relative inline-flex size-2 rounded-full bg-brand-400"></span>
-            </span>
-            <span class="relative">{cta.status}</span>
-          </span>
-        </p>
         <div class="relative">
         <h1 id="hero-title" aria-label={`Phoenix Gym, ${site.location.city}: Burn. Build. Rise.`}>
           <span class="enter-up eyebrow mb-5 hidden items-center gap-3 text-brand-300 sm:mb-6 md:flex" style="--d:0.15s">
@@ -148,21 +134,23 @@ const highlights = [
               <Fragment slot="icon"><ArrowDown className="size-4" weight="bold" /></Fragment>
             </ButtonLink>
           </div>
-          <!-- Status sits right under the CTA it explains, together with the location -->
-          <p class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-bone/65">
-            <span class={`hidden md:inline-flex ${statusPill}`}>
-              <span class="sheen" aria-hidden="true"></span>
+          <!-- Launch status: highlighted line under the CTA it explains (centred on phones), then the location -->
+          <div class="mt-6 flex flex-col items-center gap-2.5 text-center md:mt-5 md:flex-row md:items-center md:gap-5 md:text-left">
+            <p class="flex items-center gap-2.5 sm:gap-3">
+              <span class="h-px w-6 sm:w-8 bg-gradient-to-r from-transparent to-brand-400/80 md:hidden" aria-hidden="true"></span>
               <span class="relative flex size-2" aria-hidden="true">
                 <span class="absolute inline-flex size-full animate-ping rounded-full bg-brand-400 opacity-75"></span>
-                <span class="relative inline-flex size-2 rounded-full bg-brand-400"></span>
+                <span class="relative inline-flex size-2 rounded-full bg-brand-400 shadow-[0_0_12px_2px_rgba(214,170,104,0.7)]"></span>
               </span>
-              <span class="relative">{cta.status}</span>
-            </span>
-            <span class="inline-flex items-center gap-1.5">
+              <span class="text-shimmer font-mono text-[0.7rem] font-semibold tracking-[0.16em] whitespace-nowrap uppercase sm:text-[0.78rem] sm:tracking-[0.22em]">{cta.status}</span>
+              <span class="h-px w-6 sm:w-8 bg-gradient-to-l from-transparent to-brand-400/80 md:hidden" aria-hidden="true"></span>
+            </p>
+            <span class="hidden h-3.5 w-px bg-bone/20 md:block" aria-hidden="true"></span>
+            <p class="inline-flex items-center gap-1.5 text-sm text-bone/65">
               <MapPin className="size-4 text-brand-400" weight="duotone" />
               Nevari Road, {site.location.city}
-            </span>
-          </p>
+            </p>
+          </div>
         </div>
       </div>
     </div>

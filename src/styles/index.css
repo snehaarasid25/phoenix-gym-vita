@@ -293,6 +293,16 @@
     box-shadow: var(--card-shadow), 0 36px 90px -30px color-mix(in srgb, var(--color-brand-500) 85%, transparent);
   }
 
+  /* Gold text with a slow light sweep (launch status) */
+  .text-shimmer {
+    color: transparent;
+    background: linear-gradient(100deg, var(--color-brand-400) 0%, var(--color-brand-400) 38%, #fff4de 50%, var(--color-brand-400) 62%, var(--color-brand-400) 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: text-shimmer 3.6s ease-in-out infinite;
+  }
+
   /* Membership cards: warm gold aura from the top corner */
   .plan-aura {
     background:
@@ -495,6 +505,10 @@
 @keyframes ring-spin {
   to { --ring-angle: 360deg; }
 }
+@keyframes text-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
+}
 
 @utility container-x {
   margin-inline: auto;
@@ -586,7 +600,8 @@
     opacity: 1;
     transform: none;
     transition: none;
-  }  .plan-ring {
+  }  .plan-ring,
+  .text-shimmer {
     animation: none;
   }
 }
