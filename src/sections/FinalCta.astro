@@ -9,9 +9,10 @@ import { primaryEnquiry } from '../utils/contact'
 const enquiry = primaryEnquiry()
 ---
 
-<!-- sm+: full-bleed cinematic background. Phones: a square crop (whole flex + sun) centred behind the copy, fading in/out -->
+<!-- sm+: full-bleed cinematic background. Phones: a square crop (whole flex + sun) anchored just above the buttons,
+     which drop lower so the flex shows between the text and the CTAs -->
 <section data-theme="dark" aria-labelledby="final-cta-title" class="panel grain relative bg-ash-950 py-28 sm:py-48">
-  <div class="absolute inset-x-0 top-1/2 -z-20 aspect-square -translate-y-1/2 [mask-image:linear-gradient(to_bottom,transparent,black_22%,black_78%,transparent)] sm:top-[-15%] sm:bottom-[-15%] sm:aspect-auto sm:translate-y-0 sm:[mask-image:none]">
+  <div class="absolute inset-x-0 bottom-[12.5rem] -z-20 aspect-square [mask-image:linear-gradient(to_bottom,transparent,black_22%,black_86%,transparent)] sm:top-[-15%] sm:bottom-[-15%] sm:aspect-auto sm:[mask-image:none]">
     <div data-parallax data-parallax-y="-12,12" class="size-full max-sm:!transform-none">
       <Img image={images.finalCta} sizes="100vw" width={1920} className="size-full object-cover object-[55%_50%] sm:object-[60%_50%]" style={{ objectPosition: undefined }} />
     </div>
@@ -29,7 +30,7 @@ const enquiry = primaryEnquiry()
     <p class="mx-auto mt-8 max-w-lg text-lg text-bone/80">
       {site.journeyLine}. The hardest rep is walking through the door, so take the first step today.
     </p>
-    <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+    <div class="mt-48 flex flex-col justify-center gap-3 sm:mt-10 sm:flex-row">
       <ButtonLink href="#membership" size="lg" sheen>
         {cta.long}
       </ButtonLink>
