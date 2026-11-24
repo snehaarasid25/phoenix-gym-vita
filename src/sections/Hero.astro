@@ -31,10 +31,10 @@ const highlights = [
 <section id="home" aria-labelledby="hero-title" class="relative p-2 sm:p-3 lg:p-4">
   <div
     data-theme="dark"
-    class="relative isolate flex min-h-[calc(100svh-1rem)] flex-col overflow-hidden rounded-[2rem] bg-ash-950 shadow-[0_40px_120px_-40px_rgba(21,17,13,0.55)] sm:min-h-[calc(100svh-1.5rem)] sm:rounded-[2.5rem] lg:min-h-[calc(100svh-2rem)] lg:rounded-[3rem]"
+    class="relative isolate flex flex-col overflow-hidden rounded-[2rem] bg-ash-950 shadow-[0_40px_120px_-40px_rgba(21,17,13,0.55)] sm:rounded-[2.5rem] md:min-h-[calc(100svh-1.5rem)] lg:min-h-[calc(100svh-2rem)] lg:rounded-[3rem]"
   >
     <!-- ── Full-bleed HD photo: athlete + barbell centre-right, deep black space left for the copy ── -->
-    <div class="absolute inset-x-0 top-20 -z-20 h-[54%] [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] md:inset-0 md:h-auto md:[mask-image:none]">
+    <div class="absolute inset-x-0 top-20 -z-20 h-[calc(54svh-0.5rem)] [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] md:inset-0 md:h-auto md:[mask-image:none]">
       <div data-parallax data-parallax-mode="exit" data-parallax-y="0,8" class="absolute inset-0">
         <picture>
           <source media="(max-width: 767px)" srcset={srcSet(images.heroMobile.src)} sizes="100vw" />
@@ -115,7 +115,8 @@ const highlights = [
         </ul>
         </div>
 
-        <div class="enter-up mt-auto pt-14 md:mt-4 md:pt-0 lg:mt-5" style="--d:0.75s">
+        <!-- Phones: the gap under RISE. grows a little on taller screens but is capped (no huge empty band) -->
+        <div class="enter-up mt-[clamp(3.5rem,calc(22svh-4rem),7.5rem)] md:mt-4 lg:mt-5" style="--d:0.75s">
           <p class="font-serif text-[0.8rem] font-medium tracking-[0.16em] text-brand-300 uppercase sm:text-sm">{site.brandLine}</p>
           <p class="mt-2.5 max-w-lg text-base leading-relaxed text-pretty text-bone/80 sm:text-[1.0625rem]">
             <span class="font-semibold text-bone">{site.claim ? `${site.claim}.` : `${site.tagline}.`}</span> HYROX training, a steam bath and a dedicated yoga &amp; meditation
