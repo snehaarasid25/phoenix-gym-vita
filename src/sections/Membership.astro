@@ -39,31 +39,47 @@ const anyUnverified = plans.some((p) => !p.verified)
           )}
           style={`--d:${i * 0.08}s`}
         >
+          <!-- Decor layer (clipped to the card; the badge above stays free to overhang) -->
+          <div class="pointer-events-none absolute inset-0 -z-0 overflow-hidden rounded-[inherit]" aria-hidden="true">
+            <span class="plan-aura absolute inset-0"></span>
+            <span class="absolute -top-5 -right-3 font-display text-[8.5rem] leading-none text-outline-num opacity-45 transition-opacity duration-500 group-hover:opacity-80 sm:text-[9.5rem]">
+              {plan.duration.match(/\d+/)?.[0].padStart(2, '0')}
+            </span>
+            {plan.highlight && <img src="/brand/phoenix-emblem.png" alt="" width="171" height="218" class="absolute -right-6 -bottom-8 h-48 w-auto opacity-[0.06]" />}
+          </div>
+          {plan.highlight && <span class="plan-ring" aria-hidden="true" />}
+
           {plan.highlight && plan.highlightLabel && (
-            <span class="badge-gold absolute -top-3.5 left-1/2 -translate-x-1/2">
+            <span class="badge-gold absolute -top-3.5 left-1/2 z-10 -translate-x-1/2">
               <span class="sheen" aria-hidden="true" />
               <span class="relative">{plan.highlightLabel}</span>
             </span>
           )}
 
-          <p class="eyebrow whitespace-nowrap text-ash-400">{plan.duration}</p>
-          <h3 class="mt-2 font-display text-5xl leading-none uppercase">{plan.name}</h3>
-
-          <div class="my-8 border-y hairline py-6">
-            {plan.price !== null ? (
-              <p class="flex items-baseline gap-2">
-                <span class="font-display text-6xl leading-none tracking-[-0.01em] tabular-nums">{formatINR(plan.price)}</span>
-                {plan.priceNote && <span class="eyebrow text-ash-400">{plan.priceNote}</span>}
-              </p>
-            ) : (
-              <>
-                <p class={cn('font-display text-4xl leading-none uppercase', plan.highlight && 'text-brand-gradient')}>Price on enquiry</p>
-                <p class="mt-2 text-sm text-ash-400">Message us for current rates.</p>
-              </>
-            )}
+          <div class="relative">
+            <p class="eyebrow whitespace-nowrap text-brand-400">{plan.duration}</p>
+            <h3 class="mt-2 font-display text-5xl leading-none uppercase">{plan.name}</h3>
           </div>
 
-          <ul class="flex-1 space-y-3.5">
+          <div class="relative my-8">
+            <span class="block h-px bg-gradient-to-r from-brand-500/60 via-brand-500/20 to-transparent" aria-hidden="true"></span>
+            <div class="py-6">
+              {plan.price !== null ? (
+                <p class="flex items-baseline gap-2">
+                  <span class="font-display text-6xl leading-none tracking-[-0.01em] text-brand-gradient tabular-nums">{formatINR(plan.price)}</span>
+                  {plan.priceNote && <span class="eyebrow text-ash-400">{plan.priceNote}</span>}
+                </p>
+              ) : (
+                <>
+                  <p class="font-display text-4xl leading-none text-brand-gradient uppercase">Price on enquiry</p>
+                  <p class="mt-2 text-sm text-ash-400">Message us for current rates.</p>
+                </>
+              )}
+            </div>
+            <span class="block h-px bg-gradient-to-r from-brand-500/60 via-brand-500/20 to-transparent" aria-hidden="true"></span>
+          </div>
+
+          <ul class="relative flex-1 space-y-3.5">
             {plan.benefits.map((b, j) => (
               <li class="reveal flex gap-3 text-sm" style={`--reveal-y:10px; --d:${(0.25 + i * 0.06 + j * 0.1).toFixed(2)}s`}>
                 <span class="icon-well mt-0.5 size-5 rounded-full">
@@ -74,10 +90,10 @@ const anyUnverified = plans.some((p) => !p.verified)
             ))}
           </ul>
 
-          {!plan.verified && <PlaceholderBadge label="Inclusions TBC" className="mt-6 self-start" />}
+          {!plan.verified && <PlaceholderBadge label="Inclusions TBC" className="relative mt-6 self-start" />}
 
           <!-- Handled by scripts/site.ts: pre-fills the enquiry form and scrolls to it -->
-          <Button data-enquire={`${plan.name} membership`} variant={plan.highlight ? 'primary' : 'outline'} className="mt-8 w-full">
+          <Button data-enquire={`${plan.name} membership`} variant={plan.highlight ? 'primary' : 'outline'} className="relative mt-8 w-full">
             Enquire now
           </Button>
         </article>
