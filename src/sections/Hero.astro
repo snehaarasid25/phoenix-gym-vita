@@ -31,10 +31,10 @@ const highlights = [
 <section id="home" aria-labelledby="hero-title" class="relative p-2 sm:p-3 lg:p-4">
   <div
     data-theme="dark"
-    class="relative isolate flex flex-col overflow-hidden rounded-[2rem] bg-ash-950 shadow-[0_40px_120px_-40px_rgba(21,17,13,0.55)] sm:rounded-[2.5rem] md:min-h-[calc(100svh-1.5rem)] lg:min-h-[calc(100svh-2rem)] lg:rounded-[3rem]"
+    class="relative isolate flex flex-col overflow-hidden rounded-[2rem] bg-ash-950 shadow-[0_40px_120px_-40px_rgba(21,17,13,0.55)] sm:rounded-[2.5rem] lg:min-h-[min(calc(100svh-2rem),58rem)] lg:rounded-[3rem]"
   >
     <!-- ── Full-bleed HD photo: athlete + barbell centre-right, deep black space left for the copy ── -->
-    <div class="absolute inset-x-0 top-20 -z-20 h-[calc(54svh-0.5rem)] [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] md:inset-0 md:h-auto md:[mask-image:none]">
+    <div class="absolute inset-x-0 top-20 -z-20 h-[calc(54svh-0.5rem)] [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] lg:inset-0 lg:h-auto lg:[mask-image:none]">
       <div data-parallax data-parallax-mode="exit" data-parallax-y="0,8" class="absolute inset-0">
         <picture>
           <source media="(max-width: 767px)" srcset={srcSet(images.heroMobile.src)} sizes="100vw" />
@@ -47,13 +47,13 @@ const highlights = [
             decoding="sync"
             width="3200"
             height="2133"
-            class="size-full animate-kenburns object-cover object-[50%_30%] md:object-[58%_0%]"
+            class="size-full animate-kenburns object-cover object-[50%_30%] lg:object-[58%_0%]"
           />
         </picture>
       </div>
     </div>
     <!-- Keep the copy side true black; nothing sits over the athlete -->
-    <div class="absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgb(7_6_5/0.92)_0%,rgb(7_6_5/0.7)_28%,rgb(7_6_5/0.15)_46%,transparent_56%)] md:block" aria-hidden="true"></div>
+    <div class="absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgb(7_6_5/0.92)_0%,rgb(7_6_5/0.7)_28%,rgb(7_6_5/0.15)_46%,transparent_56%)] lg:block" aria-hidden="true"></div>
     <div class="absolute inset-x-0 bottom-0 -z-10 h-1/3 bg-gradient-to-t from-ash-950 to-transparent" aria-hidden="true"></div>
 
     <!-- Floating chips in the open black space to the athlete's right (verified facilities) -->
@@ -75,12 +75,12 @@ const highlights = [
       data-parallax
       data-parallax-mode="exit"
       data-parallax-fade="0.35,0.8"
-      class="container-x relative flex flex-1 flex-col justify-start pt-28 pb-8 sm:pb-12 md:justify-center md:pt-24 md:pb-10"
+      class="container-x relative flex flex-1 flex-col justify-start pt-28 pb-8 sm:pb-12 lg:justify-center lg:pt-24 lg:pb-10"
     >
-      <div class="flex max-w-[34rem] flex-1 flex-col md:block md:max-w-[44%] md:flex-none lg:max-w-[36rem]">
+      <div class="flex flex-1 flex-col lg:block lg:max-w-[36rem] lg:flex-none">
         <div class="relative">
         <h1 id="hero-title" aria-label={`Phoenix Gym, ${site.location.city}: Burn. Build. Rise.`}>
-          <span class="enter-up eyebrow mb-5 hidden items-center gap-3 text-brand-300 sm:mb-6 md:flex" style="--d:0.15s">
+          <span class="enter-up eyebrow mb-5 hidden items-center gap-3 text-brand-300 sm:mb-6 lg:flex" style="--d:0.15s">
             <span class="h-px w-8 bg-brand-400/70" aria-hidden="true"></span>
             Phoenix Gym · {site.location.city}{site.foundingYear && <> · Est. {site.foundingYear}</>}
           </span>{' '}
@@ -101,7 +101,7 @@ const highlights = [
             }
           </span>
         </h1>
-        <ul class="absolute top-0 -right-1 bottom-[0.04em] grid grid-rows-3 items-center justify-items-end md:hidden" aria-label="Highlights">
+        <ul class="absolute top-0 -right-1 bottom-[0.04em] grid grid-rows-3 items-center justify-items-end lg:hidden" aria-label="Highlights">
           {
             highlights.map(({ label, Icon }, i) => (
               <li class:list={['enter-up', i === 1 && 'mr-3 min-[360px]:mr-7']} style={`--d:${(1.1 + i * 0.15).toFixed(2)}s`}>
@@ -116,7 +116,7 @@ const highlights = [
         </div>
 
         <!-- Phones: the gap under RISE. grows a little on taller screens but is capped (no huge empty band) -->
-        <div class="enter-up mt-[clamp(3.5rem,calc(22svh-4rem),7.5rem)] md:mt-4 lg:mt-5" style="--d:0.75s">
+        <div class="enter-up mt-[clamp(3.5rem,calc(22svh-4rem),7.5rem)] lg:mt-5" style="--d:0.75s">
           <p class="font-serif text-[0.8rem] font-medium tracking-[0.16em] text-brand-300 uppercase sm:text-sm">{site.brandLine}</p>
           <p class="mt-2.5 max-w-lg text-base leading-relaxed text-pretty text-bone/80 sm:text-[1.0625rem]">
             <span class="font-semibold text-bone">{site.claim ? `${site.claim}.` : `${site.tagline}.`}</span> HYROX training, a steam bath and a dedicated yoga &amp; meditation
@@ -133,17 +133,17 @@ const highlights = [
             </ButtonLink>
           </div>
           <!-- Launch status: highlighted line under the CTA it explains (centred on phones), then the location -->
-          <div class="mt-6 flex flex-col items-center gap-2.5 text-center md:mt-5 md:flex-row md:items-center md:gap-5 md:text-left">
+          <div class="mt-6 flex flex-col items-center gap-2.5 text-center sm:mt-5 sm:flex-row sm:items-center sm:gap-5 sm:text-left">
             <p class="flex items-center gap-2.5 sm:gap-3">
-              <span class="h-px w-6 sm:w-8 bg-gradient-to-r from-transparent to-brand-400/80 md:hidden" aria-hidden="true"></span>
+              <span class="h-px w-6 sm:w-8 bg-gradient-to-r from-transparent to-brand-400/80 sm:hidden" aria-hidden="true"></span>
               <span class="relative flex size-2" aria-hidden="true">
                 <span class="absolute inline-flex size-full animate-ping rounded-full bg-brand-400 opacity-75"></span>
                 <span class="relative inline-flex size-2 rounded-full bg-brand-400 shadow-[0_0_12px_2px_rgba(214,170,104,0.7)]"></span>
               </span>
               <span class="text-shimmer font-mono text-[0.7rem] font-semibold tracking-[0.16em] whitespace-nowrap uppercase sm:text-[0.78rem] sm:tracking-[0.22em]">{cta.status}</span>
-              <span class="h-px w-6 sm:w-8 bg-gradient-to-l from-transparent to-brand-400/80 md:hidden" aria-hidden="true"></span>
+              <span class="h-px w-6 sm:w-8 bg-gradient-to-l from-transparent to-brand-400/80 sm:hidden" aria-hidden="true"></span>
             </p>
-            <span class="hidden h-3.5 w-px bg-bone/20 md:block" aria-hidden="true"></span>
+            <span class="hidden h-3.5 w-px bg-bone/20 sm:block" aria-hidden="true"></span>
             <p class="inline-flex items-center gap-1.5 text-sm text-bone/65">
               <MapPin className="size-4 text-brand-400" weight="duotone" />
               Nevari Road, {site.location.city}

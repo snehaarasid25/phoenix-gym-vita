@@ -81,7 +81,7 @@ export default function Navbar({ pathname }: { pathname: string }) {
                       href={resolve(item.href)}
                       aria-current={isActive ? 'true' : undefined}
                       className={cn(
-                        'relative rounded-full px-4 py-2 font-mono text-[0.7rem] font-medium tracking-[0.18em] uppercase transition-colors duration-300',
+                        'relative rounded-full px-2.5 py-2 font-mono text-[0.7rem] font-medium tracking-[0.12em] uppercase transition-colors duration-300 xl:px-4 xl:tracking-[0.18em]',
                         isActive ? 'text-bone' : 'text-ash-300 hover:text-bone',
                       )}
                     >

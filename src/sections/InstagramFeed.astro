@@ -20,7 +20,8 @@ const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
       id="instagram-title"
       index="08"
       eyebrow="Phoenix Gym on Instagram"
-      lines={[`@${site.social.instagramHandle}`]}
+      // the long handle is shrunk only where the header splits into two narrow columns (1024–1279px)
+      lines={[{ text: `@${site.social.instagramHandle}`, class: 'lg:text-[0.78em] xl:text-[1em]' }]}
     >
       <Fragment slot="intro">
         The latest reels and posts from the floor, straight from our Instagram. Follow along and be part of the journey from day one.

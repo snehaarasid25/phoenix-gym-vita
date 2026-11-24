@@ -204,6 +204,7 @@
   .display-xl { font-family: var(--font-display); line-height: 0.86; letter-spacing: 0.005em; font-size: clamp(4rem, min(19vw, 19svh), 13.5rem); }
   /* Hero headline: bounded by width AND height so the whole hero fits short/wide screens */
   .display-hero { font-family: var(--font-display); line-height: 0.84; letter-spacing: 0.005em; font-size: clamp(3.8rem, min(8.4vw, 13.5svh), 11rem); }
+@media (width >= 40rem) and (width < 64rem) { .display-hero { font-size: clamp(5rem, 12vw, 8.5rem); } }
   .display-lg { font-family: var(--font-display); line-height: 0.9; letter-spacing: 0.01em; font-size: clamp(3rem, 8.5vw, 7.5rem); }
   .display-md { font-family: var(--font-display); line-height: 0.92; letter-spacing: 0.01em; font-size: clamp(2.25rem, 5vw, 4.25rem); }
 

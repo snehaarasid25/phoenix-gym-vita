@@ -131,7 +131,7 @@ if (!reduceMotion && items.length) {
     )
     document.addEventListener('click', () => set(null))
     // Teach the interaction once: open each orb in turn shortly after the headline lands
-    const phone = window.matchMedia('(max-width: 767px)').matches
+    const phone = window.matchMedia('(max-width: 1023px)').matches
     const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (phone && !calm) {
       orbs.forEach((orb, i) =>
