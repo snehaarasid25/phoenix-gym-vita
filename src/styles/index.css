@@ -299,6 +299,7 @@
 
   /* Social pills: the brand colour rises in on hover, logo flips to white; press + ripple on tap */
   .social-chip {
+    --brand: var(--color-brand-400);
     position: relative;
     isolation: isolate;
     overflow: hidden;
@@ -324,7 +325,7 @@
     inset: 0;
     z-index: -1;
     border-radius: inherit;
-    background: var(--brand);
+    background: linear-gradient(180deg, #ead6b4, #c49f6e);
     transform: translateY(102%);
     transition: transform 0.45s var(--ease-out-expo);
   }
@@ -354,7 +355,7 @@
     border-radius: inherit;
     padding: 1.5px;
     pointer-events: none;
-    background: conic-gradient(from var(--ring-angle), var(--brand), transparent 28%, transparent 72%, var(--brand));
+    background: conic-gradient(from var(--ring-angle), #f3e2c2, var(--brand) 14%, transparent 30%, transparent 70%, var(--brand) 86%, #f3e2c2);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
@@ -369,7 +370,7 @@
   }
   .social-chip:hover,
   .social-chip:focus-visible {
-    color: #fff;
+    color: var(--color-ink);
     border-color: var(--brand);
     transform: translateY(-3px);
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 20%, transparent), 0 18px 40px -10px var(--brand);
@@ -382,19 +383,112 @@
   .social-chip:focus-visible .social-icon {
     transform: scale(1.12) rotate(-8deg);
   }
-  .social-chip:hover .si-bg,
-  .social-chip:focus-visible .si-bg {
-    fill: #fff;
-  }
-  .social-chip:hover .si-fg,
-  .social-chip:focus-visible .si-fg {
-    fill: var(--brand);
-  }
   .social-chip:active {
     transform: translateY(0) scale(0.95);
   }
   .social-chip:active::after {
     animation: chip-ripple 0.5s ease-out;
+  }
+
+  /* Instagram CTA card */
+  .ig-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 1.75rem;
+    background:
+      radial-gradient(60% 90% at 100% 0%, color-mix(in srgb, var(--color-brand-500) 18%, transparent), transparent 70%),
+      radial-gradient(50% 80% at 0% 100%, color-mix(in srgb, var(--color-brand-500) 8%, transparent), transparent 70%),
+      var(--color-ash-850);
+    box-shadow: var(--card-shadow), 0 30px 80px -40px color-mix(in srgb, var(--color-brand-500) 70%, transparent);
+  }
+  .ig-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    pointer-events: none;
+    background: conic-gradient(from var(--ring-angle), #f3e2c2, var(--color-brand-500) 18%, transparent 34%, transparent 66%, var(--color-brand-500) 82%, #f3e2c2);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    animation: ring-spin 6s linear infinite;
+  }
+  /* Story-style ring around the emblem */
+  .ig-avatar {
+    position: relative;
+    display: grid;
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 2.5px;
+    border-radius: 9999px;
+    background: conic-gradient(from var(--ring-angle), #f3e2c2, #c49f6e, #8f6a3c, #e6c999, #f3e2c2);
+    box-shadow: 0 0 22px -4px color-mix(in srgb, var(--color-brand-400) 70%, transparent);
+    animation: ring-spin 4s linear infinite;
+  }
+  .btn-ig,
+  .btn-ig-ghost {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 3rem;
+    padding-inline: 1rem;
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: transform 0.35s var(--ease-out-expo), box-shadow 0.35s, background-color 0.35s, color 0.35s;
+    -webkit-tap-highlight-color: transparent;
+    @media (width >= 40rem) { padding-inline: 1.6rem; font-size: 0.8rem; letter-spacing: 0.14em; }
+  }
+  .btn-ig {
+    color: var(--color-ink);
+    background: linear-gradient(90deg, #c49f6e, #ead6b4, #c49f6e, #a6825a, #c49f6e);
+    background-size: 300% 100%;
+    box-shadow: 0 10px 30px -10px rgb(196 159 110 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.4);
+    animation: ig-flow 6s linear infinite;
+  }
+  .btn-ig:hover,
+  .btn-ig:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 4px rgb(196 159 110 / 0.2), 0 18px 46px -10px rgb(196 159 110 / 0.95), inset 0 1px 0 rgb(255 255 255 / 0.45);
+  }
+  .btn-ig-ghost {
+    color: var(--color-bone);
+    background: color-mix(in srgb, var(--color-bone) 4%, transparent);
+  }
+  .btn-ig-ghost::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(90deg, #f3e2c2, var(--color-brand-500), #8f6a3c);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    opacity: 0.7;
+    transition: opacity 0.35s;
+  }
+  .btn-ig-ghost:hover,
+  .btn-ig-ghost:focus-visible {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--color-brand-500) 12%, transparent);
+    box-shadow: 0 14px 36px -14px rgb(196 159 110 / 0.85);
+  }
+  .btn-ig-ghost:hover::before {
+    opacity: 1;
+  }
+  .btn-ig:active,
+  .btn-ig-ghost:active {
+    transform: scale(0.96);
   }
 
   /* Gold text with a slow light sweep (launch status) */
@@ -621,6 +715,10 @@
 @keyframes ring-spin {
   to { --ring-angle: 360deg; }
 }
+@keyframes ig-flow {
+  from { background-position: 0% 0; }
+  to { background-position: 300% 0; }
+}
 @keyframes icon-breathe {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
@@ -737,7 +835,10 @@
   .chip-ring,
   .social-icon,
   .text-brand-gradient,
-  .gold-rule::after {
+  .gold-rule::after,
+  .ig-ring,
+  .ig-avatar,
+  .btn-ig {
     animation: none;
   }
 }

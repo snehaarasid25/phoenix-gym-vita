@@ -4,10 +4,9 @@
  * thumbnails, playable on the site). The list itself is curated in
  * data/content.ts; a fully automatic feed would need the Instagram Graph API.
  */
-import { CaretLeft, CaretRight, InstagramLogo, Play } from '@phosphor-icons/react'
+import { CaretLeft, CaretRight, InstagramLogo, PaperPlaneTilt, Play } from '@phosphor-icons/react'
 import { site } from '../config/site'
 import { INSTAGRAM_EMBED_COUNT, instagramPosts } from '../data/content'
-import ButtonLink from '../components/ButtonLink.astro'
 import SectionHeader from '../components/SectionHeader.astro'
 
 const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
@@ -91,41 +90,58 @@ const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
     </div>
   </div>
 
-  <div class="container-x mt-16 flex flex-col items-start gap-6 sm:mt-24 sm:flex-row sm:items-center sm:justify-between">
-    <p class="max-w-md text-ash-300">
-      Have questions? Send us a DM on Instagram. It's the fastest way to reach the team right now.
-    </p>
-    <div class="flex flex-col gap-3 sm:flex-row">
-      <ButtonLink href={site.social.instagramUrl} size="lg" class="bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af] text-bone hover:shadow-[0_10px_40px_-8px_rgba(221,42,123,0.6)]">
-        Follow Phoenix
-        <Fragment slot="icon"><InstagramLogo className="size-4" /></Fragment>
-      </ButtonLink>
-      <ButtonLink href={site.social.instagramDmUrl} size="lg" variant="outline">
-        Send a DM
-      </ButtonLink>
+  <!-- Instagram CTA card: orbiting IG-gradient border, story-ring avatar, flowing "Follow" + glass "DM" on one line -->
+  <div class="container-x mt-16 sm:mt-24">
+    <div class="ig-card reveal p-5 sm:p-7">
+      <span class="ig-ring" aria-hidden="true"></span>
+      <div class="relative lg:flex lg:items-center lg:justify-between lg:gap-10">
+      <div class="relative flex items-center gap-4">
+        <span class="ig-avatar" aria-hidden="true">
+          <span class="grid size-full place-items-center rounded-full bg-ash-950">
+            <img src="/brand/phoenix-emblem.png" alt="" width="171" height="218" class="h-7 w-auto" />
+          </span>
+        </span>
+        <div class="min-w-0">
+          <p class="truncate font-semibold text-bone">@{site.social.instagramHandle}</p>
+          <p class="mt-0.5 text-sm leading-snug text-ash-300">Have questions? A DM is the fastest way to reach the team.</p>
+        </div>
+      </div>
+      <div class="relative mt-5 grid grid-cols-2 gap-2.5 sm:flex sm:gap-3 lg:mt-0 lg:shrink-0">
+        <a href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer" class="btn-ig">
+          <span class="sheen" aria-hidden="true"></span>
+          <InstagramLogo className="relative size-[1.1rem]" weight="bold" />
+          <span class="relative">Follow</span>
+        </a>
+        <a href={site.social.instagramDmUrl} target="_blank" rel="noopener noreferrer" class="btn-ig-ghost">
+          <PaperPlaneTilt className="relative size-[1.1rem]" weight="bold" />
+          <span class="relative">Send a DM</span>
+        </a>
+      </div>
+      </div>
+      <!-- Footer row: other channels, centred in its band (equal space above and below) -->
+      <div class="relative mt-5 flex flex-nowrap items-center justify-center gap-2.5 border-t hairline pt-5 sm:mt-7 sm:justify-start sm:gap-3 sm:pt-7">
+      <span class="eyebrow text-shimmer mr-1 shrink-0 max-[419px]:hidden sm:mr-2">Also on</span>
+      <span class="reveal inline-flex shrink-0" style="--d:0.05s">
+        <a href={site.social.youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on YouTube" class="social-chip">
+          <span class="chip-ring" aria-hidden="true"></span><span class="sheen" aria-hidden="true"></span>
+          <svg viewBox="0 0 24 24" class="social-icon size-5" aria-hidden="true">
+            <path class="si-bg" fill="#ff0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z" />
+            <path class="si-fg" fill="#fff" d="M9.6 15.6V8.4l6.3 3.6-6.3 3.6z" />
+          </svg>
+          <span class="relative">YouTube</span>
+        </a>
+      </span>
+      <span class="reveal inline-flex shrink-0" style="--d:0.18s">
+        <a href={site.social.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on Facebook" class="social-chip">
+          <span class="chip-ring" aria-hidden="true"></span><span class="sheen" aria-hidden="true"></span>
+          <svg viewBox="0 0 24 24" class="social-icon size-5" aria-hidden="true">
+            <circle class="si-bg" fill="#1877f2" cx="12" cy="12" r="12" />
+            <path class="si-fg" fill="#fff" d="M16.67 15.47 17.2 12h-3.33V9.75c0-.95.47-1.88 1.95-1.88h1.51V4.92s-1.37-.23-2.68-.23c-2.74 0-4.53 1.66-4.53 4.66V12H7.08v3.47h3.04V24a12.1 12.1 0 0 0 3.75 0v-8.53h2.8z" />
+          </svg>
+          <span class="relative">Facebook</span>
+        </a>
+      </span>
+      </div>
     </div>
-  </div>
-  <div class="container-x mt-6 flex flex-nowrap items-center gap-2.5 border-t hairline pt-6 sm:gap-3">
-    <span class="eyebrow text-shimmer mr-1 shrink-0 max-[359px]:hidden sm:mr-2">Also on</span>
-    <span class="reveal inline-flex shrink-0" style="--d:0.05s">
-      <a href={site.social.youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on YouTube" class="social-chip" style="--brand:#ff0000">
-        <span class="chip-ring" aria-hidden="true"></span><span class="sheen" aria-hidden="true"></span>
-        <svg viewBox="0 0 24 24" class="social-icon size-5" aria-hidden="true">
-          <path class="si-bg" fill="#ff0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z" />
-          <path class="si-fg" fill="#fff" d="M9.6 15.6V8.4l6.3 3.6-6.3 3.6z" />
-        </svg>
-        <span class="relative">YouTube</span>
-      </a>
-    </span>
-    <span class="reveal inline-flex shrink-0" style="--d:0.18s">
-      <a href={site.social.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on Facebook" class="social-chip" style="--brand:#1877f2">
-        <span class="chip-ring" aria-hidden="true"></span><span class="sheen" aria-hidden="true"></span>
-        <svg viewBox="0 0 24 24" class="social-icon size-5" aria-hidden="true">
-          <circle class="si-bg" fill="#1877f2" cx="12" cy="12" r="12" />
-          <path class="si-fg" fill="#fff" d="M16.67 15.47 17.2 12h-3.33V9.75c0-.95.47-1.88 1.95-1.88h1.51V4.92s-1.37-.23-2.68-.23c-2.74 0-4.53 1.66-4.53 4.66V12H7.08v3.47h3.04V24a12.1 12.1 0 0 0 3.75 0v-8.53h2.8z" />
-        </svg>
-        <span class="relative">Facebook</span>
-      </a>
-    </span>
   </div>
 </section>
