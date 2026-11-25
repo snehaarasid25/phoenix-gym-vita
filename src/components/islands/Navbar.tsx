@@ -50,13 +50,7 @@ export default function Navbar({ pathname }: { pathname: string }) {
       {/* Fixed geometry: only the surface fades in on scroll, nothing moves */}
       <header data-theme={overHero ? 'dark' : undefined} className="fixed inset-x-0 top-0 z-50 py-3 sm:py-4">
         {/* Page content fades out before it reaches the floating bar (no text sliding through the gap above it) */}
-        <div
-          aria-hidden
-          className={cn(
-            'pointer-events-none absolute inset-x-0 top-0 -z-10 h-[calc(100%+1.25rem)] bg-gradient-to-b from-ash-950 from-40% via-ash-950/80 to-transparent transition-opacity duration-300',
-            scrolled ? 'opacity-100' : 'opacity-0',
-          )}
-        />
+        <div aria-hidden className="nav-scrim pointer-events-none absolute inset-x-0 top-0 -z-10 h-[calc(100%+1.25rem)] bg-gradient-to-b from-ash-950 from-40% via-ash-950/80 to-transparent" />
         <div className="container-x">
           <nav
             aria-label="Primary"

@@ -514,6 +514,15 @@
     pointer-events: none;
   }
 
+  /* Fade behind the floating header: driven by html[data-scrolled] (set by an inline script before any JS loads) */
+  .nav-scrim {
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+  }
+  [data-scrolled='true'] .nav-scrim {
+    opacity: 1;
+  }
+
   /* Instagram CTA card */
   .ig-card {
     position: relative;

@@ -45,6 +45,11 @@ const jsonLd = structuredData ? JSON.stringify([localBusinessSchema(), websiteSc
       ;(function () {
         var root = document.documentElement
         root.classList.add('js')
+        // Mark the page as scrolled straight away (no waiting for the header's JS to load), so the fade
+        // behind the floating header is active from the very first scroll (see .nav-scrim in index.css)
+        var markScrolled = function () { root.dataset.scrolled = String(window.scrollY > 24) }
+        markScrolled()
+        window.addEventListener('scroll', markScrolled, { passive: true })
         var introOn = false
         try {
           // Intro at most once every 12h per browser (returning visitors go straight in)
