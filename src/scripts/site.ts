@@ -60,6 +60,7 @@ document.querySelectorAll('.reveal, .reveal-lines, .reveal-img').forEach((el) =>
  * data-parallax-scale="1.15,1"        scale
  * data-parallax-fade="0.35,0.8"       opacity 1 → 0 across that progress range
  * data-parallax-mode="exit"           progress 0→1 while the host scrolls OUT
+ * data-parallax-min="1024"            only at viewport widths ≥ this (e.g. keep phone text fully readable)
  *                                     (default: while it passes through the viewport)
  * Progress is measured on the closest <section> (or <footer>).
  */
@@ -76,6 +77,7 @@ const items = [...document.querySelectorAll<HTMLElement>('[data-parallax]')].map
   x: pair(el.dataset.parallaxX),
   scale: pair(el.dataset.parallaxScale),
   fade: pair(el.dataset.parallaxFade),
+  min: Number(el.dataset.parallaxMin ?? 0),
 }))
 
 let ticking = false
@@ -83,6 +85,12 @@ function update() {
   ticking = false
   const vh = window.innerHeight
   for (const item of items) {
+    if (item.min && window.innerWidth < item.min) {
+      // effect switched off at this width: make sure nothing is left faded or shifted
+      item.el.style.transform = ''
+      item.el.style.opacity = ''
+      continue
+    }
     const r = item.host.getBoundingClientRect()
     if (r.bottom < -vh || r.top > vh * 2) continue
     const t = item.exit ? clamp(-r.top / r.height) : clamp((vh - r.top) / (vh + r.height))
