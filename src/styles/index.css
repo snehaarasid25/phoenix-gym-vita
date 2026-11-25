@@ -519,7 +519,8 @@
     opacity: 0;
     transition: opacity 0.2s ease-out;
   }
-  [data-scrolled='true'] .nav-scrim {
+  [data-scrolled='true'] .nav-scrim,
+  .nav-scrim.is-on {
     opacity: 1;
   }
 
