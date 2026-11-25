@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowRight, CaretDown, Plus } from '@phosphor-icons/react'
+import { ArrowRight, CaretDown } from '@phosphor-icons/react'
 import { programs } from '../../data/programs'
 import { requestEnquiry } from '../../utils/enquiry'
 import { Button } from '../ui/Button'
@@ -251,17 +251,19 @@ function MobileCards() {
               </AnimatePresence>
               <button
                 type="button"
-                onClick={() => setOpen(isOpen ? null : p.id)}
+                onClick={(e) => {
+                  const card = e.currentTarget.closest('article')
+                  setOpen(isOpen ? null : p.id)
+                  // Collapsing: once the card has folded up, glide back to its top (a smooth scroll started
+                  // during the collapse gets cancelled by the layout change)
+                  if (isOpen && card) {
+                    window.setTimeout(() => window.scrollTo({ top: card.getBoundingClientRect().top + window.scrollY - 110, behavior: 'smooth' }), 420)
+                  }
+                }}
                 aria-expanded={isOpen}
-                className={cn(
-                  'relative mt-5 inline-flex min-h-11 items-center gap-2.5 rounded-full border py-1.5 pr-4 pl-1.5 font-mono text-xs font-semibold tracking-[0.16em] uppercase transition-colors duration-300',
-                  isOpen ? 'border-brand-400 bg-brand-500/15 text-brand-200' : 'border-brand-500/40 bg-brand-500/10 text-brand-300 hover:border-brand-400',
-                )}
+                className="mt-4 min-h-11 font-mono text-xs font-semibold tracking-[0.16em] text-brand-300 uppercase underline decoration-brand-500/60 underline-offset-[6px] transition-colors hover:text-brand-200"
               >
-                <span className={cn('grid size-7 place-items-center rounded-full bg-brand-500/90 text-ink transition-transform duration-300', isOpen && 'rotate-45')}>
-                  <Plus className="size-3.5" weight="bold" />
-                </span>
-                {isOpen ? 'Show less' : 'Learn more'}
+                {isOpen ? 'Less' : 'More'}
               </button>
             </div>
           </Reveal>
