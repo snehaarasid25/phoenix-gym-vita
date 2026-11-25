@@ -63,7 +63,6 @@ const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
       featured.map((post, i) => (
         <article class="reveal w-[326px] shrink-0 snap-start" style={`--d:${(Math.min(i, 3) * 0.08).toFixed(2)}s`}>
           <p class="eyebrow mb-3 flex items-center gap-3 text-ash-400">
-            <span class="text-brand-400">{String(i + 1).padStart(2, '0')}</span>
             <span class="h-px w-6 bg-brand-500/50" aria-hidden="true" />
             {post.type === 'reel' ? 'Reel' : 'Post'}
           </p>

@@ -116,7 +116,6 @@ const jsonLd = structuredData ? JSON.stringify([localBusinessSchema(), websiteSc
       )
     }
 
-    <div id="scroll-progress" aria-hidden="true"></div>
 
     <!-- Hydrates when the browser is idle: its HTML is already on the page, so nothing waits on it -->
     <Navbar client:idle pathname={pathname} />

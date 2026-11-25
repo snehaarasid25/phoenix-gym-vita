@@ -52,8 +52,7 @@ const span: Record<NonNullable<Facility['size']>, string> = {
           <div class="absolute inset-0 -z-10 bg-brand-600/0 mix-blend-color transition-colors duration-700 group-hover:bg-brand-600/25" aria-hidden="true" />
 
           <div class="flex h-full flex-col justify-between p-5 sm:p-7">
-            <div class="flex items-start justify-between gap-3">
-              <span class="font-mono text-xs text-bone/70">{String(i + 1).padStart(2, '0')}</span>
+            <div class="flex items-start justify-end gap-3">
               {f.status === 'proposed' && <PlaceholderBadge label="To verify" />}
             </div>
             <div>

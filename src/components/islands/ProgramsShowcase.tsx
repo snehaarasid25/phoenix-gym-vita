@@ -48,7 +48,6 @@ function DesktopShowcase() {
                 onClick={() => setActive(i)}
                 className="group flex w-full items-center gap-6 py-5 text-left xl:py-6"
               >
-                <span className={cn('font-mono text-xs transition-colors', isActive ? 'text-brand-400' : 'text-ash-400')}>{prog.index}</span>
                 <span
                   className={cn(
                     'flex-1 font-display text-5xl leading-none uppercase transition-all duration-500 ease-[var(--ease-out-expo)] xl:text-6xl',
@@ -167,10 +166,10 @@ function MobileCards() {
         const isOpen = open === p.id
         return (
           <Reveal as="article" key={p.id} delay={i * 0.05} className="w-[88%] max-w-md shrink-0 snap-start overflow-hidden rounded-[1.5rem] card-lux sm:w-[58%]">
+            <span className="plan-aura pointer-events-none absolute inset-0" aria-hidden />
             <div className="relative aspect-[4/3]">
               <Img image={p.image} sizes="(min-width:640px) 46vw, 82vw" width={768} className="size-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-ash-850 to-transparent" aria-hidden />
-              <span className="absolute top-4 left-4 font-mono text-xs text-bone/80">{p.index}</span>
               {!p.verified && <PlaceholderBadge label="TBC" className="absolute top-3 right-3" />}
             </div>
             <div className="-mt-10 p-5">
@@ -197,9 +196,12 @@ function MobileCards() {
                 type="button"
                 onClick={() => setOpen(isOpen ? null : p.id)}
                 aria-expanded={isOpen}
-                className="mt-4 flex min-h-11 items-center gap-2 font-mono text-xs font-semibold tracking-[0.16em] text-bone uppercase"
+                className={cn(
+                  'relative mt-5 inline-flex min-h-11 items-center gap-2.5 rounded-full border py-1.5 pr-4 pl-1.5 font-mono text-xs font-semibold tracking-[0.16em] uppercase transition-colors duration-300',
+                  isOpen ? 'border-brand-400 bg-brand-500/15 text-brand-200' : 'border-brand-500/40 bg-brand-500/10 text-brand-300 hover:border-brand-400',
+                )}
               >
-                <span className={cn('grid size-7 place-items-center rounded-full border border-bone/20 transition-transform duration-300', isOpen && 'rotate-45 border-brand-400 text-brand-400')}>
+                <span className={cn('grid size-7 place-items-center rounded-full bg-brand-500/90 text-ink transition-transform duration-300', isOpen && 'rotate-45')}>
                   <Plus className="size-3.5" weight="bold" />
                 </span>
                 {isOpen ? 'Show less' : 'Learn more'}
