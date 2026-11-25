@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
-import { ArrowClockwise, DownloadSimple, MagnifyingGlass, Phone, SignOut, Trash, WhatsappLogo } from '@phosphor-icons/react'
+import { ArrowClockwise, CaretDown, DownloadSimple, MagnifyingGlass, Phone, SignOut, Trash, WhatsappLogo } from '@phosphor-icons/react'
 import { field, supabase } from './admin/client'
 import { OffersEditor, PlansEditor, ReviewsEditor, SettingsEditor } from './admin/ContentEditors'
 import { cn } from '../../utils/cn'
+import { formatINR } from '../../utils/contact'
+import { site } from '../../config/site'
 
 const TABS = [
   { id: 'enquiries', label: 'Enquiries' },
@@ -42,6 +44,29 @@ interface Enquiry {
 const waNumber = (phone: string) => {
   const d = phone.replace(/\D/g, '')
   return d.length === 10 ? `91${d}` : d
+}
+interface PlanLite {
+  name: string
+  duration: string
+  price: number | null
+  price_note: string | null
+}
+const MAP_LINK = site.location.geo ? `https://maps.google.com/?q=${site.location.geo.lat},${site.location.geo.lng}` : site.location.mapsUrl
+/** Ready-made WhatsApp replies, personalised with the enquiry's name, interest and the current plans. */
+function replyTemplates(r: Enquiry, plans: PlanLite[]) {
+  const first = r.name.trim().split(/\s+/)[0]
+  const about = r.interest ? ` about ${r.interest}` : ''
+  const priceLines = plans.map((p) => `• ${p.name} (${p.duration})${p.price !== null ? `: ${formatINR(p.price)}${p.price_note ? ` ${p.price_note}` : ''}` : ''}`).join('\n')
+  return [
+    { label: 'Hello', text: `Hi ${first}, this is Phoenix Gym Vita. Thanks for your enquiry${about}! How can we help you?` },
+    {
+      label: 'Send prices',
+      text: `Hi ${first}, thanks for your interest in Phoenix Gym Vita! Here are our membership plans:\n\n${priceLines}\n\nWould you like to visit and see the gym?`,
+    },
+    { label: 'Invite for a visit', text: `Hi ${first}, we'd love to show you around Phoenix Gym Vita. When would suit you to drop by?\n\nLocation: ${MAP_LINK}` },
+    { label: 'Follow-up', text: `Hi ${first}, just checking in from Phoenix Gym Vita about your enquiry${about}. Do you have any questions we can help with?` },
+    { label: 'Welcome (joined)', text: `Hi ${first}, welcome to Phoenix Gym Vita! We're excited to have you with us. See you on the floor! 🔥` },
+  ]
 }
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
@@ -230,6 +255,15 @@ function Inbox() {
   const [error, setError] = useState<string | null>(null)
   const [q, setQ] = useState('')
   const [filter, setFilter] = useState<Status | 'all'>('all')
+  const [plans, setPlans] = useState<PlanLite[]>([])
+  useEffect(() => {
+    supabase!
+      .from('plans')
+      .select('name,duration,price,price_note')
+      .eq('visible', true)
+      .order('sort')
+      .then(({ data }) => setPlans((data ?? []) as PlanLite[]))
+  }, [])
 
   const query = () => supabase!.from('enquiries').select('*').order('created_at', { ascending: false }).limit(1000)
   const apply = useCallback(({ data, error }: { data: unknown; error: { message: string } | null }) => {
@@ -257,6 +291,10 @@ function Inbox() {
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)))
     const { error } = await supabase!.from('enquiries').update(patch).eq('id', id)
     if (error) setError(error.message)
+  }
+  /** Calling or messaging a new lead moves it to "Contacted" automatically. */
+  const markContacted = (r: Enquiry) => {
+    if (r.status === 'new') update(r.id, { status: 'contacted' })
   }
   const remove = async (id: string) => {
     if (!window.confirm('Delete this enquiry permanently?')) return
@@ -362,17 +400,33 @@ function Inbox() {
             {r.message && <p className="mt-3 text-sm leading-relaxed whitespace-pre-line text-ash-300">{r.message}</p>}
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <a href={`tel:${r.phone}`} className="inline-flex items-center gap-2 rounded-full border border-bone/15 px-3.5 py-2 text-sm text-bone hover:border-brand-400">
+              <a href={`tel:${r.phone}`} onClick={() => markContacted(r)} className="inline-flex items-center gap-2 rounded-full border border-bone/15 px-3.5 py-2 text-sm text-bone hover:border-brand-400">
                 <Phone className="size-4 text-brand-400" weight="fill" /> {r.phone}
               </a>
-              <a
-                href={`https://wa.me/${waNumber(r.phone)}?text=${encodeURIComponent(`Hi ${r.name}, this is Phoenix Gym Vita about your enquiry.`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3.5 py-2 text-sm text-emerald-200 hover:border-emerald-300"
-              >
-                <WhatsappLogo className="size-4" weight="fill" /> WhatsApp
-              </a>
+              <details className="group order-last w-full sm:order-none sm:w-auto">
+                <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3.5 py-2 text-sm text-emerald-200 hover:border-emerald-300 [&::-webkit-details-marker]:hidden">
+                  <WhatsappLogo className="size-4" weight="fill" /> WhatsApp
+                  <CaretDown className="size-3.5 transition-transform group-open:rotate-180" weight="bold" />
+                </summary>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {replyTemplates(r, plans).map((t) => (
+                    <a
+                      key={t.label}
+                      href={`https://wa.me/${waNumber(r.phone)}?text=${encodeURIComponent(t.text)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={t.text}
+                      onClick={(e) => {
+                        markContacted(r)
+                        e.currentTarget.closest('details')?.removeAttribute('open')
+                      }}
+                      className="rounded-full border border-emerald-400/30 px-3 py-1.5 text-xs text-emerald-100 hover:border-emerald-300 hover:bg-emerald-400/10"
+                    >
+                      {t.label}
+                    </a>
+                  ))}
+                </div>
+              </details>
               <button type="button" onClick={() => remove(r.id)} aria-label={`Delete enquiry from ${r.name}`} className="ml-auto grid size-9 place-items-center rounded-full text-ash-400 hover:bg-red-500/10 hover:text-red-300">
                 <Trash className="size-4" />
               </button>

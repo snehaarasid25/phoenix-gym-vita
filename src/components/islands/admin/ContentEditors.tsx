@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowDown, ArrowUp, Camera, Plus, Trash } from '@phosphor-icons/react'
 import { field, labelCls, LIVE_NOTE, supabase } from './client'
 import { cn } from '../../../utils/cn'
@@ -66,6 +66,60 @@ function AddBtn({ onClick, children }: { onClick: () => void; children: React.Re
   )
 }
 const today = () => new Date().toLocaleDateString('en-CA') // YYYY-MM-DD (local)
+const addDays = (ymd: string, n: number) => {
+  const d = new Date(`${ymd}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() + n)
+  return d.toISOString().slice(0, 10)
+}
+
+const CUSTOM = '__custom'
+/** Dropdown of presets with a "Custom…" option that reveals a free-text box. */
+function PresetSelect({ value, options, onChange, placeholder }: { value: string; options: readonly string[]; onChange: (v: string) => void; placeholder?: string }) {
+  const [forceCustom, setForceCustom] = useState(false)
+  const showCustom = forceCustom || (value !== '' && !options.includes(value))
+  return (
+    <>
+      <select
+        className={field}
+        value={showCustom ? CUSTOM : value}
+        onChange={(e) => {
+          if (e.target.value === CUSTOM) return setForceCustom(true)
+          setForceCustom(false)
+          onChange(e.target.value)
+        }}
+      >
+        {value === '' && !showCustom && (
+          <option value="" disabled>
+            Choose…
+          </option>
+        )}
+        {options.map((o) => (
+          <option key={o} value={o} className="bg-ash-900">
+            {o}
+          </option>
+        ))}
+        <option value={CUSTOM} className="bg-ash-900">
+          Custom…
+        </option>
+      </select>
+      {showCustom && <input aria-label={placeholder} className={cn(field, 'mt-2')} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />}
+    </>
+  )
+}
+function Chip({ onClick, active, children }: { onClick: () => void; active?: boolean; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'rounded-full border px-3 py-1.5 text-xs transition-colors',
+        active ? 'border-brand-400 bg-brand-500/20 text-brand-200' : 'border-bone/15 text-ash-300 hover:border-brand-400 hover:text-bone',
+      )}
+    >
+      {children}
+    </button>
+  )
+}
 
 /* ── Plans ────────────────────────────────────────────────────────────── */
 interface PlanRow {
@@ -81,6 +135,24 @@ interface PlanRow {
   visible: boolean
   _new?: boolean
 }
+const DURATIONS = [
+  { duration: '1 Month', name: 'Monthly' },
+  { duration: '3 Months', name: 'Quarterly' },
+  { duration: '6 Months', name: 'Half-Yearly' },
+  { duration: '12 Months', name: 'Annual' },
+] as const
+const BENEFIT_IDEAS = [
+  'Full gym floor access',
+  'Strength & cardio zones',
+  'HYROX training zone',
+  'Steam bath access',
+  'Yoga & mobility area',
+  'Trainer guidance',
+  'Diet guidance',
+  'Locker access',
+  'Progress check-ins',
+  'Orientation on first visit',
+]
 const slug = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)
 
 export function PlansEditor({ notify }: { notify: Notify }) {
@@ -92,6 +164,14 @@ export function PlansEditor({ notify }: { notify: Notify }) {
     const id = r._new ? slug(r.name) : r.id
     if (!id || !r.name.trim() || !r.duration.trim()) return notify('Name and duration are required.', true)
     setBusy(r.id)
+    // Only one featured plan: un-feature the others first
+    if (r.highlight) {
+      const { error } = await supabase!.from('plans').update({ highlight: false }).neq('id', id).eq('highlight', true)
+      if (error) {
+        setBusy(null)
+        return notify(error.message, true)
+      }
+    }
     const { _new: _, ...row } = { ...r, id, benefits: r.benefits.map((b) => b.trim()).filter(Boolean) }
     const { error } = await supabase!.from('plans').upsert(row)
     setBusy(null)
@@ -137,11 +217,21 @@ export function PlansEditor({ notify }: { notify: Notify }) {
       {rows.map((r, i) => (
         <Panel key={r.id}>
           <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Duration">
+              <PresetSelect
+                value={r.duration}
+                options={DURATIONS.map((d) => d.duration)}
+                placeholder="e.g. 2 Months"
+                onChange={(v) => {
+                  const preset = DURATIONS.find((d) => d.duration === v)
+                  // Fill the name too, unless the owner typed their own
+                  const autoName = preset && (!r.name || DURATIONS.some((d) => d.name === r.name))
+                  patch(r.id, { duration: v, ...(autoName ? { name: preset.name } : {}) })
+                }}
+              />
+            </Field>
             <Field label="Plan name">
               <input className={field} value={r.name} onChange={(e) => patch(r.id, { name: e.target.value })} placeholder="e.g. Annual" />
-            </Field>
-            <Field label="Duration">
-              <input className={field} value={r.duration} onChange={(e) => patch(r.id, { duration: e.target.value })} placeholder="e.g. 12 Months" />
             </Field>
             <Field label="Price (₹)">
               <input
@@ -161,12 +251,37 @@ export function PlansEditor({ notify }: { notify: Notify }) {
             <Field label="Benefits (one per line)" className="sm:col-span-2">
               <textarea className={cn(field, 'resize-y')} rows={4} value={r.benefits.join('\n')} onChange={(e) => patch(r.id, { benefits: e.target.value.split('\n') })} />
             </Field>
+            <div className="sm:col-span-2">
+              <p className="mb-2 text-xs text-ash-400">Tap to add:</p>
+              <div className="flex flex-wrap gap-2">
+                {BENEFIT_IDEAS.filter((b) => !r.benefits.some((x) => x.trim().toLowerCase() === b.toLowerCase())).map((b) => (
+                  <Chip key={b} onClick={() => patch(r.id, { benefits: [...r.benefits.filter((x) => x.trim()), b] })}>
+                    + {b}
+                  </Chip>
+                ))}
+              </div>
+            </div>
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Toggle checked={r.visible} onChange={(v) => patch(r.id, { visible: v })} label="Show on website" />
-            <Toggle checked={r.highlight} onChange={(v) => patch(r.id, { highlight: v })} label="Highlight this plan" />
+            <Toggle
+              checked={r.highlight}
+              label="Highlight this plan (only one)"
+              onChange={(v) =>
+                setRows((rs) =>
+                  rs!.map((x) => (x.id === r.id ? { ...x, highlight: v, highlight_label: v ? (x.highlight_label ?? 'Best value') : x.highlight_label } : v ? { ...x, highlight: false } : x)),
+                )
+              }
+            />
             {r.highlight && (
-              <input className={cn(field, 'max-w-xs py-2 text-sm')} value={r.highlight_label ?? ''} onChange={(e) => patch(r.id, { highlight_label: e.target.value || null })} placeholder="Badge, e.g. Best value" />
+              <div className="w-full max-w-xs">
+                <PresetSelect
+                  value={r.highlight_label ?? ''}
+                  options={['Best value', 'Most popular', 'Recommended', 'Full-year commitment']}
+                  onChange={(v) => patch(r.id, { highlight_label: v || null })}
+                  placeholder="Badge text"
+                />
+              </div>
             )}
           </div>
           <div className="mt-5 flex items-center gap-2">
@@ -204,6 +319,44 @@ interface OfferRow {
   active: boolean
   _new?: boolean
 }
+const OCCASIONS = [
+  { title: 'Launch offer', description: 'Pre-book before we open and save on your membership.' },
+  { title: 'Diwali offer', description: 'Celebrate Diwali with a stronger you. Festive savings on memberships.' },
+  { title: 'Navratri offer', description: 'Nine nights of celebration, a lifetime of strength. Navratri savings on memberships.' },
+  { title: 'Dussehra offer', description: 'Win over your excuses this Dussehra. Special savings on memberships.' },
+  { title: 'New Year offer', description: 'New year, stronger you. Start the year with savings on your membership.' },
+  { title: 'Republic Day offer', description: 'Celebrate Republic Day with savings on memberships.' },
+  { title: 'Holi offer', description: 'Add some colour to your fitness. Holi savings on memberships.' },
+  { title: "Women's Day offer", description: "Celebrating strong women. Special Women's Day savings on memberships." },
+  { title: 'Summer offer', description: 'Get summer-ready with savings on memberships.' },
+  { title: 'Independence Day offer', description: 'Freedom to be your strongest. Independence Day savings on memberships.' },
+  { title: 'Ganesh Chaturthi offer', description: 'Begin something new this Ganesh Chaturthi, with festive savings on memberships.' },
+  { title: 'Christmas offer', description: 'Gift yourself strength this Christmas. Festive savings on memberships.' },
+]
+const DISCOUNTS = [5, 10, 15, 20, 25, 30, 50]
+/** Quick date ranges, starting today (or the offer's future start date). */
+const RANGES: { label: string; range: (start: string) => [string, string] }[] = [
+  { label: '1 week', range: (s) => [s, addDays(s, 6)] },
+  { label: '2 weeks', range: (s) => [s, addDays(s, 13)] },
+  {
+    label: 'Till month end',
+    range: (s) => {
+      const [y, m] = s.split('-').map(Number)
+      return [s, new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10)]
+    },
+  },
+  {
+    label: 'This weekend',
+    range: () => {
+      const t = today()
+      const dow = new Date(`${t}T00:00:00Z`).getUTCDay()
+      if (dow === 0) return [t, t]
+      const sat = addDays(t, 6 - dow)
+      return [sat, addDays(sat, 1)]
+    },
+  },
+]
+
 const offerState = (o: OfferRow) => {
   const t = today()
   if (!o.active) return { label: 'Off', tone: 'border-bone/15 text-ash-400' }
@@ -249,7 +402,7 @@ export function OffersEditor({ notify }: { notify: Notify }) {
     }
   }
   const add = () =>
-    setRows((rs) => [{ id: `new-${Date.now()}`, title: '', description: null, discount_percent: 10, plan_ids: [], starts_on: today(), ends_on: today(), active: true, _new: true }, ...(rs ?? [])])
+    setRows((rs) => [{ id: `new-${Date.now()}`, title: '', description: null, discount_percent: 10, plan_ids: [], starts_on: today(), ends_on: addDays(today(), 6), active: true, _new: true }, ...(rs ?? [])])
 
   if (!rows) return <p className="text-sm text-ash-400">Loading…</p>
   return (
@@ -263,9 +416,20 @@ export function OffersEditor({ notify }: { notify: Notify }) {
           <Panel key={r.id}>
             {!r._new && <span className={cn('mb-4 inline-block rounded-full border px-3 py-1 font-mono text-[0.62rem] tracking-[0.14em] uppercase', st.tone)}>{st.label}</span>}
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Title">
-                <input className={field} value={r.title} onChange={(e) => patch(r.id, { title: e.target.value })} placeholder="e.g. Diwali offer" />
+              <Field label="Occasion">
+                <PresetSelect
+                  value={r.title}
+                  options={OCCASIONS.map((o) => o.title)}
+                  placeholder="Offer title, e.g. Anniversary offer"
+                  onChange={(v) => {
+                    const preset = OCCASIONS.find((o) => o.title === v)
+                    // Suggest the matching description unless the owner wrote their own
+                    const autoDesc = preset && (!r.description || OCCASIONS.some((o) => o.description === r.description))
+                    patch(r.id, { title: v, ...(autoDesc ? { description: preset.description } : {}) })
+                  }}
+                />
               </Field>
+              <div>
               <Field label="Discount (%)">
                 <input
                   className={field}
@@ -278,12 +442,42 @@ export function OffersEditor({ notify }: { notify: Notify }) {
                   placeholder="e.g. 20 (empty = no % shown)"
                 />
               </Field>
+                <span className="mt-2 flex flex-wrap gap-1.5">
+                  {DISCOUNTS.map((d) => (
+                    <Chip key={d} active={r.discount_percent === d} onClick={() => patch(r.id, { discount_percent: d })}>
+                      {d}%
+                    </Chip>
+                  ))}
+                </span>
+              </div>
               <Field label="Starts on">
-                <input type="date" className={field} value={r.starts_on} onChange={(e) => patch(r.id, { starts_on: e.target.value })} />
+                <input
+                  type="date"
+                  className={field}
+                  value={r.starts_on}
+                  onChange={(e) => {
+                    const v = e.target.value
+                    if (v) patch(r.id, { starts_on: v, ...(r.ends_on < v ? { ends_on: addDays(v, 6) } : {}) })
+                  }}
+                />
               </Field>
               <Field label="Ends on">
-                <input type="date" className={field} value={r.ends_on} onChange={(e) => patch(r.id, { ends_on: e.target.value })} />
+                <input type="date" className={field} value={r.ends_on} onChange={(e) => e.target.value && patch(r.id, { ends_on: e.target.value })} />
               </Field>
+              <div className="flex flex-wrap items-center gap-1.5 sm:col-span-2">
+                <span className="mr-1 text-xs text-ash-400">Quick dates:</span>
+                {RANGES.map(({ label, range }) => (
+                  <Chip
+                    key={label}
+                    onClick={() => {
+                      const [starts_on, ends_on] = range(r.starts_on > today() ? r.starts_on : today())
+                      patch(r.id, { starts_on, ends_on })
+                    }}
+                  >
+                    {label}
+                  </Chip>
+                ))}
+              </div>
               <Field label="Short description (optional)" className="sm:col-span-2">
                 <input className={field} value={r.description ?? ''} onChange={(e) => patch(r.id, { description: e.target.value || null })} placeholder="e.g. Join before 15 Nov and save on your first year." />
               </Field>
@@ -341,9 +535,20 @@ async function toAvatar(file: File): Promise<Blob> {
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Could not process image'))), 'image/webp', 0.85))
 }
 
+const REVIEWER_LINES = ['Member', 'Pre-booked member', `Member since ${new Date().getFullYear()}`, 'HYROX athlete', 'Yoga member', 'Personal training client']
+
 export function ReviewsEditor({ notify }: { notify: Notify }) {
   const [rows, setRows, reload] = useTable<ReviewRow>('reviews', 'sort', notify)
   const [busy, setBusy] = useState<string | null>(null)
+  const quoteEls = useRef<Record<string, HTMLTextAreaElement | null>>({})
+  /** Gold phrase = whatever the owner selected in the review text (selection survives the button tap). */
+  const takeSelection = (r: ReviewRow) => {
+    const el = quoteEls.current[r.id]
+    const sel = el ? el.value.slice(el.selectionStart, el.selectionEnd).trim() : ''
+    if (!sel) return notify('First select (highlight) a few words in the review, then tap “Use selected text”.', true)
+    if (sel.length > 120) return notify('That selection is too long for the gold phrase (max 120 characters).', true)
+    patch(r.id, { highlight: sel })
+  }
   const patch = (id: string, p: Partial<ReviewRow>) => setRows((rs) => rs!.map((r) => (r.id === id ? { ...r, ...p } : r)))
 
   const upload = async (r: ReviewRow, file?: File) => {
@@ -406,16 +611,43 @@ export function ReviewsEditor({ notify }: { notify: Notify }) {
                 <input className={field} value={r.name} onChange={(e) => patch(r.id, { name: e.target.value })} placeholder="e.g. Rahul P." />
               </Field>
               <Field label="Line under the name">
-                <input className={field} value={r.detail} onChange={(e) => patch(r.id, { detail: e.target.value })} placeholder="e.g. Member since 2026" />
+                <PresetSelect value={r.detail} options={REVIEWER_LINES} onChange={(v) => patch(r.id, { detail: v })} placeholder="e.g. Morning batch regular" />
               </Field>
             </div>
           </div>
           <Field label="Review" className="mt-4">
-            <textarea className={cn(field, 'resize-y')} rows={4} value={r.quote} onChange={(e) => patch(r.id, { quote: e.target.value })} />
+            <textarea
+              ref={(el) => {
+                quoteEls.current[r.id] = el
+              }}
+              className={cn(field, 'resize-y')}
+              rows={4}
+              maxLength={600}
+              value={r.quote}
+              onChange={(e) => patch(r.id, { quote: e.target.value })}
+            />
           </Field>
-          <Field label="Phrase to show in gold (optional, copied exactly from the review)" className="mt-4">
-            <input className={field} value={r.highlight ?? ''} onChange={(e) => patch(r.id, { highlight: e.target.value || null })} />
-          </Field>
+          <div className="mt-4">
+            <p className={labelCls}>Phrase to show in gold (optional)</p>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <input
+                aria-label="Phrase to show in gold"
+                className={cn(field, r.highlight && !r.quote.includes(r.highlight) && 'border-red-400/60')}
+                value={r.highlight ?? ''}
+                onChange={(e) => patch(r.id, { highlight: e.target.value || null })}
+                placeholder="Select words in the review above, then tap the button"
+              />
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault() /* keep the textarea selection */}
+                onClick={() => takeSelection(r)}
+                className="h-12 shrink-0 rounded-full border border-brand-500/50 px-5 font-mono text-xs font-semibold tracking-[0.12em] text-brand-300 uppercase hover:border-brand-400 hover:bg-brand-500/10"
+              >
+                Use selected text
+              </button>
+            </div>
+            {r.highlight && !r.quote.includes(r.highlight) && <p className="mt-1.5 text-xs text-red-300">This phrase isn’t in the review text, so it won’t show in gold.</p>}
+          </div>
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3">
             <Toggle checked={r.visible} onChange={(v) => patch(r.id, { visible: v })} label="Show on website" />
             <Toggle checked={r.is_sample} onChange={(v) => patch(r.id, { is_sample: v })} label="Sample (labelled “not a real review”)" />
@@ -445,6 +677,27 @@ const STATUS_OPTIONS = [
   { value: 'open', label: 'Now open', hint: 'Buttons say “Join Phoenix”' },
 ] as const
 
+const DAY_SETS = ['Mon – Sat', 'Mon – Fri', 'Saturday', 'Sunday', 'Daily', 'Weekends']
+/** "Mon-Sat" / "mon - sat" → the matching preset "Mon – Sat" (else unchanged). */
+const matchDays = (d: string) => DAY_SETS.find((x) => x.replace(/[\s–-]/g, '').toLowerCase() === d.replace(/[\s–—-]/g, '').toLowerCase()) ?? d
+/** "5:30 AM" → "05:30" (for <input type=time>), and back. */
+const to24 = (t: string) => {
+  const m = t.trim().match(/^(\d{1,2})(?:[:.](\d{2}))?\s*([AP])\.?\s?M\.?$/i) // "5:30 AM", "10 PM", "6.00 a.m."
+  if (!m || Number(m[1]) > 12) return null
+  const h = (Number(m[1]) % 12) + (m[3].toUpperCase() === 'P' ? 12 : 0)
+  return `${String(h).padStart(2, '0')}:${m[2] ?? '00'}`
+}
+const to12 = (t: string) => {
+  const [h, m] = t.split(':').map(Number)
+  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`
+}
+const splitHours = (s: string) => {
+  const [a, b, extra] = s.split(/\s*[–—-]\s*/)
+  const open = a && to24(a)
+  const close = b && to24(b)
+  return open && close && !extra ? { open, close } : null
+}
+
 export function SettingsEditor({ notify }: { notify: Notify }) {
   const [status, setStatus] = useState<string | null>(null)
   const [hours, setHours] = useState<{ days: string; hours: string }[]>([])
@@ -458,7 +711,7 @@ export function SettingsEditor({ notify }: { notify: Notify }) {
       .then(({ data, error }) => {
         if (error) return notify(error.message, true)
         setStatus(data.launch_status)
-        setHours(data.hours ?? [])
+        setHours(((data.hours ?? []) as { days?: string; hours?: string }[]).map((h) => ({ days: matchDays(h.days ?? ''), hours: h.hours || '5:30 AM – 10:00 PM' })))
       })
   }, [notify])
 
@@ -492,16 +745,36 @@ export function SettingsEditor({ notify }: { notify: Notify }) {
         <p className={labelCls}>Opening hours</p>
         <p className="mb-3 text-sm text-ash-400">Leave empty to show “Timings announced soon”.</p>
         <div className="space-y-2">
-          {hours.map((h, i) => (
-            <div key={i} className="flex gap-2">
-              <input className={field} value={h.days} onChange={(e) => setHours((hs) => hs.map((x, j) => (j === i ? { ...x, days: e.target.value } : x)))} placeholder="e.g. Mon – Sat" />
-              <input className={field} value={h.hours} onChange={(e) => setHours((hs) => hs.map((x, j) => (j === i ? { ...x, hours: e.target.value } : x)))} placeholder="e.g. 5:30 AM – 10:00 PM" />
-              <DeleteBtn onClick={() => setHours((hs) => hs.filter((_, j) => j !== i))} label="Remove row" />
-            </div>
-          ))}
+          {hours.map((h, i) => {
+            const set = (p: Partial<{ days: string; hours: string }>) => setHours((hs) => hs.map((x, j) => (j === i ? { ...x, ...p } : x)))
+            const closed = h.hours.trim().toLowerCase() === 'closed'
+            const times = splitHours(h.hours) ?? { open: '05:30', close: '22:00' }
+            const parsed = closed || !h.hours.trim() || splitHours(h.hours)
+            return (
+              <div key={i} className="rounded-xl border border-bone/10 p-3">
+                <div className="flex items-start gap-2">
+                  <div className="min-w-0 flex-1">
+                    <PresetSelect value={h.days} options={DAY_SETS} onChange={(v) => set({ days: v })} placeholder="e.g. Tue – Sun" />
+                  </div>
+                  <DeleteBtn onClick={() => setHours((hs) => hs.filter((_, j) => j !== i))} label="Remove row" />
+                </div>
+                {parsed ? (
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <input type="time" aria-label="Opens" disabled={closed} className={cn(field, 'w-auto flex-1 disabled:opacity-40')} value={times.open} onChange={(e) => e.target.value && set({ hours: `${to12(e.target.value)} – ${to12(times.close)}` })} />
+                    <span className="text-ash-400">to</span>
+                    <input type="time" aria-label="Closes" disabled={closed} className={cn(field, 'w-auto flex-1 disabled:opacity-40')} value={times.close} onChange={(e) => e.target.value && set({ hours: `${to12(times.open)} – ${to12(e.target.value)}` })} />
+                    <Toggle checked={closed} onChange={(v) => set({ hours: v ? 'Closed' : `${to12(times.open)} – ${to12(times.close)}` })} label="Closed" />
+                  </div>
+                ) : (
+                  <input className={cn(field, 'mt-2')} value={h.hours} onChange={(e) => set({ hours: e.target.value })} aria-label="Hours" />
+                )}
+                <p className="mt-2 text-xs text-ash-400">Shows as: <span className="text-bone">{h.days || '…'} · {h.hours || '…'}</span></p>
+              </div>
+            )
+          })}
         </div>
         <div className="mt-3">
-          <AddBtn onClick={() => setHours((hs) => [...hs, { days: '', hours: '' }])}>Add row</AddBtn>
+          <AddBtn onClick={() => setHours((hs) => [...hs, hs.length ? { days: 'Sunday', hours: '6:00 AM – 12:00 PM' } : { days: 'Mon – Sat', hours: '5:30 AM – 10:00 PM' }])}>Add row</AddBtn>
         </div>
       </Panel>
       <SaveBtn onClick={save} busy={busy}>
