@@ -1,5 +1,6 @@
 import { site } from '../config/site'
 import type { InstagramPost, Pillar, Testimonial } from '../types'
+import { remote } from './remote'
 
 /** "Why Phoenix" differentiators — built on what the launch poster confirms. */
 export const pillars: Pillar[] = [
@@ -31,7 +32,7 @@ export const pillars: Pillar[] = [
  * production build. Replace with real member feedback (with their permission)
  * and set `isSample: false`.
  */
-export const testimonials: Testimonial[] = [
+const builtInTestimonials: Testimonial[] = [
   // ✅ Real review (shared by Sneha, with her photo, for the website)
   {
     id: 'sneha',
@@ -65,6 +66,22 @@ export const testimonials: Testimonial[] = [
     isSample: true,
   },
 ]
+
+/** True when the reviews come from the owner's admin (Supabase) rather than the built-in list. */
+export const reviewsFromAdmin = Array.isArray(remote.reviews)
+
+/** Reviews: owner-managed in /admin → Reviews (Supabase), else the built-in list above. */
+export const testimonials: Testimonial[] = reviewsFromAdmin
+  ? remote.reviews!.map((r) => ({
+      id: r.id,
+      quote: r.quote,
+      name: r.name,
+      detail: r.detail,
+      photo: r.photo_url ?? undefined,
+      highlight: r.highlight ?? undefined,
+      isSample: r.is_sample,
+    }))
+  : builtInTestimonials
 
 /**
  * Instagram posts shown as OFFICIAL Instagram embeds (real thumbnails, playable

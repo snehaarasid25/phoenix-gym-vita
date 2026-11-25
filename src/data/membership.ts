@@ -1,5 +1,6 @@
 import { cta } from '../config/site'
 import type { MembershipPlan } from '../types'
+import { remote } from './remote'
 
 /**
  * Membership plans.
@@ -10,7 +11,7 @@ import type { MembershipPlan } from '../types'
  *
  * Benefits are generic placeholders. Replace with what each plan actually includes.
  */
-export const plans: MembershipPlan[] = [
+const builtInPlans: MembershipPlan[] = [
   {
     id: 'monthly',
     name: 'Monthly',
@@ -46,5 +47,20 @@ export const plans: MembershipPlan[] = [
     verified: false,
   },
 ]
+
+/** Plans: owner-managed in /admin → Plans (Supabase), else the built-in list above. */
+export const plans: MembershipPlan[] = remote.plans?.length
+  ? remote.plans.map((p) => ({
+      id: p.id,
+      name: p.name,
+      duration: p.duration,
+      price: p.price,
+      priceNote: p.price_note ?? undefined,
+      benefits: p.benefits,
+      highlight: p.highlight,
+      highlightLabel: p.highlight_label ?? undefined,
+      verified: true,
+    }))
+  : builtInPlans
 
 export const membershipNote = `${cta.status}. Plans and pricing are being finalised, so message us to register your interest and hear about opening offers first.`

@@ -1,14 +1,21 @@
 ---
 /** Membership plans. Featured plan = same card, gold edge + lift + overhanging badge. */
-import { Check, Info } from '@phosphor-icons/react'
+import { Check, Info, SealPercent } from '@phosphor-icons/react'
 import { membershipNote, plans } from '../data/membership'
+import { fmtOfferDate, isLive, offerFor, offers } from '../data/offers'
 import SectionHeader from '../components/SectionHeader.astro'
 import { Button } from '../components/ui/Button'
 import { PlaceholderBadge } from '../components/ui/PlaceholderBadge'
 import { cn } from '../utils/cn'
+import { site } from '../config/site'
 import { formatINR } from '../utils/contact'
 
+const launchLine = { 'prebooking-soon': 'pre-booking for Vita is opening soon.', 'prebooking-open': 'pre-booking for Vita is now open.', open: 'Phoenix Vita is now open.' }[site.launchStatus]
 const anyUnverified = plans.some((p) => !p.verified)
+const planName = (id: string) => plans.find((p) => p.id === id)?.name ?? id
+const offerScope = (ids: string[]) => (ids.length ? ids.map(planName).join(', ') : 'all plans')
+// Offer elements carry their dates; scripts/site.ts re-checks them in the browser so they switch on/off on time
+const offerAttrs = (o: { startsOn: string; endsOn: string }) => ({ 'data-offer-start': o.startsOn, 'data-offer-end': o.endsOn, 'data-offer-live': String(isLive(o)) })
 ---
 
 <section id="membership" aria-labelledby="membership-title" class="section-y relative isolate overflow-hidden">
@@ -20,8 +27,25 @@ const anyUnverified = plans.some((p) => !p.verified)
       id="membership-title"
       eyebrow="Gym membership"
       lines={['Commit to', { text: 'the climb.', class: 'text-brand-gradient' }]}
-      intro="Choose the gym membership that matches your ambition. Longer plans give you the time consistency needs to pay off, and pre-booking for Vita is opening soon."
+      intro={`Choose the gym membership that matches your ambition. Longer plans give you the time consistency needs to pay off, and ${launchLine}`}
     />
+
+    {offers.length > 0 && (
+      <ul class="mt-10 space-y-3 sm:mt-14">
+        {offers.map((o) => (
+          <li {...offerAttrs(o)} class="offer-on reveal relative overflow-hidden rounded-2xl border border-brand-400/50 bg-brand-500/10 px-5 py-4 sm:px-6">
+            <span class="sheen" aria-hidden="true"></span>
+            <div class="relative flex flex-wrap items-center gap-x-4 gap-y-1.5">
+              <SealPercent className="size-6 shrink-0 text-brand-400" weight="fill" />
+              <p class="font-display text-2xl leading-none tracking-wide text-bone uppercase">{o.title}</p>
+              {o.discountPercent && <p class="font-semibold text-brand-300">{o.discountPercent}% off {offerScope(o.planIds)}</p>}
+              <p class="font-mono text-xs tracking-[0.14em] text-ash-300 uppercase sm:ml-auto">Till {fmtOfferDate(o.endsOn)}</p>
+            </div>
+            {o.description && <p class="relative mt-2 text-sm text-ash-300 sm:pl-10">{o.description}</p>}
+          </li>
+        ))}
+      </ul>
+    )}
 
     <!-- Phones: swipeable row (next card peeks in) + dots; md+: grid -->
     <div
@@ -29,8 +53,12 @@ const anyUnverified = plans.some((p) => !p.verified)
       data-carousel
       class="no-scrollbar -mx-5 mt-12 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pt-5 pb-2 sm:-mx-8 sm:mt-16 sm:scroll-px-8 sm:px-8 md:mx-0 md:mt-24 md:grid md:snap-none md:grid-cols-2 md:gap-x-4 md:gap-y-10 md:overflow-visible md:px-0 md:pt-0 md:pb-0 xl:grid-cols-4"
     >
-      {plans.map((plan, i) => (
+      {plans.map((plan, i) => {
+        const offer = offerFor(plan.id)
+        const discounted = offer?.discountPercent && plan.price !== null ? Math.round((plan.price * (100 - offer.discountPercent)) / 100) : null
+        return (
         <article
+          {...(offer ? offerAttrs(offer) : {})}
           class={"reveal " + cn(
             /* Featured plan = same object, chosen: same surface, gold edge + lift. Never a different fill. */
             'card-lux group flex w-[84%] shrink-0 snap-start flex-col rounded-[1.75rem] p-7 hover:-translate-y-1.5 sm:w-[70%] sm:p-8 md:w-auto',
@@ -56,6 +84,12 @@ const anyUnverified = plans.some((p) => !p.verified)
           )}
 
           <div class="relative">
+            {offer && (
+              <p class="offer-on mb-3 inline-flex items-center gap-1.5 rounded-full border border-brand-400/60 bg-brand-500/15 px-2.5 py-1 font-mono text-[0.62rem] font-semibold tracking-[0.14em] text-brand-200 uppercase">
+                <SealPercent className="size-3.5" weight="fill" />
+                {offer.title}{offer.discountPercent && <> · {offer.discountPercent}% off</>}
+              </p>
+            )}
             <p class="eyebrow whitespace-nowrap text-brand-400">{plan.duration}</p>
             <h3 class="mt-2 font-display text-5xl leading-none uppercase">{plan.name}</h3>
           </div>
@@ -64,14 +98,30 @@ const anyUnverified = plans.some((p) => !p.verified)
             <span class="block h-px bg-gradient-to-r from-brand-500/60 via-brand-500/20 to-transparent" aria-hidden="true"></span>
             <div class="py-6">
               {plan.price !== null ? (
-                <p class="flex items-baseline gap-2">
-                  <span class="font-display text-6xl leading-none tracking-[-0.01em] text-brand-gradient tabular-nums">{formatINR(plan.price)}</span>
-                  {plan.priceNote && <span class="eyebrow text-ash-400">{plan.priceNote}</span>}
-                </p>
+                <>
+                  <p class={cn('flex items-baseline gap-2', discounted !== null && 'offer-off')}>
+                    <span class="font-display text-6xl leading-none tracking-[-0.01em] text-brand-gradient tabular-nums">{formatINR(plan.price)}</span>
+                    {plan.priceNote && <span class="eyebrow text-ash-400">{plan.priceNote}</span>}
+                  </p>
+                  {discounted !== null && (
+                    <div class="offer-on">
+                      <p class="flex items-baseline gap-2">
+                        <span class="font-display text-6xl leading-none tracking-[-0.01em] text-brand-gradient tabular-nums">{formatINR(discounted)}</span>
+                        {plan.priceNote && <span class="eyebrow text-ash-400">{plan.priceNote}</span>}
+                      </p>
+                      <p class="mt-2 text-sm text-ash-400">
+                        <s class="decoration-brand-500/70">{formatINR(plan.price)}</s> · Save {offer!.discountPercent}% till {fmtOfferDate(offer!.endsOn)}
+                      </p>
+                    </div>
+                  )}
+                </>
               ) : (
                 <>
                   <p class="font-display text-4xl leading-none text-brand-gradient uppercase">Price on enquiry</p>
                   <p class="mt-2 text-sm text-ash-400">Message us for current rates.</p>
+                  {offer?.discountPercent && (
+                    <p class="offer-on mt-2 text-sm font-semibold text-brand-300">{offer.title}: {offer.discountPercent}% off till {fmtOfferDate(offer.endsOn)}</p>
+                  )}
                 </>
               )}
             </div>
@@ -96,7 +146,8 @@ const anyUnverified = plans.some((p) => !p.verified)
             Enquire now
           </Button>
         </article>
-      ))}
+        )
+      })}
     </div>
     <div data-carousel-dots="plans-track" class="mt-5 flex justify-center gap-2 md:hidden" aria-label="Choose a plan"></div>
 

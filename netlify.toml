@@ -1,0 +1,4 @@
+# Build = fetch owner-edited content from Supabase (scripts/fetch-content.mjs), then build the static site.
+[build]
+  command = "npm run build"
+  publish = "dist"

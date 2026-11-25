@@ -151,6 +151,15 @@ if (!reduceMotion && items.length) {
   }
 }
 
+/* ── Offers: switch on/off by date in the visitor's browser (local day), even between rebuilds ── */
+{
+  const d = new Date()
+  const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  document.querySelectorAll<HTMLElement>('[data-offer-start]').forEach((el) => {
+    el.dataset.offerLive = String(today >= (el.dataset.offerStart ?? '') && today <= (el.dataset.offerEnd ?? ''))
+  })
+}
+
 /* ── Enquire buttons (data-enquire="Annual membership") ───────────────── */
 document.addEventListener('click', (event) => {
   const trigger = (event.target as Element | null)?.closest<HTMLElement>('[data-enquire]')

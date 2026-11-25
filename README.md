@@ -148,6 +148,13 @@ The form asks for name, phone (required), interest, message and a consent tick, 
 A hidden honeypot field drops bots. "Enquire" buttons on programmes and membership plans pre-select the interest and
 scroll to the form. Backend setup, security model and the owner's inbox: see `docs/ADMIN_SETUP.md`.
 
+## Owner-editable content
+
+Plans, offers, reviews, launch status and opening hours are edited in `/admin` and stored in Supabase.
+`npm run build` / `npm run dev` first run `scripts/fetch-content.mjs`, which writes `src/data/remote.json` (git-ignored);
+if it's missing or empty the built-in data in `src/data/*.ts` is used. Saving in `/admin` triggers a Netlify build hook,
+so the live site updates in about a minute. Offers carry their dates and are re-checked in the browser (`src/scripts/site.ts`).
+
 ---
 
 ## Instagram

@@ -6,11 +6,12 @@
  */
 import { CalendarCheck, CaretLeft, CaretRight } from '@phosphor-icons/react'
 import { SHOW_PLACEHOLDER_BADGES, SHOW_SAMPLE_REVIEWS_LIVE, site } from '../config/site'
-import { testimonials } from '../data/content'
+import { reviewsFromAdmin, testimonials } from '../data/content'
 import ButtonLink from '../components/ButtonLink.astro'
 import SectionHeader from '../components/SectionHeader.astro'
 
-const visible = testimonials.filter((t) => !t.isSample || SHOW_PLACEHOLDER_BADGES || SHOW_SAMPLE_REVIEWS_LIVE)
+// Admin-managed reviews are shown as the owner set them (samples stay labelled); built-in ones follow the flags
+const visible = reviewsFromAdmin ? testimonials : testimonials.filter((t) => !t.isSample || SHOW_PLACEHOLDER_BADGES || SHOW_SAMPLE_REVIEWS_LIVE)
 /** Split a quote around its highlighted phrase (if any) so that phrase can be set in gold. */
 const parts = (quote: string, hl?: string) => {
   const at = hl ? quote.indexOf(hl) : -1

@@ -1,4 +1,5 @@
 import type { NavItem, OpeningHours } from '../types'
+import { remote } from '../data/remote'
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -43,8 +44,8 @@ export const site = {
    */
   claim: 'The biggest gym in Vita' as string | null,
 
-  // ⚠️ TODO — update as the launch progresses
-  launchStatus: 'prebooking-soon' as LaunchStatus,
+  // Owner sets this in /admin → Settings (falls back to the value here)
+  launchStatus: (remote.settings?.launch_status ?? 'prebooking-soon') as LaunchStatus,
 
   // ⚠️ TODO — production domain. Used for canonical URLs and OG tags.
   //    Keep in sync with SITE_URL in astro.config.mjs (sitemap + robots.txt).
@@ -90,11 +91,10 @@ export const site = {
   },
 
   /**
-   * ⚠️ TODO — opening hours (incl. family batch timings). `null` shows "Hours to be announced".
-   * Example:
-   *   [{ days: 'Mon – Sat', hours: '5:30 AM – 10:00 PM' }, { days: 'Sunday', hours: 'Closed' }]
+   * Opening hours: owner sets them in /admin → Settings. `null`/empty shows "Hours to be announced".
+   * Shape: [{ days: 'Mon – Sat', hours: '5:30 AM – 10:00 PM' }, { days: 'Sunday', hours: 'Closed' }]
    */
-  hours: null as OpeningHours[] | null,
+  hours: (remote.settings?.hours?.length ? remote.settings.hours : null) as OpeningHours[] | null,
 } as const
 
 /** Primary CTA wording for the current launch stage. */

@@ -7,3 +7,6 @@ dist
 
 # Personal source photos stay local; only processed web versions are published
 photos/originals/testimonial-*
+
+# Build-time content snapshot from Supabase (scripts/fetch-content.mjs)
+src/data/remote.json

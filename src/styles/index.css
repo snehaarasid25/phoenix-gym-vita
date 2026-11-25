@@ -520,6 +520,13 @@
     opacity: 1;
   }
 
+  /* Offers: shown only inside their date window (data-offer-live set at build, re-checked in the browser) */
+  [data-offer-live='false'].offer-on,
+  [data-offer-live='false'] .offer-on,
+  [data-offer-live='true'] .offer-off {
+    display: none !important; /* beats display utilities like flex */
+  }
+
   /* Instagram CTA card */
   .ig-card {
     position: relative;

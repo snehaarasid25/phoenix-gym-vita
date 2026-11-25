@@ -1,10 +1,19 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
-import { createClient, type Session } from '@supabase/supabase-js'
+import type { Session } from '@supabase/supabase-js'
 import { ArrowClockwise, DownloadSimple, MagnifyingGlass, Phone, SignOut, Trash, WhatsappLogo } from '@phosphor-icons/react'
-import { SUPABASE_ANON_KEY, SUPABASE_URL, supabaseEnabled } from '../../utils/supabase'
+import { field, supabase } from './admin/client'
+import { OffersEditor, PlansEditor, ReviewsEditor, SettingsEditor } from './admin/ContentEditors'
 import { cn } from '../../utils/cn'
 
-const supabase = supabaseEnabled ? createClient(SUPABASE_URL as string, SUPABASE_ANON_KEY as string) : null
+const TABS = [
+  { id: 'enquiries', label: 'Enquiries' },
+  { id: 'plans', label: 'Plans' },
+  { id: 'offers', label: 'Offers' },
+  { id: 'reviews', label: 'Reviews' },
+  { id: 'settings', label: 'Settings' },
+] as const
+type Tab = (typeof TABS)[number]['id']
+
 
 const STATUSES = ['new', 'contacted', 'visited', 'joined', 'closed'] as const
 type Status = (typeof STATUSES)[number]
@@ -28,8 +37,6 @@ interface Enquiry {
   notes: string | null
 }
 
-const field =
-  'w-full rounded-xl border border-bone/12 bg-ash-950/60 px-4 py-3 text-base text-bone outline-none transition-colors placeholder:text-ash-400 focus:border-brand-400'
 
 /** Indian numbers without a country code get +91 for WhatsApp links. */
 const waNumber = (phone: string) => {
@@ -82,13 +89,13 @@ export default function AdminApp() {
         <Card>
           <h1 className="font-display text-3xl uppercase">No access</h1>
           <p className="mt-3 text-sm text-ash-300">This account isn't an admin. Ask the site developer to grant access.</p>
-          <button type="button" onClick={() => supabase.auth.signOut()} className="mt-6 text-sm text-brand-300 underline underline-offset-4">
+          <button type="button" onClick={() => supabase!.auth.signOut()} className="mt-6 text-sm text-brand-300 underline underline-offset-4">
             Sign out
           </button>
         </Card>
       </Shell>
     )
-  return <Inbox email={session.user.email ?? ''} />
+  return <Dashboard email={session.user.email ?? ''} />
 }
 
 /* ── Layout bits ──────────────────────────────────────────────────────── */
@@ -152,8 +159,72 @@ function Login() {
   )
 }
 
+/* ── Signed-in dashboard: tabs + toast ───────────────────────────────── */
+function Dashboard({ email }: { email: string }) {
+  const [tab, setTab] = useState<Tab>(() => {
+    const h = window.location.hash.slice(1)
+    return TABS.some((t) => t.id === h) ? (h as Tab) : 'enquiries'
+  })
+  const [toast, setToast] = useState<{ msg: string; error?: boolean; n: number } | null>(null)
+  const notify = useCallback((msg: string, error?: boolean) => setToast((t) => ({ msg, error, n: (t?.n ?? 0) + 1 })), [])
+  useEffect(() => {
+    if (!toast) return
+    const id = window.setTimeout(() => setToast(null), toast.error ? 7000 : 4000)
+    return () => window.clearTimeout(id)
+  }, [toast])
+  const go = (t: Tab) => {
+    setTab(t)
+    history.replaceState(null, '', `#${t}`)
+  }
+
+  return (
+    <Shell>
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <p className="truncate text-sm text-ash-400">Signed in as {email}</p>
+        <IconBtn label="Sign out" onClick={() => supabase!.auth.signOut()}>
+          <SignOut className="size-4" weight="bold" />
+        </IconBtn>
+      </div>
+      <nav className="no-scrollbar -mx-4 mb-8 flex gap-1 overflow-x-auto border-b border-bone/10 px-4 sm:mx-0 sm:px-0" aria-label="Admin sections">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => go(t.id)}
+            aria-current={tab === t.id ? 'page' : undefined}
+            className={cn(
+              '-mb-px shrink-0 border-b-2 px-4 py-3 font-mono text-[0.7rem] tracking-[0.14em] uppercase transition-colors',
+              tab === t.id ? 'border-brand-400 text-brand-200' : 'border-transparent text-ash-400 hover:text-bone',
+            )}
+          >
+            {t.label}
+          </button>
+        ))}
+      </nav>
+      {tab === 'enquiries' && <Inbox />}
+      {tab !== 'enquiries' && <h1 className="mb-6 font-display text-4xl leading-none uppercase sm:text-5xl">{TABS.find((t) => t.id === tab)!.label}</h1>}
+      {tab === 'plans' && <PlansEditor notify={notify} />}
+      {tab === 'offers' && <OffersEditor notify={notify} />}
+      {tab === 'reviews' && <ReviewsEditor notify={notify} />}
+      {tab === 'settings' && <SettingsEditor notify={notify} />}
+      {toast && (
+        <p
+          key={toast.n}
+          role="status"
+          className={cn(
+            'fixed inset-x-4 bottom-5 z-50 mx-auto max-w-md rounded-2xl border px-5 py-3.5 text-sm shadow-2xl backdrop-blur sm:inset-x-auto sm:right-6',
+            toast.error ? 'border-red-400/50 bg-red-950/90 text-red-100' : 'border-brand-400/50 bg-ash-950/90 text-brand-100',
+          )}
+        >
+          {toast.msg}
+        </p>
+      )}
+    </Shell>
+  )
+}
+
 /* ── Enquiries inbox ─────────────────────────────────────────────────── */
-function Inbox({ email }: { email: string }) {
+function Inbox() {
   const [rows, setRows] = useState<Enquiry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -224,21 +295,15 @@ function Inbox({ email }: { email: string }) {
   }
 
   return (
-    <Shell>
+    <>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl leading-none uppercase sm:text-5xl">Enquiries</h1>
-          <p className="mt-2 text-sm text-ash-400">Signed in as {email}</p>
-        </div>
+        <h1 className="font-display text-4xl leading-none uppercase sm:text-5xl">Enquiries</h1>
         <div className="flex gap-2">
           <IconBtn label="Refresh" onClick={load}>
             <ArrowClockwise className={cn('size-4', loading && 'animate-spin')} weight="bold" />
           </IconBtn>
           <IconBtn label="Export CSV (Excel)" onClick={exportCsv}>
             <DownloadSimple className="size-4" weight="bold" />
-          </IconBtn>
-          <IconBtn label="Sign out" onClick={() => supabase!.auth.signOut()}>
-            <SignOut className="size-4" weight="bold" />
           </IconBtn>
         </div>
       </div>
@@ -323,7 +388,7 @@ function Inbox({ email }: { email: string }) {
           </li>
         ))}
       </ul>
-    </Shell>
+    </>
   )
 }
 
