@@ -3,7 +3,6 @@
  * ~2 KB: scroll reveals, scroll-linked parallax and "Enquire" buttons.
  */
 import Lenis from 'lenis'
-import { initEmbers } from './embers'
 import { requestEnquiry } from '../utils/enquiry'
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -214,17 +213,9 @@ if (finePointer && !reduceMotion) {
   })
 }
 
-/* ── Rising gold embers: started once the page has settled (keeps first load smooth) ── */
-if (!reduceMotion) {
-  const startEmbers = () => document.querySelectorAll<HTMLCanvasElement>('canvas[data-embers]').forEach(initEmbers)
-  const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback
-  window.addEventListener('load', () => (idle ? idle(startEmbers, { timeout: 1500 }) : window.setTimeout(startEmbers, 300)), { once: true })
-}
-
-/* ── Scroll progress line + velocity skew (one rAF loop, transforms only) ── */
-const progress = document.getElementById('scroll-progress')
+/* ── Velocity skew on the mantra band (one rAF loop, transforms only) ── */
 const skewers = [...document.querySelectorAll<HTMLElement>('[data-velocity-skew]')]
-if (progress || (skewers.length && !reduceMotion)) {
+if (skewers.length && !reduceMotion) {
   let lastY = window.scrollY
   let lastT = performance.now()
   let queued = false
@@ -232,18 +223,14 @@ if (progress || (skewers.length && !reduceMotion)) {
   const frame = () => {
     queued = false
     const y = window.scrollY
-    const max = document.documentElement.scrollHeight - window.innerHeight
-    if (progress) progress.style.transform = `scaleX(${max > 0 ? y / max : 0})`
-    if (!reduceMotion && skewers.length) {
-      const now = performance.now()
-      const v = (y - lastY) / Math.max(16, now - lastT) // px per ms
-      const skew = Math.max(-8, Math.min(8, v * -4))
-      skewers.forEach((el) => el.style.setProperty('--skew', `${skew.toFixed(2)}deg`))
-      window.clearTimeout(settle)
-      settle = window.setTimeout(() => skewers.forEach((el) => el.style.setProperty('--skew', '0deg')), 140)
-      lastY = y
-      lastT = now
-    }
+    const now = performance.now()
+    const v = (y - lastY) / Math.max(16, now - lastT) // px per ms
+    const skew = Math.max(-8, Math.min(8, v * -4))
+    skewers.forEach((el) => el.style.setProperty('--skew', `${skew.toFixed(2)}deg`))
+    window.clearTimeout(settle)
+    settle = window.setTimeout(() => skewers.forEach((el) => el.style.setProperty('--skew', '0deg')), 140)
+    lastY = y
+    lastT = now
   }
   window.addEventListener('scroll', () => {
     if (!queued) {

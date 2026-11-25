@@ -6,9 +6,9 @@ import { cn } from '../../utils/cn'
  * navbar and footer. Ask the owner for the original vector (SVG/AI/PDF) or a
  * 1000px+ transparent PNG and drop it in at /public/brand/phoenix-emblem.png.
  */
-export const EMBLEM_SRC = '/brand/phoenix-emblem.png'
+const EMBLEM_SRC = '/brand/phoenix-emblem.png'
 
-export function LogoMark({ className }: { className?: string }) {
+function LogoMark({ className }: { className?: string }) {
   return <img src={EMBLEM_SRC} alt="" width={171} height={218} className={cn('object-contain', className)} decoding="async" />
 }
 

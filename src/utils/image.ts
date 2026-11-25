@@ -6,7 +6,7 @@ export const isUnsplash = (src: string) => src.includes(UNSPLASH)
  * Local responsive images produced by photos/enhance.py use a `{w}` placeholder,
  * e.g. '/images/phoenix/hero-athlete-{w}.webp', with these widths available.
  */
-export const LOCAL_WIDTHS = [640, 960, 1280, 1600, 2000, 2560, 3200]
+const LOCAL_WIDTHS = [640, 960, 1280, 1600, 2000, 2560, 3200]
 const isLocalVariant = (src: string) => src.includes('{w}')
 
 /** URL for an image at (at least) the requested display width. */

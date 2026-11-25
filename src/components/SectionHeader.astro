@@ -13,7 +13,6 @@ import { cn } from '../utils/cn'
 type Line = string | { text: string; class?: string }
 
 interface Props {
-  index: string
   eyebrow: string
   lines: Line[]
   intro?: string
@@ -22,7 +21,7 @@ interface Props {
   class?: string
 }
 
-const { index, eyebrow, lines, intro, align = 'split', id, class: className } = Astro.props
+const { eyebrow, lines, intro, align = 'split', id, class: className } = Astro.props
 const hasIntroSlot = Astro.slots.has('intro')
 const norm = (l: Line) => (typeof l === 'string' ? { text: l, class: '' } : { class: '', ...l })
 ---

@@ -35,7 +35,6 @@ export interface Facility {
 
 export interface Program {
   id: string
-  index: string
   title: string
   tagline: string
   description: string

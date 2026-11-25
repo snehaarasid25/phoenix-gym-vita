@@ -11,7 +11,6 @@ import type { Program } from '../types'
 export const programs: Program[] = [
   {
     id: 'weight-training',
-    index: '01',
     title: 'Weight Training',
     tagline: 'The foundation of everything.',
     description:
@@ -31,7 +30,6 @@ export const programs: Program[] = [
   },
   {
     id: 'hyrox',
-    index: '02',
     title: 'HYROX Training',
     tagline: 'Race-ready fitness.',
     description:
@@ -52,7 +50,6 @@ export const programs: Program[] = [
   },
   {
     id: 'strength-muscle',
-    index: '03',
     title: 'Strength & Muscle',
     tagline: 'Lift heavier. Build more.',
     description:
@@ -72,7 +69,6 @@ export const programs: Program[] = [
   },
   {
     id: 'fat-loss',
-    index: '04',
     title: 'Fat Loss',
     tagline: 'Burn hot. Stay consistent.',
     description:
@@ -92,7 +88,6 @@ export const programs: Program[] = [
   },
   {
     id: 'yoga-meditation',
-    index: '05',
     title: 'Yoga & Meditation',
     tagline: 'Strong body. Calm mind.',
     description:
@@ -112,7 +107,6 @@ export const programs: Program[] = [
   },
   {
     id: 'family-batches',
-    index: '06',
     title: 'Family Batches',
     tagline: 'Fitness is better together.',
     description:
@@ -132,7 +126,6 @@ export const programs: Program[] = [
   },
   {
     id: 'personal-training',
-    index: '07',
     title: 'Personal Training',
     tagline: 'Your goal. Your plan.',
     description:

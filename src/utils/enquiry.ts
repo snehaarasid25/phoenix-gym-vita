@@ -6,7 +6,7 @@
  * value + event does: it also works if a button is clicked before the form
  * island has hydrated.
  */
-export const ENQUIRY_EVENT = 'phoenix:enquire'
+const ENQUIRY_EVENT = 'phoenix:enquire'
 
 declare global {
   interface Window {

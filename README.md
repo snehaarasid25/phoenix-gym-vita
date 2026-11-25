@@ -117,33 +117,36 @@ WhatsApp automatically, including the floating mobile bar, the enquiry form and 
 
 - **Default is light**, taken from the gym's own launch poster: ivory/stone surfaces, deep ink text, ink-black primary
   buttons, and champagne gold reserved for accents (headline highlights, badges, icon tiles, dividers).
-- **Rhythm:** ivory and stone sections are broken up by full-bleed dark "moments": hero, Facilities, Gallery, the final CTA and the
-  footer (`data-theme="dark"` on those elements). Primary buttons automatically turn gold inside dark sections.
+- **Rhythm:** ivory and stone sections are broken up by dark "moments" that stay dark in both themes: the hero, the final CTA
+  and the footer (`data-theme="dark"`). Photo cards keep their own dark scope so text over images stays readable.
+  Primary buttons automatically turn gold inside dark sections.
 - **Type:** Bebas Neue (headlines) + Manrope (everything else); Cinzel only for brand lines such as "Where Fitness Meets Refinement".
 - **Photos:** one consistent grade via the `.photo-grade` class (applied automatically by `<Img>`).
-- **Premium layer** (`src/scripts/site.ts`, `src/scripts/embers.ts`, utilities in `src/styles/index.css`):
-  inset rounded hero card with rising gold **embers** (2D canvas, paused off-screen); floating glass feature chips;
+- **Premium layer** (`src/scripts/site.ts`, utilities in `src/styles/index.css`):
+  inset rounded hero card; floating feature chips on desktop and tappable gold orbs on phones;
   rotating circular brand badge (`components/RotatingBadge.astro`); dark sections as inset rounded `.panel`s;
   `.bg-dots` texture on light sections; `.reveal-img` image wipe; cursor **spotlight** on cards; subtle **3D tilt** on large cards (`data-tilt`;
   buttons intentionally don't move under the cursor); **Lenis** smooth scrolling on mouse/trackpad (phones keep native momentum).
   Also: a branded **intro curtain** (home page, at most once per 12h, ≤0.9s, lifts when the hero image is ready), the hero
-  headline rising **letter by letter**, **blur-to-sharp** scroll reveals, a gold **scroll-progress** line, the mantra band
-  **leaning with scroll speed**, and **arrow-swap** button hovers.
-- **Loading:** hero image + the two main fonts are preloaded; the navbar hydrates on idle; embers start after load.
+  headline rising **letter by letter**, **blur-to-sharp** scroll reveals, the mantra band **leaning with scroll speed**,
+  slow gold shine on gold headings, swipeable rows with gold dots / side arrows, and **arrow-swap** button hovers.
+- **Loading:** hero image + the two main fonts are preloaded; the navbar hydrates on idle. The header's scroll fade is driven
+  by an inline script + CSS, so it works before any island hydrates.
   Measured: LCP 0.37s desktop / 1.23s on throttled 4G mobile, CLS 0.
   Everything is disabled for `prefers-reduced-motion`.
 - **Dark mode** is still available from the sun/moon toggle; the choice is saved in `localStorage` (`phoenix-theme`).
   The inline script in `layouts/BaseLayout.astro` applies it before first paint (no flash).
 - Palettes and button tokens: the `[data-theme='dark']` and `:root:not([data-theme='dark'])` blocks in `src/styles/index.css`.
 
-## How the enquiry form works (no backend)
+## How the enquiry form works
 
-The form builds a message from name, phone, interest and message, then:
-- **WhatsApp configured** → opens `wa.me/<number>` with the message pre-typed.
-- **Not configured** → copies the message to the clipboard and opens Instagram DM (`ig.me/m/phoenix_gym_03`).
+The form asks for name, phone (required), interest, message and a consent tick, then:
+1. **Saves the enquiry to Supabase** (`src/utils/supabase.ts`, `keepalive` request) so the owner sees it in `/admin`.
+2. **Opens WhatsApp** (`wa.me/<number>`) with the message pre-typed, or, without a WhatsApp number, copies it and opens
+   an Instagram DM. WhatsApp opens even if saving fails, so no lead is lost.
 
-"Enquire" buttons on programmes and membership plans pre-select the interest and scroll to the form.
-No personal data is stored, so there's no database, no GDPR/DPDP storage burden and no spam handling.
+A hidden honeypot field drops bots. "Enquire" buttons on programmes and membership plans pre-select the interest and
+scroll to the form. Backend setup, security model and the owner's inbox: see `docs/ADMIN_SETUP.md`.
 
 ---
 
@@ -156,7 +159,7 @@ with like counts and a "View profile" button. No API token is needed.
   prev/next arrows and a counter (`INSTAGRAM_EMBED_COUNT`, default 5). To feature a new post, copy its link in
   Instagram ("…" → Copy link) and add it to the top.
 - **Design:** Instagram's own card UI inside the embed can't be restyled or hidden (Meta's embed terms), so the
-  presentation lives around it: numbered labels and gold-edged frames.
+  presentation lives around it: Reel/Post labels, gold-edged frames, gold side arrows and dots.
 - **Performance and privacy:** Instagram's `embed.js` loads only when a visitor scrolls near the section
   (see `src/scripts/site.ts`). Before that, and with JavaScript off, each post is a styled card linking to Instagram.
 - **Fully automatic feed (later):** to have the site pick up new posts by itself, switch the account to Business/Creator,
@@ -165,8 +168,9 @@ with like counts and a "View profile" button. No API token is needed.
 ## SEO implemented
 
 **Local-search content (Vita, Maharashtra)**
-- Every section `<h2>` starts with a plain, descriptive phrase (the small eyebrow label: e.g. "Gym facilities in Vita",
-  "Training programmes in Vita", "Gym membership in Vita"), followed by the brand slogan. Keep this pattern when adding sections.
+- Every section `<h2>` starts with a plain, descriptive phrase (the small eyebrow label: e.g. "Gym facilities",
+  "Training programmes", "Gym membership"), followed by the brand slogan. "Vita" lives in the page title, meta description,
+  structured data, intros and FAQ rather than in every label.
 - **FAQ section** (`src/data/faq.ts`, `src/sections/Faq.astro`): 9 real local questions answered only from verified facts in
   `config/site.ts`, so answers update automatically (hours, prices, WhatsApp). The same data emits **FAQPage** JSON-LD.
 - A plain-language local summary (name, city, district, state, street, facilities) sits beside the FAQ.

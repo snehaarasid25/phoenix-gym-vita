@@ -41,11 +41,14 @@ const fmtDate = (iso: string) =>
 
 export default function AdminApp() {
   const [session, setSession] = useState<Session | null>(null)
-  const [ready, setReady] = useState(false)
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+  const [ready, setReady] = useState(!supabase) // nothing to wait for when Supabase isn't configured
+  // Admin check is remembered per user id, so it resets automatically on sign-out / account switch
+  const [adminCheck, setAdminCheck] = useState<{ uid: string; ok: boolean } | null>(null)
+  const uid = session?.user.id
+  const isAdmin = uid && adminCheck?.uid === uid ? adminCheck.ok : null
 
   useEffect(() => {
-    if (!supabase) return setReady(true)
+    if (!supabase) return
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setReady(true)
@@ -55,9 +58,9 @@ export default function AdminApp() {
   }, [])
 
   useEffect(() => {
-    if (!supabase || !session) return setIsAdmin(null)
-    supabase.rpc('is_admin').then(({ data }) => setIsAdmin(Boolean(data)))
-  }, [session])
+    if (!supabase || !uid) return
+    supabase.rpc('is_admin').then(({ data }) => setAdminCheck({ uid, ok: Boolean(data) }))
+  }, [uid])
 
   if (!supabase)
     return (
@@ -157,9 +160,8 @@ function Inbox({ email }: { email: string }) {
   const [q, setQ] = useState('')
   const [filter, setFilter] = useState<Status | 'all'>('all')
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    const { data, error } = await supabase!.from('enquiries').select('*').order('created_at', { ascending: false }).limit(1000)
+  const query = () => supabase!.from('enquiries').select('*').order('created_at', { ascending: false }).limit(1000)
+  const apply = useCallback(({ data, error }: { data: unknown; error: { message: string } | null }) => {
     if (error) setError(error.message)
     else {
       setRows((data ?? []) as Enquiry[])
@@ -167,9 +169,18 @@ function Inbox({ email }: { email: string }) {
     }
     setLoading(false)
   }, [])
+  // Initial load (state only changes in the promise callback; ignored if the inbox unmounts first)
   useEffect(() => {
-    load()
-  }, [load])
+    let alive = true
+    query().then((res) => alive && apply(res))
+    return () => {
+      alive = false
+    }
+  }, [apply])
+  const load = () => {
+    setLoading(true)
+    query().then(apply)
+  }
 
   const update = async (id: string, patch: Partial<Pick<Enquiry, 'status' | 'notes'>>) => {
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)))

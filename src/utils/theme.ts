@@ -1,7 +1,7 @@
 export type Theme = 'dark' | 'light'
 
 /** localStorage key. Also referenced by the no-flash inline script in layouts/BaseLayout.astro. */
-export const THEME_STORAGE_KEY = 'phoenix-theme'
+const THEME_STORAGE_KEY = 'phoenix-theme'
 
 /** Browser UI colour (address bar on mobile) for each theme. */
 const THEME_COLOR: Record<Theme, string> = { dark: '#070605', light: '#f7f3ec' }
