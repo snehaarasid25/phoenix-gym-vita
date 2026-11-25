@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
-import { AddressBook, ArrowClockwise, CaretDown, Check, DownloadSimple, MagnifyingGlass, Phone, SignOut, Trash, WhatsappLogo, X } from '@phosphor-icons/react'
+import { ArrowClockwise, CaretDown, Check, DownloadSimple, MagnifyingGlass, Phone, SignOut, Trash, WhatsappLogo, X } from '@phosphor-icons/react'
 import { field, supabase } from './admin/client'
 import { OffersEditor, PlansEditor, ReviewsEditor, SettingsEditor } from './admin/ContentEditors'
 import { cn } from '../../utils/cn'
@@ -82,25 +82,6 @@ function download(filename: string, content: string, type: string) {
 }
 const today = () => new Date().toISOString().slice(0, 10)
 
-/** Enquiries as phone contacts (.vcf), named "<Name> (Phoenix)" so they're easy to find for a WhatsApp broadcast list. */
-function contactsFile(list: Enquiry[]) {
-  const esc = (v: string) => v.replace(/\\/g, '\\\\').replace(/[,;]/g, (c) => `\\${c}`).replace(/\r?\n/g, ' ')
-  return list
-    .map((r) =>
-      [
-        'BEGIN:VCARD',
-        'VERSION:3.0',
-        `FN:${esc(r.name)} (Phoenix)`,
-        `N:;${esc(r.name)} (Phoenix);;;`,
-        `TEL;TYPE=CELL:+${waNumber(r.phone)}`,
-        r.interest ? `NOTE:${esc(`Phoenix Gym enquiry: ${r.interest}`)}` : null,
-        'END:VCARD',
-      ]
-        .filter(Boolean)
-        .join('\r\n'),
-    )
-    .join('\r\n')
-}
 
 export default function AdminApp() {
   const [session, setSession] = useState<Session | null>(null)
@@ -290,7 +271,6 @@ function Inbox() {
   const [selected, setSelected] = useState<Set<string>>(() => new Set())
   const [selecting, setSelecting] = useState(false) // tick-boxes only show after tapping "Select"
   const [queue, setQueue] = useState<Enquiry[] | null>(null) // bulk WhatsApp sender, when open
-  const [info, setInfo] = useState<string | null>(null)
   useEffect(() => {
     supabase!
       .from('plans')
@@ -387,12 +367,6 @@ function Inbox() {
     setSelecting(false)
     clearSelection()
   }
-  const saveContacts = () => {
-    download(`phoenix-contacts-${today()}.vcf`, contactsFile(selectedRows), 'text/vcard;charset=utf-8')
-    setInfo(
-      `Saved ${selectedRows.length} contact${selectedRows.length === 1 ? '' : 's'}. Open the file on your phone to add them to Contacts, then in WhatsApp Business: Chats → ⋮ → New broadcast → pick them. Only people who have saved the gym's number receive broadcasts.`,
-    )
-  }
 
   return (
     <>
@@ -430,14 +404,6 @@ function Inbox() {
       </div>
 
       {error && <p className="mt-4 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</p>}
-      {info && (
-        <div className="mt-4 flex items-start gap-3 rounded-xl border border-brand-400/40 bg-brand-500/10 px-4 py-3 text-sm text-brand-100">
-          <p className="flex-1 leading-relaxed">{info}</p>
-          <button type="button" onClick={() => setInfo(null)} aria-label="Dismiss" className="shrink-0 text-brand-200 hover:text-bone">
-            <X className="size-4" />
-          </button>
-        </div>
-      )}
 
       {shown.length > 0 && (
         <div className="mt-6 flex min-h-10 items-center justify-between gap-3">
@@ -559,9 +525,6 @@ function Inbox() {
               className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-emerald-500 px-5 text-sm font-semibold text-ash-950 hover:bg-emerald-400 sm:flex-none"
             >
               <WhatsappLogo className="size-5" weight="fill" /> Send on WhatsApp
-            </button>
-            <button type="button" onClick={saveContacts} className="inline-flex h-11 items-center gap-2 rounded-full border border-bone/20 px-4 text-sm text-bone hover:border-brand-400" title="Save as phone contacts (.vcf) for a WhatsApp Business broadcast">
-              <AddressBook className="size-5" /> Contacts
             </button>
             <button type="button" onClick={() => exportCsv(selectedRows)} className="inline-flex h-11 items-center gap-2 rounded-full border border-bone/20 px-4 text-sm text-bone hover:border-brand-400" title="Export the selected enquiries to CSV (Excel)">
               <DownloadSimple className="size-5" /> CSV
