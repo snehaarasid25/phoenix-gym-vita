@@ -252,6 +252,8 @@ function MobileCards() {
               <button
                 type="button"
                 onClick={(e) => {
+                  // Tap/click: drop focus so no focus box lingers (keyboard users still get the outline)
+                  if (e.detail > 0) e.currentTarget.blur()
                   const card = e.currentTarget.closest('article')
                   setOpen(isOpen ? null : p.id)
                   // Collapsing: once the card has folded up, glide back to its top (a smooth scroll started
