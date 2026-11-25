@@ -33,14 +33,14 @@ const jsonLd = structuredData ? JSON.stringify([localBusinessSchema(), websiteSc
 ---
 
 <!doctype html>
-<html lang="en-IN">
+<html lang="en-IN" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#f7f3ec" />
+    <meta name="theme-color" content="#070605" />
     {intro && <meta name="phoenix-intro" content="1" />}
 
-    <!-- Before first paint: mark JS on, apply saved theme (default: light "Ivory luxury"). Key shared with src/utils/theme.ts -->
+    <!-- Before first paint: mark JS on, apply saved theme (default: dark; light only if the visitor chose it). Key shared with src/utils/theme.ts -->
     <script is:inline>
       ;(function () {
         var root = document.documentElement
@@ -62,9 +62,9 @@ const jsonLd = structuredData ? JSON.stringify([localBusinessSchema(), websiteSc
         try {
           t = localStorage.getItem('phoenix-theme')
         } catch (e) {}
-        var theme = t === 'dark' ? 'dark' : 'light'
+        var theme = t === 'light' ? 'light' : 'dark'
         root.setAttribute('data-theme', theme)
-        if (theme === 'dark') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#070605')
+        if (theme === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f3ec')
       })()
     </script>
 

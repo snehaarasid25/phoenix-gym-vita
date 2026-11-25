@@ -112,7 +112,7 @@
   --btn-shadow-hover: 0 16px 48px -10px rgb(214 170 104 / 0.85);
   color-scheme: dark;
 }
-/* "Ivory luxury": the default. :root covers no-JS visitors; dark scopes opt out. */
+/* "Ivory luxury" light palette: used when the visitor picks light (html has data-theme="dark" by default). */
 :root:not([data-theme='dark']),
 [data-theme='light'] {
   --color-ash-950: #f7f3ec; /* ivory page */

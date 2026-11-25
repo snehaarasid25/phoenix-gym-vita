@@ -113,10 +113,11 @@ WhatsApp automatically, including the floating mobile bar, the enquiry form and 
 
 ---
 
-## Design theme: "Ivory luxury" (light by default) + dark mode
+## Design theme: dark by default + "Ivory luxury" light mode
 
-- **Default is light**, taken from the gym's own launch poster: ivory/stone surfaces, deep ink text, ink-black primary
-  buttons, and champagne gold reserved for accents (headline highlights, badges, icon tiles, dividers).
+- **Default is dark** (black and champagne gold). `<html data-theme="dark">` is set in the markup, so it's dark even before JS.
+  The header toggle switches to the light "Ivory luxury" palette (from the gym's launch poster: ivory/stone surfaces, ink text,
+  gold accents); that choice is remembered per browser (`localStorage` key `phoenix-theme`).
 - **Rhythm:** ivory and stone sections are broken up by dark "moments" that stay dark in both themes: the hero, the final CTA
   and the footer (`data-theme="dark"`). Photo cards keep their own dark scope so text over images stays readable.
   Primary buttons automatically turn gold inside dark sections.
