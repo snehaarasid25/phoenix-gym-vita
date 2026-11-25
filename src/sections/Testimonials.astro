@@ -42,10 +42,10 @@ const parts = (quote: string, hl?: string) => {
       <div class="relative mt-14 sm:mt-20">
       {visible.length > 1 && (
         <>
-          <button type="button" data-carousel-prev="reviews-track" aria-label="Previous review" class="absolute top-1/2 z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full border border-brand-500/50 bg-ash-950/75 text-brand-300 shadow-[0_0_22px_-6px_rgba(196,159,110,0.8)] backdrop-blur-md transition-all duration-300 hover:border-brand-400 hover:bg-brand-500/20 hover:text-brand-200 active:scale-95 disabled:pointer-events-none disabled:opacity-0 sm:size-12 -left-2 sm:-left-3 lg:-left-6">
+          <button type="button" data-carousel-prev="reviews-track" aria-label="Previous review" class="carousel-arrow -left-2 sm:-left-3 lg:-left-6">
             <CaretLeft className="size-4" weight="bold" />
           </button>
-          <button type="button" data-carousel-next="reviews-track" aria-label="Next review" class="absolute top-1/2 z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full border border-brand-500/50 bg-ash-950/75 text-brand-300 shadow-[0_0_22px_-6px_rgba(196,159,110,0.8)] backdrop-blur-md transition-all duration-300 hover:border-brand-400 hover:bg-brand-500/20 hover:text-brand-200 active:scale-95 disabled:pointer-events-none disabled:opacity-0 sm:size-12 -right-2 sm:-right-3 lg:-right-6">
+          <button type="button" data-carousel-next="reviews-track" aria-label="Next review" class="carousel-arrow -right-2 sm:-right-3 lg:-right-6">
             <CaretRight className="size-4" weight="bold" />
           </button>
         </>

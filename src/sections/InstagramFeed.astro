@@ -40,20 +40,19 @@ const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
     <p class="eyebrow flex items-center gap-3 text-ash-400">
       <InstagramLogo className="size-4 text-brand-400" />
       Latest from @{site.social.instagramHandle}
-      <span class="text-brand-400 tabular-nums" data-carousel-count="ig-track">01 / {String(featured.length).padStart(2, '0')}</span>
+      <span class="whitespace-nowrap text-brand-400 tabular-nums" data-carousel-count="ig-track">01 / {String(featured.length).padStart(2, '0')}</span>
     </p>
-    <div class="hidden gap-2 sm:flex">
-      <button type="button" data-carousel-prev="ig-track" aria-label="Previous posts" class="grid size-12 place-items-center rounded-full border border-bone/15 text-bone transition-colors hover:border-brand-400 hover:text-brand-400 disabled:opacity-30 disabled:hover:border-bone/15 disabled:hover:text-bone">
-        <CaretLeft className="size-5" weight="bold" />
-      </button>
-      <button type="button" data-carousel-next="ig-track" aria-label="Next posts" class="grid size-12 place-items-center rounded-full border border-bone/15 text-bone transition-colors hover:border-brand-400 hover:text-brand-400 disabled:opacity-30 disabled:hover:border-bone/15 disabled:hover:text-bone">
-        <CaretRight className="size-5" weight="bold" />
-      </button>
-    </div>
   </div>
 
   <!-- Track stays inside the page's content width (clips at the column edges, never the window) -->
   <div class="container-x mt-6">
+    <div class="relative">
+    <button type="button" data-carousel-prev="ig-track" aria-label="Previous posts" class="carousel-arrow -left-2 sm:-left-3 lg:-left-6">
+      <CaretLeft className="size-4" weight="bold" />
+    </button>
+    <button type="button" data-carousel-next="ig-track" aria-label="Next posts" class="carousel-arrow -right-2 sm:-right-3 lg:-right-6">
+      <CaretRight className="size-4" weight="bold" />
+    </button>
     <div
       id="ig-track"
       data-instagram-embeds
@@ -89,6 +88,8 @@ const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
       ))
     }
     </div>
+    </div>
+    <div data-carousel-dots="ig-track" class="mt-2 flex justify-center gap-2" aria-label="Choose a post"></div>
   </div>
 
   <!-- Instagram CTA card: orbiting IG-gradient border, story-ring avatar, flowing "Follow" + glass "DM" on one line -->
