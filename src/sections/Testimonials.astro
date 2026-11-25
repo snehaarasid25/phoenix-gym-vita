@@ -39,11 +39,21 @@ const parts = (quote: string, hl?: string) => {
          3 on desktop) with gold dots + arrows, so the section stays compact however many reviews come in. -->
     {visible.length > 0 ? (
       <>
+      <div class="relative mt-14 sm:mt-20">
+      {visible.length > 1 && (
+        <>
+          <button type="button" data-carousel-prev="reviews-track" aria-label="Previous review" class="absolute top-1/2 z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full border border-brand-500/50 bg-ash-950/75 text-brand-300 shadow-[0_0_22px_-6px_rgba(196,159,110,0.8)] backdrop-blur-md transition-all duration-300 hover:border-brand-400 hover:bg-brand-500/20 hover:text-brand-200 active:scale-95 disabled:pointer-events-none disabled:opacity-0 sm:size-12 left-1 sm:left-2 lg:-left-6">
+            <CaretLeft className="size-4" weight="bold" />
+          </button>
+          <button type="button" data-carousel-next="reviews-track" aria-label="Next review" class="absolute top-1/2 z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full border border-brand-500/50 bg-ash-950/75 text-brand-300 shadow-[0_0_22px_-6px_rgba(196,159,110,0.8)] backdrop-blur-md transition-all duration-300 hover:border-brand-400 hover:bg-brand-500/20 hover:text-brand-200 active:scale-95 disabled:pointer-events-none disabled:opacity-0 sm:size-12 right-1 sm:right-2 lg:-right-6">
+            <CaretRight className="size-4" weight="bold" />
+          </button>
+        </>
+      )}
       <div
         id="reviews-track"
         data-carousel={visible.length > 1 ? '' : undefined}
         class:list={[
-          'mt-14 sm:mt-20',
           visible.length === 1
             ? 'mx-auto grid max-w-2xl'
             : 'no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pt-1 pb-3 sm:-mx-8 sm:scroll-px-8 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:px-0 [&>article]:w-[86%] [&>article]:shrink-0 [&>article]:snap-start sm:[&>article]:w-[62%] lg:[&>article]:w-[calc((100%-2rem)/3)]',
@@ -86,17 +96,8 @@ const parts = (quote: string, hl?: string) => {
           </article>
         ))}
       </div>
-      {visible.length > 1 && (
-        <div class="mt-7 flex items-center justify-center gap-5">
-          <button type="button" data-carousel-prev="reviews-track" aria-label="Previous review" class="grid size-11 place-items-center rounded-full border border-brand-500/40 text-brand-300 shadow-[0_0_20px_-8px_rgba(196,159,110,0.7)] transition-all duration-300 hover:border-brand-400 hover:bg-brand-500/15 hover:text-brand-200 active:scale-95 disabled:opacity-30 disabled:shadow-none disabled:hover:bg-transparent">
-            <CaretLeft className="size-4" weight="bold" />
-          </button>
-          <div data-carousel-dots="reviews-track" class="flex gap-2" aria-label="Choose a review"></div>
-          <button type="button" data-carousel-next="reviews-track" aria-label="Next review" class="grid size-11 place-items-center rounded-full border border-brand-500/40 text-brand-300 shadow-[0_0_20px_-8px_rgba(196,159,110,0.7)] transition-all duration-300 hover:border-brand-400 hover:bg-brand-500/15 hover:text-brand-200 active:scale-95 disabled:opacity-30 disabled:shadow-none disabled:hover:bg-transparent">
-            <CaretRight className="size-4" weight="bold" />
-          </button>
-        </div>
-      )}
+      </div>
+      {visible.length > 1 && <div data-carousel-dots="reviews-track" class="mt-7 flex justify-center gap-2" aria-label="Choose a review"></div>}
       </>
     ) : (
       <div class="reveal mt-12">
