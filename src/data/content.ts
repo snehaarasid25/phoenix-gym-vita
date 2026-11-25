@@ -40,6 +40,7 @@ export const testimonials: Testimonial[] = [
     name: 'Sneha A.',
     detail: 'Pre-booked member',
     photo: '/images/testimonials/sneha-160.webp',
+    highlight: 'counting down the days to my first session',
     isSample: false,
   },
   {

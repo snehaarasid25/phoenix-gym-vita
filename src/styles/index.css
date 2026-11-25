@@ -465,6 +465,23 @@
     opacity: 0;
   }
 
+  /* Review cards: lift + warmer glow on hover; photo in a slowly turning gold ring */
+  .review-card:hover {
+    transform: translateY(-4px);
+  }
+  .review-avatar {
+    position: relative;
+    display: block;
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 2.5px;
+    border-radius: 9999px;
+    background: conic-gradient(from var(--ring-angle), #f3e2c2, #c49f6e, #8f6a3c, #e6c999, #f3e2c2);
+    box-shadow: 0 0 22px -4px color-mix(in srgb, var(--color-brand-400) 70%, transparent);
+    animation: ring-spin 5s linear infinite;
+  }
+
   /* Instagram CTA card */
   .ig-card {
     position: relative;
@@ -917,6 +934,7 @@
   .gold-rule::after,
   .ig-ring,
   .ig-avatar,
+  .review-avatar,
   .btn-ig,
   .hl-orb::before {
     animation: none;

@@ -70,6 +70,8 @@ export interface Testimonial {
   detail: string
   /** Optional profile photo path under /public (square, e.g. 320px). Falls back to the initial. */
   photo?: string
+  /** Optional phrase inside the quote to pick out in gold (must match the quote text exactly). */
+  highlight?: string
   /** Sample testimonials are only rendered in development. */
   isSample: boolean
 }
