@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { ArrowRight, Plus } from '@phosphor-icons/react'
 import { programs } from '../../data/programs'
@@ -122,13 +122,51 @@ function ProgramDetail({ program, onEnquire }: { program: Program; onEnquire: ()
 /* ── Mobile / tablet: swipeable cards with expandable "Learn more" ─────────── */
 function MobileCards() {
   const [open, setOpen] = useState<string | null>(null)
+  const track = useRef<HTMLDivElement>(null)
+  // Scroll state drives the dots and the edge fades
+  const [pos, setPos] = useState({ start: true, end: false, active: 0, scrollable: false })
+
+  const update = useCallback(() => {
+    const t = track.current
+    if (!t) return
+    const max = t.scrollWidth - t.clientWidth - 4
+    const items = [...t.children] as HTMLElement[]
+    const first = items[0]?.offsetLeft ?? 0
+    const near = (el: HTMLElement) => Math.abs(el.offsetLeft - first - t.scrollLeft)
+    const active = t.scrollLeft >= max ? items.length - 1 : items.reduce((best, el, i) => (near(el) < near(items[best]) ? i : best), 0)
+    setPos({ start: t.scrollLeft <= 4, end: t.scrollLeft >= max, active, scrollable: t.scrollWidth > t.clientWidth + 4 })
+  }, [])
+
+  useEffect(() => {
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [update])
+
+  const goTo = (i: number) => {
+    const t = track.current
+    if (!t) return
+    const items = [...t.children] as HTMLElement[]
+    const target = items[Math.max(0, Math.min(items.length - 1, i))]
+    t.scrollTo({ left: target.offsetLeft - items[0].offsetLeft, behavior: 'smooth' })
+  }
 
   return (
-    <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 no-scrollbar sm:-mx-8 sm:px-8 lg:hidden">
+    <div className="lg:hidden">
+    <div className="relative">
+    <div
+      ref={track}
+      onScroll={() => requestAnimationFrame(update)}
+      data-fade-row=""
+      data-scrollable={String(pos.scrollable)}
+      data-at-start={String(pos.start)}
+      data-at-end={String(pos.end)}
+      className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 no-scrollbar"
+    >
       {programs.map((p, i) => {
         const isOpen = open === p.id
         return (
-          <Reveal as="article" key={p.id} delay={i * 0.05} className="w-[82vw] max-w-sm shrink-0 snap-center overflow-hidden rounded-[1.5rem] card-lux sm:w-[46vw]">
+          <Reveal as="article" key={p.id} delay={i * 0.05} className="w-[88%] max-w-md shrink-0 snap-start overflow-hidden rounded-[1.5rem] card-lux sm:w-[58%]">
             <div className="relative aspect-[4/3]">
               <Img image={p.image} sizes="(min-width:640px) 46vw, 82vw" width={768} className="size-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-ash-850 to-transparent" aria-hidden />
@@ -170,6 +208,13 @@ function MobileCards() {
           </Reveal>
         )
       })}
+    </div>
+    </div>
+    <div className="mt-3 flex justify-center gap-2" aria-label="Choose a programme">
+      {programs.map((p, i) => (
+        <button key={p.id} type="button" className="carousel-dot" aria-current={i === pos.active} aria-label={`Go to ${p.title}`} onClick={() => goTo(i)} />
+      ))}
+    </div>
     </div>
   )
 }

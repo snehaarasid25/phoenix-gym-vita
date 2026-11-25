@@ -974,15 +974,15 @@
 }
 
 /* Edge fades only on rows that actually scroll (on desktop grids the mask would clip overhanging badges) */
-[data-carousel][data-scrollable='true'] {
+:is([data-carousel], [data-fade-row])[data-scrollable='true'] {
   --fade-l: 0px;
   --fade-r: 3rem;
   mask-image: linear-gradient(to right, transparent 0, black var(--fade-l), black calc(100% - var(--fade-r)), transparent 100%);
 }
-[data-carousel][data-at-start='false'] {
+:is([data-carousel], [data-fade-row])[data-at-start='false'] {
   --fade-l: 3rem;
 }
-[data-carousel][data-at-end='true'] {
+:is([data-carousel], [data-fade-row])[data-at-end='true'] {
   --fade-r: 0px;
 }
 .carousel-dot {
