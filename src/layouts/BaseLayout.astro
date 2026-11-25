@@ -11,6 +11,7 @@ import { faqSchema, localBusinessSchema, websiteSchema } from '../utils/structur
 import Footer from '../components/Footer.astro'
 import Navbar from '../components/islands/Navbar'
 import MobileActionBar from '../components/islands/MobileActionBar'
+import EnquiryModal from '../components/islands/EnquiryModal'
 // Preloaded so the first paint already uses the real typefaces (no fallback-font flash)
 import bebasWoff2 from '@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2?url'
 import manropeWoff2 from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url'
@@ -19,17 +20,20 @@ interface Props {
   meta: PageMeta
   /** Emit LocalBusiness/WebSite JSON-LD (home page only). */
   structuredData?: boolean
+  /** Emit FAQPage JSON-LD (FAQ page only: it must match the questions visible on that page). */
+  faqData?: boolean
   /** Responsive srcset of the above-the-fold hero image to preload. */
   preloadImage?: string
   /** Show the branded intro curtain (home page, first visit per session). */
   intro?: boolean
 }
 
-const { meta, structuredData = false, preloadImage, intro = false } = Astro.props
+const { meta, structuredData = false, faqData = false, preloadImage, intro = false } = Astro.props
 const canonical = absoluteUrl(meta.path)
 const image = absoluteUrl(ogImage)
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/'
-const jsonLd = structuredData ? JSON.stringify([localBusinessSchema(), websiteSchema(), faqSchema()]).replace(/</g, '\\u003c') : null
+const schemas = [...(structuredData ? [localBusinessSchema(), websiteSchema()] : []), ...(faqData ? [faqSchema()] : [])]
+const jsonLd = schemas.length ? JSON.stringify(schemas).replace(/</g, '\\u003c') : null
 ---
 
 <!doctype html>
@@ -132,6 +136,9 @@ const jsonLd = structuredData ? JSON.stringify([localBusinessSchema(), websiteSc
     <Footer pathname={pathname} />
 
     <MobileActionBar client:idle />
+
+    <!-- "Get early access" / "Enquire" buttons on every page open this pop-up form -->
+    <EnquiryModal client:idle />
 
     <script>
       import '../scripts/site.ts'

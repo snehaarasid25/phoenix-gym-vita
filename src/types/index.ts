@@ -22,17 +22,6 @@ export interface NavItem {
   href: string
 }
 
-export interface Facility {
-  id: string
-  title: string
-  description: string
-  image: ImageAsset
-  /** "confirmed" = verified with the owner / visible in official content. */
-  status: 'confirmed' | 'proposed'
-  /** Bento grid footprint on desktop. */
-  size?: 'large' | 'tall' | 'wide' | 'regular'
-}
-
 export interface Program {
   id: string
   title: string
@@ -86,8 +75,10 @@ export interface InstagramPost {
   id: string
   url: string
   type: 'reel' | 'post'
-  /** Short label used for the loading/fallback card and accessible names. */
+  /** Short line shown on the card (and its accessible name). */
   caption: string
+  /** Cover image under /public (portrait 4:5). Optional: falls back to a branded card. */
+  thumb?: string
 }
 
 export interface OpeningHours {

@@ -104,15 +104,19 @@ export const cta = {
   open: { short: 'Join Now', long: 'Join Phoenix', status: 'Now open' },
 }[site.launchStatus]
 
+/** `#id` = a section on the home page; `/path` = its own page. */
 export const navItems: NavItem[] = [
   { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
+  { label: 'About', href: '/about' },
   { label: 'Facilities', href: '#facilities' },
-  { label: 'Programs', href: '#programs' },
-  { label: 'Gallery', href: '#gallery' },
   { label: 'Membership', href: '#membership' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Gallery', href: '#gallery' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Contact', href: '/contact' },
 ]
+
+/** Resolve a nav href for the current page: home-page sections need a "/" prefix on other pages. */
+export const navHref = (href: string, onHome: boolean) => (href.startsWith('#') && !onHome ? `/${href}` : href)
 
 /** In development, unverified content shows a visible "Placeholder" badge. */
 export const SHOW_PLACEHOLDER_BADGES = import.meta.env.DEV

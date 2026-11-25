@@ -1,7 +1,7 @@
 import { useState, useSyncExternalStore, type FormEvent } from 'react'
 import { PaperPlaneTilt } from '@phosphor-icons/react'
 import { plans } from '../../data/membership'
-import { programs } from '../../data/programs'
+import { facilities } from '../../data/facilities'
 import { getEnquiry, setEnquiry, subscribeEnquiry } from '../../utils/enquiry'
 import { primaryEnquiry } from '../../utils/contact'
 import { saveEnquiry } from '../../utils/supabase'
@@ -10,7 +10,7 @@ import { Select, type SelectGroup } from '../ui/Select'
 
 const interestGroups: SelectGroup[] = [
   { label: 'Membership', options: plans.map((p) => `${p.name} membership`) },
-  { label: 'Programmes', options: programs.map((p) => p.title) },
+  { label: 'Facilities & training', options: facilities.map((f) => f.title) },
   { label: 'Other', options: ['Just visiting / general question'] },
 ]
 const knownOptions = interestGroups.flatMap((g) => g.options)
@@ -20,7 +20,8 @@ const knownOptions = interestGroups.flatMap((g) => g.options)
  * message (or copies text + opens an Instagram DM when no WhatsApp number is set).
  * WhatsApp always opens, even if saving fails, so no lead is lost.
  */
-export default function EnquiryForm() {
+export default function EnquiryForm({ idPrefix = 'enquiry', autoFocus = false }: { idPrefix?: string; autoFocus?: boolean }) {
+  const id = (name: string) => `${idPrefix}-${name}`
   // Shared with "Enquire" buttons elsewhere on the page (see utils/enquiry.ts)
   const interest = useSyncExternalStore(subscribeEnquiry, getEnquiry, () => '')
   const [name, setName] = useState('')
@@ -71,8 +72,8 @@ export default function EnquiryForm() {
     'pointer-events-none absolute top-2 left-4 font-mono text-[0.6rem] tracking-[0.16em] text-ash-400 uppercase transition-colors peer-focus:text-brand-300'
 
   return (
-    <form onSubmit={onSubmit} className="flex h-full flex-col" aria-labelledby="enquiry-heading">
-      <h3 id="enquiry-heading" className="font-display text-4xl leading-none uppercase sm:text-5xl">Send an enquiry</h3>
+    <form onSubmit={onSubmit} className="flex h-full flex-col" aria-labelledby={id('heading')}>
+      <h3 id={id('heading')} className="font-display text-4xl leading-none uppercase sm:text-5xl">Send an enquiry</h3>
       <p className="mt-3 max-w-md text-sm text-ash-400">
         {channel === 'whatsapp'
           ? 'Fill this in and we’ll open WhatsApp with your message ready to send.'
@@ -81,16 +82,16 @@ export default function EnquiryForm() {
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <div className="relative">
-          <input id="enquiry-name" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className={field} />
-          <label htmlFor="enquiry-name" className={label}>Name *</label>
+          <input id={id('name')} autoFocus={autoFocus} required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className={field} />
+          <label htmlFor={id('name')} className={label}>Name *</label>
         </div>
         <div className="relative">
-          <input id="enquiry-phone" required type="tel" inputMode="tel" autoComplete="tel" pattern="[0-9+\s\-]{7,15}" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className={field} />
-          <label htmlFor="enquiry-phone" className={label}>Phone *</label>
+          <input id={id('phone')} required type="tel" inputMode="tel" autoComplete="tel" pattern="[0-9+\s\-]{7,15}" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className={field} />
+          <label htmlFor={id('phone')} className={label}>Phone *</label>
         </div>
         <div className="relative sm:col-span-2">
           <Select
-            id="enquiry-interest"
+            id={id('interest')}
             label="I'm interested in"
             placeholder="Choose one (optional)"
             value={interest}
@@ -102,13 +103,13 @@ export default function EnquiryForm() {
           />
         </div>
         <div className="relative sm:col-span-2">
-          <textarea id="enquiry-message" rows={4} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message" className={`${field} resize-none`} />
-          <label htmlFor="enquiry-message" className={label}>Message</label>
+          <textarea id={id('message')} rows={4} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message" className={`${field} resize-none`} />
+          <label htmlFor={id('message')} className={label}>Message</label>
         </div>
         {/* Honeypot (hidden from people and screen readers) */}
         <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden>
-          <label htmlFor="enquiry-website">Website</label>
-          <input id="enquiry-website" tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} />
+          <label htmlFor={id('website')}>Website</label>
+          <input id={id('website')} tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} />
         </div>
         <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-ash-300 sm:col-span-2">
           <input

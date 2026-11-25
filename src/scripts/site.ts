@@ -160,35 +160,14 @@ if (!reduceMotion && items.length) {
   })
 }
 
-/* ── Enquire buttons (data-enquire="Annual membership") ───────────────── */
+/* ── Enquire buttons: open the enquiry pop-up (data-enquire="Annual membership" pre-selects the interest;
+   an empty data-enquire just opens it). Links keep a real href to /contact#enquire for no-JS visitors. ── */
 document.addEventListener('click', (event) => {
   const trigger = (event.target as Element | null)?.closest<HTMLElement>('[data-enquire]')
-  if (trigger) requestEnquiry(trigger.dataset.enquire ?? '')
+  if (!trigger) return
+  event.preventDefault()
+  requestEnquiry(trigger.dataset.enquire ?? '')
 })
-
-/* ── Official Instagram embeds: load Meta's script only when the section is near ── */
-declare global {
-  interface Window {
-    instgrm?: { Embeds: { process: () => void } }
-  }
-}
-const igEmbeds = document.querySelector('[data-instagram-embeds]')
-if (igEmbeds) {
-  const igObserver = new IntersectionObserver(
-    ([entry]) => {
-      if (!entry?.isIntersecting) return
-      igObserver.disconnect()
-      if (window.instgrm) return window.instgrm.Embeds.process()
-      const script = document.createElement('script')
-      script.src = 'https://www.instagram.com/embed.js'
-      script.async = true
-      script.onload = () => window.instgrm?.Embeds.process()
-      document.body.appendChild(script)
-    },
-    { rootMargin: '600px 0px' },
-  )
-  igObserver.observe(igEmbeds)
-}
 
 /* ── Cursor spotlight on cards (.spotlight) ──────────────────────────── */
 if (finePointer) {

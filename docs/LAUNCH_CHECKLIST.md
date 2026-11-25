@@ -18,8 +18,7 @@ Each remaining item lists where it goes in the code.
 - [ ] **Original logo file** (vector SVG/AI/PDF or 1000px+ transparent PNG). The site currently uses a cut-out from the poster screenshot; `public/brand/phoenix-emblem.png`
 - [ ] **Domain name** (buy one, e.g. `phoenixgymvita.in` / `.com`); `site.ts → url`
 - [ ] **Real photos of the gym** (at least: hero shot, 6 facility zones, 8–12 gallery images). Shoot in landscape, good light, no clutter; `config/images.ts`
-- [ ] Confirm the **unverified** zones: strength/free weights, cardio; `data/facilities.ts`
-- [ ] Confirm unverified programmes: weight training, strength & muscle, fat loss, personal training; `data/programs.ts`
+- [ ] Confirm the **unverified** facilities: strength floor, cardio & conditioning, personal training; `data/facilities.ts`
 - [ ] When pre-booking opens: set `launchStatus: 'prebooking-open'`, then `'open'` on opening day
 - [ ] **Membership plans**: durations, prices (or confirm "price on enquiry"), and what each includes; `data/membership.ts`
 - [ ] **Owner approval** of About copy, Privacy Policy and Terms (have the legal pages reviewed)

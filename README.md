@@ -27,9 +27,9 @@ Requires Node 22.12+ (Astro 7).
 | Choice | Why |
 |---|---|
 | **Astro 7** (static output) | A content-first marketing site is Astro's sweet spot. Every page is rendered to plain HTML at build time with per-page `<title>`, meta, Open Graph and JSON-LD, so Google and WhatsApp/Instagram previews see full content. Sections ship **zero JavaScript** by default. |
-| **React 19 islands** (`@astrojs/react`) | Only genuinely interactive pieces hydrate: Navbar + theme toggle (`client:load`), mobile action bar (`client:idle`), enquiry form (`client:idle`), programmes showcase and gallery/lightbox (`client:visible`, so their JS loads only when scrolled near). |
+| **React 19 islands** (`@astrojs/react`) | Only genuinely interactive pieces hydrate: Navbar + theme toggle (`client:load`), mobile action bar (`client:idle`), enquiry form + enquiry pop-up (`client:idle`), facilities showcase and gallery/lightbox (`client:visible`, so their JS loads only when scrolled near). |
 | **Tiny vanilla motion script** (`src/scripts/site.ts`, ~1 KB) | Scroll reveals, parallax and "Enquire" buttons for the static sections, with no framework. Content stays visible with JS disabled. |
-| **Motion** (Framer Motion) | Used inside islands only: nav indicator, mobile menu, programme panel transitions, gallery filtering, lightbox. |
+| **Motion** (Framer Motion) | Used inside islands only: nav indicator, mobile menu, facility panel transitions, gallery filtering, lightbox. |
 | **Tailwind CSS v4** | Design tokens live in one `@theme` block (`src/styles/index.css`), including light/dark palettes. |
 | **@astrojs/sitemap** + `robots.txt` route | Sitemap and robots generated at build from the `site` URL. |
 | **Phosphor Icons** (`@phosphor-icons/react`) | One consistent icon family, including brand logos. In `.astro` files they render to static SVG (no JS). |
@@ -47,9 +47,10 @@ astro.config.mjs        ← site URL (canonical/sitemap), React + sitemap integr
 src/
   pages/                ← routes: index, privacy, terms, 404, robots.txt.ts
   layouts/              ← BaseLayout (head/SEO/theme/nav/footer), LegalLayout
-  sections/             ← one .astro file per homepage section (static HTML)
+  pages/                ← / (home), /about, /contact, /faq, /privacy, /terms, /admin
+  sections/             ← one .astro file per page section (static HTML)
   components/
-    islands/            ← React islands: Navbar, MobileActionBar, ProgramsShowcase, GalleryGrid, EnquiryForm
+    islands/            ← React islands: Navbar, MobileActionBar, FacilitiesShowcase, GalleryGrid, EnquiryForm, EnquiryModal
     ui/                 ← shared React pieces (Button, Img, Logo, Lightbox, ThemeToggle…), also rendered statically
     contact/            ← QuickAction / ContactDetail (.astro)
     SectionHeader.astro, ButtonLink.astro, Footer.astro
@@ -58,7 +59,7 @@ src/
     site.ts             ← ALL business info: name, address, phone, WhatsApp, hours, socials, domain
     images.ts           ← ALL image URLs (hero, sections, gallery). Swap for real photos here.
     seo.ts              ← per-page titles & descriptions
-  data/                 ← programs, facilities, membership plans, testimonials, Instagram posts
+  data/                 ← facilities (zones + training), membership plans, testimonials, Instagram posts
   utils/                ← enquiry store (cross-island), contact links, JSON-LD, image srcset, theme
   styles/index.css      ← design tokens, themes, reveal/parallax CSS, atmosphere utilities
 public/                 ← favicon, icons, og-image.jpg, brand emblem, manifest
@@ -92,11 +93,10 @@ or `data-parallax data-parallax-y="6,-6"` (also `-x`, `-scale`, `-fade`) for scr
 |---|---|
 | Phone, WhatsApp, address, hours, domain | `src/config/site.ts` |
 | Prices / plan benefits | `src/data/membership.ts` (set `price: 1500`, `priceNote: '/ month'`, `verified: true`) |
-| Programmes | `src/data/programs.ts` |
-| Facilities | `src/data/facilities.ts` (set `status: 'confirmed'`) |
+| Facilities & training | `src/data/facilities.ts` (each zone + the training it's for; set `verified: true` once confirmed) |
 | Testimonials | `src/data/content.ts` (add real ones with `isSample: false`) |
 | Any photo | `src/config/images.ts`. Put the file in `public/images/` and use `src: '/images/name.jpg'` |
-| Instagram posts | `src/data/content.ts → instagramPosts` (official embeds; add new post links at the top) |
+| Instagram posts | `src/data/content.ts → instagramPosts` (add new post links at the top + a cover image in `public/images/instagram/`) |
 | Logo | `public/brand/phoenix-emblem.png` (official emblem, cut from the launch poster; swap for the original file) |
 | Brand colours | `--color-brand-*` tokens in `src/styles/index.css` (sampled from the emblem's gold) |
 | Light / dark palettes | `[data-theme='dark']` and `:root:not([data-theme='dark'])` blocks in `src/styles/index.css` |
@@ -146,8 +146,10 @@ The form asks for name, phone (required), interest, message and a consent tick, 
 2. **Opens WhatsApp** (`wa.me/<number>`) with the message pre-typed, or, without a WhatsApp number, copies it and opens
    an Instagram DM. WhatsApp opens even if saving fails, so no lead is lost.
 
-A hidden honeypot field drops bots. "Enquire" buttons on programmes and membership plans pre-select the interest and
-scroll to the form. Backend setup, security model and the owner's inbox: see `docs/ADMIN_SETUP.md`.
+It appears on `/contact` and as a pop-up on every page: any element with `data-enquire` ("Get early access",
+"Enquire now" on plans, "Enquire about this" on facilities) opens the pop-up (`islands/EnquiryModal.tsx`), and a
+non-empty `data-enquire="Annual membership"` pre-selects the interest. Those links point to `/contact#enquire`, so they
+still work without JavaScript. A hidden honeypot field drops bots. Backend setup, security model and the owner's inbox: see `docs/ADMIN_SETUP.md`.
 
 ## Owner-editable content
 
@@ -160,16 +162,15 @@ so the live site updates in about a minute. Offers carry their dates and are re-
 
 ## Instagram
 
-The Instagram section shows the latest posts as **official Instagram embeds**: real thumbnails, playable on the site,
-with like counts and a "View profile" button. No API token is needed.
+The Instagram section (on `/contact`) shows the latest posts as **theme-matched cards**: the post's cover image,
+a Reel/Post label, a short caption and "Watch on Instagram". Tapping a card opens the post on Instagram.
+Instagram's official embed (white card, likes, comment box) can't be restyled, so it isn't used; that also means no
+Meta script loads on the site.
 
-- **Which posts:** `src/data/content.ts → instagramPosts` (newest first), shown in a swipeable carousel with
-  prev/next arrows and a counter (`INSTAGRAM_EMBED_COUNT`, default 5). To feature a new post, copy its link in
-  Instagram ("…" → Copy link) and add it to the top.
-- **Design:** Instagram's own card UI inside the embed can't be restyled or hidden (Meta's embed terms), so the
-  presentation lives around it: Reel/Post labels, gold-edged frames, gold side arrows and dots.
-- **Performance and privacy:** Instagram's `embed.js` loads only when a visitor scrolls near the section
-  (see `src/scripts/site.ts`). Before that, and with JavaScript off, each post is a styled card linking to Instagram.
+- **Which posts:** `src/data/content.ts → instagramPosts` (newest first; `INSTAGRAM_FEED_COUNT`, default 5), in a swipeable
+  row with gold arrows, a counter and dots.
+- **Adding a post:** copy its link (Instagram "…" → Copy link), add it at the top, and save its cover as
+  `public/images/instagram/<id>.webp` (portrait 4:5, about 640×800). Without an image the card shows a branded placeholder.
 - **Fully automatic feed (later):** to have the site pick up new posts by itself, switch the account to Business/Creator,
   create a Meta app and use the Instagram Graph API at build time (the token needs refreshing every 60 days).
 
@@ -177,9 +178,9 @@ with like counts and a "View profile" button. No API token is needed.
 
 **Local-search content (Vita, Maharashtra)**
 - Every section `<h2>` starts with a plain, descriptive phrase (the small eyebrow label: e.g. "Gym facilities",
-  "Training programmes", "Gym membership"), followed by the brand slogan. "Vita" lives in the page title, meta description,
+  "Gym membership"), followed by the brand slogan. "Vita" lives in the page title, meta description,
   structured data, intros and FAQ rather than in every label.
-- **FAQ section** (`src/data/faq.ts`, `src/sections/Faq.astro`): 9 real local questions answered only from verified facts in
+- **FAQ page** (`/faq`: `src/data/faq.ts`, `src/sections/Faq.astro`): 9 real local questions answered only from verified facts in
   `config/site.ts`, so answers update automatically (hours, prices, WhatsApp). The same data emits **FAQPage** JSON-LD.
 - A plain-language local summary (name, city, district, state, street, facilities) sits beside the FAQ.
 - No hidden text and no keyword stuffing; "Vita" appears naturally (~2% of words).

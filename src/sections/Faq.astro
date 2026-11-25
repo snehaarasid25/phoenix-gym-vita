@@ -10,13 +10,13 @@ import { faqs } from '../data/faq'
 import SectionHeader from '../components/SectionHeader.astro'
 ---
 
-<section id="faq" aria-labelledby="faq-title" class="section-y relative overflow-hidden bg-ash-900">
+<section id="faq" aria-labelledby="faq-title" class="section-y relative overflow-clip bg-ash-900">
   <div class="gold-rule absolute inset-x-0 top-0" aria-hidden="true"></div>
   <div class="glow-orb-soft top-1/4 -left-60 size-[40rem]" aria-hidden="true"></div>
   <div class="container-x relative grid gap-14 lg:grid-cols-12 lg:gap-10">
     <div class="lg:col-span-5">
       <div class="lg:sticky lg:top-28">
-        <SectionHeader id="faq-title" eyebrow="Your questions" lines={['Good to', { text: 'know.', class: 'text-brand-gradient' }]} align="left" />
+        <SectionHeader id="faq-title" level={1} eyebrow="Your questions" lines={['Good to', { text: 'know.', class: 'text-brand-gradient' }]} align="left" />
         <!-- Plain-language local summary (visible, useful to visitors and to search engines) -->
         <div class="reveal mt-8 max-w-md space-y-4 leading-relaxed text-ash-300" style="--d:0.15s">
           <p>

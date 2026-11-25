@@ -694,23 +694,6 @@
   }
 
 
-  /* Instagram embeds: our placeholder card before load, softened official iframe after */
-  blockquote.ig-embed {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    width: 100%;
-  }
-  [data-instagram-embeds] iframe.instagram-media-rendered {
-    width: 100% !important;
-    max-width: none !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    border: 0 !important;
-    border-radius: 1.6rem !important;
-    background: #fff;
-  }
-
   /* ── Premium layout & interaction layer ───────────────────────────── */
 
   /* Dark "moments" sit as inset rounded panels on the ivory page */
@@ -718,6 +701,9 @@
     margin-inline: 0.5rem;
     border-radius: 2rem;
     overflow: hidden;
+    /* clip (not hidden) when supported: clips the same but isn't a scroll container, so sticky
+       headers inside (FAQ) stick to the viewport instead of being pushed down by the padding */
+    overflow: clip;
     isolation: isolate;
     @media (width >= 40rem) { margin-inline: 0.75rem; border-radius: 2.5rem; }
     @media (width >= 64rem) { margin-inline: 1rem; border-radius: 3rem; }
@@ -1111,4 +1097,47 @@
   .js .reveal:not(.is-in) { filter: none; }
   .char { animation: none; }
   [data-velocity-skew] { transform: none; }
+}
+
+/* Enquiry pop-up (islands/EnquiryModal.tsx): page behind can't scroll; card rises in, backdrop fades in */
+html:has(dialog.enquiry-dialog[open]) {
+  overflow: hidden;
+}
+.enquiry-dialog[open] .enquiry-card {
+  animation: enquiry-in 0.45s var(--ease-out-expo) both;
+}
+/* The pop-up card always wears the gold edge + glow (other cards only get it on hover, which phones don't have) */
+.enquiry-card.card-lux,
+.enquiry-card.card-lux:hover {
+  /* soft warm light from the top-right, like the desktop hover spotlight */
+  background:
+    radial-gradient(520px circle at 75% 0%, color-mix(in srgb, var(--color-brand-400) 14%, transparent), transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-bone) 3%, transparent), transparent 40%),
+    var(--color-ash-850);
+  border-color: color-mix(in srgb, var(--color-brand-400) 55%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-brand-500) 12%, transparent),
+    0 30px 90px -28px color-mix(in srgb, var(--color-brand-500) 65%, transparent),
+    0 0 60px -20px color-mix(in srgb, var(--color-brand-400) 35%, transparent);
+}
+.enquiry-dialog[open]::backdrop {
+  animation: enquiry-fade 0.35s ease-out both;
+}
+@keyframes enquiry-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+}
+@keyframes enquiry-fade {
+  from { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .enquiry-dialog[open] .enquiry-card, .enquiry-dialog[open]::backdrop { animation: none; }
+}
+
+
+/* Sub-pages (/about, /contact, /faq): room for the floating header above the first section */
+.page-top {
+  height: 4.5rem;
+}
+@media (width >= 40rem) {
+  .page-top { height: 4rem; }
 }

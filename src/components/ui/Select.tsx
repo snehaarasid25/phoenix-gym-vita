@@ -29,6 +29,8 @@ interface Position {
   bottom?: number
   maxHeight: number
   up: boolean
+  /** Where the panel is portalled: the open <dialog> the field sits in (top layer), else <body>. */
+  host: Element
 }
 
 /** Space kept clear for the fixed header (top) and the phone action bar (bottom). */
@@ -38,7 +40,8 @@ const IDEAL_HEIGHT = 340
 const noop = () => () => {}
 
 /**
- * Branded dropdown (select-only combobox). The panel is portalled to <body> with fixed
+ * Branded dropdown (select-only combobox). The panel is portalled to <body> (or to the open
+ * <dialog> it sits in, which is drawn above everything) with fixed
  * positioning, so animated/transformed ancestors can't clip or cover it, and it flips
  * upwards when there isn't room below (never runs under the phone action bar).
  */
@@ -65,7 +68,8 @@ export function Select({ id, label, placeholder, value, onChange, groups, fieldC
     const above = r.top - HEADER_SPACE
     const up = below < Math.min(IDEAL_HEIGHT, 260) && above > below
     const maxHeight = Math.max(160, Math.min(IDEAL_HEIGHT, (up ? above : below) - 10))
-    setPos(up ? { left: r.left, width: r.width, bottom: vh - r.top + 8, maxHeight, up } : { left: r.left, width: r.width, top: r.bottom + 8, maxHeight, up })
+    const host = el.closest('dialog') ?? document.body
+    setPos(up ? { left: r.left, width: r.width, bottom: vh - r.top + 8, maxHeight, up, host } : { left: r.left, width: r.width, top: r.bottom + 8, maxHeight, up, host })
   }
 
   const openList = () => {
@@ -235,7 +239,7 @@ export function Select({ id, label, placeholder, value, onChange, groups, fieldC
               </motion.ul>
             )}
           </AnimatePresence>,
-          document.body,
+          pos?.host ?? document.body,
         )}
     </div>
   )

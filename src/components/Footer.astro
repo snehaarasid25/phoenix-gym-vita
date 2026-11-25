@@ -1,7 +1,7 @@
 ---
 /** Site footer (static HTML, zero JS). */
 import { ArrowUp, Clock, GithubLogo, FacebookLogo, InstagramLogo, MapPin, Phone, WhatsappLogo, YoutubeLogo } from '@phosphor-icons/react'
-import { navItems, site } from '../config/site'
+import { navHref, navItems, site } from '../config/site'
 import { whatsappLink } from '../utils/contact'
 import { Logo } from './ui/Logo'
 import { Marquee } from './ui/Marquee'
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { pathname } = Astro.props
-const resolve = (href: string) => (pathname === '/' ? href : `/${href}`)
+const resolve = (href: string) => navHref(href, pathname === '/')
 const wa = whatsappLink()
 const YEAR = new Date().getFullYear()
 const credit = { name: 'Sneha', url: 'https://github.com/snehaarasid25' }
@@ -66,9 +66,6 @@ const rowIcon = 'grid size-9 shrink-0 place-items-center rounded-full bg-brand-5
             </a>
           </li>
         ))}
-        <li>
-          <a href={resolve('#faq')} class="text-sm text-ash-300 transition-colors hover:text-brand-300">FAQ</a>
-        </li>
       </ul>
     </nav>
 
@@ -136,7 +133,7 @@ const rowIcon = 'grid size-9 shrink-0 place-items-center rounded-full bg-brand-5
 
   <!-- Phones / tablets: centred, ordered stack -->
   <div class="container-x flex flex-col items-center gap-4 border-t border-bone/10 py-8 text-center text-xs text-ash-400 lg:hidden">
-    <a href={resolve('#home')} class="inline-flex items-center gap-2 rounded-full border border-brand-500/40 bg-brand-500/10 px-4 py-2 font-mono text-[0.65rem] font-semibold tracking-[0.16em] text-brand-300 uppercase transition-colors hover:border-brand-400 hover:bg-brand-500/15">
+    <a href={pathname === '/' ? '#home' : '#main'} class="inline-flex items-center gap-2 rounded-full border border-brand-500/40 bg-brand-500/10 px-4 py-2 font-mono text-[0.65rem] font-semibold tracking-[0.16em] text-brand-300 uppercase transition-colors hover:border-brand-400 hover:bg-brand-500/15">
       <ArrowUp className="size-3.5" weight="bold" /> Back to top
     </a>
     <nav aria-label="Legal" class="mt-1 flex items-center gap-3 text-[0.8rem] text-ash-300">
@@ -175,7 +172,7 @@ const rowIcon = 'grid size-9 shrink-0 place-items-center rounded-full bg-brand-5
     <div class="flex items-center gap-6">
       <a href="/privacy" class="hover:text-bone">Privacy Policy</a>
       <a href="/terms" class="hover:text-bone">Terms &amp; Conditions</a>
-      <a href={resolve('#home')} aria-label="Back to top" class="grid size-9 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+      <a href={pathname === '/' ? '#home' : '#main'} aria-label="Back to top" class="grid size-9 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
         <ArrowUp className="size-4" weight="bold" />
       </a>
     </div>

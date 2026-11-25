@@ -1,0 +1,15 @@
+---
+/** About: the full Phoenix Gym story, photography and creed. */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { pages } from '../config/seo'
+import About from '../sections/About.astro'
+import FinalCta from '../sections/FinalCta.astro'
+import MantraBand from '../sections/MantraBand.astro'
+---
+
+<BaseLayout meta={pages.about}>
+  <div class="page-top" aria-hidden="true"></div>
+  <About />
+  <MantraBand />
+  <FinalCta />
+</BaseLayout>

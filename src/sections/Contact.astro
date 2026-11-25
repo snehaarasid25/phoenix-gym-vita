@@ -21,15 +21,15 @@ const cityMapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(`${site
   <div class="glow-orb-soft right-[-10rem] bottom-0 size-[36rem]" aria-hidden="true" />
   <div class="container-x relative">
     <SectionHeader
-      id="contact-title"
+      id="contact-title" level={1}
       eyebrow="Visit our gym"
       lines={['Your first rep', { text: 'starts here.', class: 'text-brand-gradient' }]}
       intro={`Find us at ${site.location.streetAddress ?? site.location.city}, ${site.location.city}. Come and see the floor, ask about membership, or just say hello.`}
     />
 
     <div class="mt-14 grid gap-4 sm:mt-20 lg:grid-cols-12">
-      <!-- ── Enquiry form (no backend: composes a WhatsApp / Instagram message) ── -->
-      <div class="reveal card-lux rounded-[1.75rem] p-6 sm:p-10 lg:col-span-7">
+      <!-- ── Enquiry form (saves the enquiry, then opens WhatsApp). #enquire = no-JS target of every "Get early access" button ── -->
+      <div id="enquire" class="reveal card-lux scroll-mt-28 rounded-[1.75rem] p-6 sm:p-10 lg:col-span-7">
         <EnquiryForm client:idle />
       </div>
 

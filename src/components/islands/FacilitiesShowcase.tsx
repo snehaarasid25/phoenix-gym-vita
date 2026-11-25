@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, CaretDown } from "@phosphor-icons/react";
-import { programs } from "../../data/programs";
+import { facilities as programs } from "../../data/facilities";
 import { requestEnquiry } from "../../utils/enquiry";
 import { Button } from "../ui/Button";
 import { Img } from "../ui/Img";
@@ -13,10 +13,10 @@ import { cn } from "../../utils/cn";
 const ease = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Programmes showcase (React island, hydrated when visible).
+ * Gym facilities showcase (React island, hydrated when visible). Each zone + the training it is built for.
  * Desktop: hover/focus tab list + cinematic preview. Mobile: swipeable cards.
  */
-export default function ProgramsShowcase() {
+export default function FacilitiesShowcase() {
   return (
     <>
       <DesktopShowcase />
@@ -35,7 +35,7 @@ function DesktopShowcase() {
       <ul
         className="lg:col-span-6"
         role="tablist"
-        aria-label="Training programs"
+        aria-label="Gym facilities"
         aria-orientation="vertical"
       >
         {programs.map((prog, i) => {
@@ -212,7 +212,7 @@ function ProgramDetail({
             aria-controls={`more-${program.id}`}
             className="mt-5 inline-flex items-center gap-2 font-mono text-xs font-semibold tracking-[0.16em] text-brand-300 uppercase transition-colors hover:text-brand-200"
           >
-            {more ? "Show less" : "More about this programme"}
+            {more ? "Show less" : "Read more"}
             <CaretDown
               className={cn(
                 "size-3.5 transition-transform duration-300",
@@ -412,7 +412,7 @@ function MobileCards() {
       </div>
       <div
         className="mt-3 flex justify-center gap-2"
-        aria-label="Choose a programme"
+        aria-label="Choose a facility"
       >
         {programs.map((p, i) => (
           <button

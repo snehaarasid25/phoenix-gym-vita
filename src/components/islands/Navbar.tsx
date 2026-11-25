@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { InstagramLogo, X } from '@phosphor-icons/react'
-import { cta, navItems, site } from '../../config/site'
+import { cta, navHref, navItems, site } from '../../config/site'
 import { useActiveSection } from '../../hooks/useActiveSection'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 import { useScrolled } from '../../hooks/useScrolled'
@@ -10,7 +10,8 @@ import { ButtonLink } from '../ui/Button'
 import { Logo } from '../ui/Logo'
 import { ThemeToggle } from '../ui/ThemeToggle'
 
-const sectionIds = navItems.map((n) => n.href.slice(1))
+// Home-page sections the scroll-spy watches (page links like /about are matched by pathname instead)
+const sectionIds = navItems.filter((n) => n.href.startsWith('#')).map((n) => n.href.slice(1))
 
 /** True while the (always-dark) hero is still underneath the floating nav. */
 function useOverHero(enabled: boolean) {
@@ -42,8 +43,9 @@ export default function Navbar({ pathname }: { pathname: string }) {
   const active = useActiveSection(onHome ? sectionIds : [])
   useLockBodyScroll(open)
 
-  /** On sub-pages, anchors must point back to the home page. */
-  const resolve = (href: string) => (onHome ? href : `/${href}`)
+  /** On sub-pages, home-section anchors must point back to the home page. */
+  const resolve = (href: string) => navHref(href, onHome)
+  const isActive = (href: string) => (href.startsWith('#') ? onHome && active === href.slice(1) : pathname === href)
 
   return (
     <>
@@ -72,18 +74,18 @@ export default function Navbar({ pathname }: { pathname: string }) {
 
             <ul className="hidden items-center gap-1 lg:flex">
               {navItems.slice(1).map((item) => {
-                const isActive = onHome && active === item.href.slice(1)
+                const current = isActive(item.href)
                 return (
                   <li key={item.href}>
                     <a
                       href={resolve(item.href)}
-                      aria-current={isActive ? 'true' : undefined}
+                      aria-current={current ? (item.href.startsWith('#') ? 'true' : 'page') : undefined}
                       className={cn(
                         'relative rounded-full px-2.5 py-2 font-mono text-[0.7rem] font-medium tracking-[0.12em] uppercase transition-colors duration-300 xl:px-4 xl:tracking-[0.18em]',
-                        isActive ? 'text-bone' : 'text-ash-300 hover:text-bone',
+                        current ? 'text-bone' : 'text-ash-300 hover:text-bone',
                       )}
                     >
-                      {isActive && (
+                      {current && (
                         <motion.span layoutId="nav-active" className="absolute inset-0 rounded-full bg-bone/[0.07]" transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }} />
                       )}
                       <span className="relative">{item.label}</span>
@@ -96,7 +98,7 @@ export default function Navbar({ pathname }: { pathname: string }) {
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <span className="hidden sm:block">
-                <ButtonLink href={resolve('#membership')}>{cta.short}</ButtonLink>
+                <ButtonLink href="/contact#enquire" data-enquire="">{cta.short}</ButtonLink>
               </span>
               <button
                 type="button"
@@ -176,7 +178,7 @@ function MobileMenu({ onClose, resolve }: { onClose: () => void; resolve: (h: st
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        <ButtonLink href={resolve('#membership')} onClick={onClose} size="lg" className="w-full sm:w-auto">
+        <ButtonLink href="/contact#enquire" data-enquire="" onClick={onClose} size="lg" className="w-full sm:w-auto">
           {cta.long}
         </ButtonLink>
         <a href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 font-mono text-xs tracking-[0.18em] text-ash-300 uppercase hover:text-bone">

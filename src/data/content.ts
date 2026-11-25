@@ -84,17 +84,18 @@ export const testimonials: Testimonial[] = reviewsFromAdmin
   : builtInTestimonials
 
 /**
- * Instagram posts shown as OFFICIAL Instagram embeds (real thumbnails, playable
- * on the site). Newest first; the carousel shows the first `INSTAGRAM_EMBED_COUNT`.
- * To feature a new post: copy its link from Instagram ("…" → Copy link) and add
- * it at the top. `id` = the code in the URL (instagram.com/reel/<id>/).
+ * Instagram posts shown on the Contact page as theme-matched cards (tap opens the post on Instagram).
+ * Newest first; the row shows the first `INSTAGRAM_FEED_COUNT`.
+ * To feature a new post: copy its link (Instagram "…" → Copy link), add it at the top, and save its cover
+ * image as public/images/instagram/<id>.webp (portrait 4:5, about 640×800). Without an image the card
+ * shows a branded placeholder. `id` = the code in the URL (instagram.com/reel/<id>/).
  */
-export const INSTAGRAM_EMBED_COUNT = 5
+export const INSTAGRAM_FEED_COUNT = 5
 
 export const instagramPosts: InstagramPost[] = [
-  { id: 'Dfru_2Zzhed', url: 'https://www.instagram.com/reel/Dfru_2Zzhed/', type: 'reel', caption: 'Latest reel' },
-  { id: 'DfZwPsXzHM8', url: 'https://www.instagram.com/reel/DfZwPsXzHM8/', type: 'reel', caption: 'Inside Phoenix' },
-  { id: 'DfKUIAuNq9E', url: 'https://www.instagram.com/reel/DfKUIAuNq9E/', type: 'reel', caption: 'The floor' },
-  { id: 'De11UFWThjm', url: 'https://www.instagram.com/reel/De11UFWThjm/', type: 'reel', caption: 'Train with us' },
-  { id: 'De1I4jmzX6R', url: 'https://www.instagram.com/p/De1I4jmzX6R/', type: 'post', caption: 'Phoenix Gym Vita' },
+  { id: 'Dfru_2Zzhed', url: 'https://www.instagram.com/reel/Dfru_2Zzhed/', type: 'reel', caption: 'Introducing a new era of fitness in Vita.', thumb: '/images/instagram/Dfru_2Zzhed.webp' },
+  { id: 'DfZwPsXzHM8', url: 'https://www.instagram.com/reel/DfZwPsXzHM8/', type: 'reel', caption: 'Find us at Sambhaji Nagar, Nevari Road, Vita.', thumb: '/images/instagram/DfZwPsXzHM8.webp' },
+  { id: 'DfKUIAuNq9E', url: 'https://www.instagram.com/reel/DfKUIAuNq9E/', type: 'reel', caption: 'Rise stronger. Train harder. Become unstoppable.', thumb: '/images/instagram/DfKUIAuNq9E.webp' },
+  { id: 'De11UFWThjm', url: 'https://www.instagram.com/reel/De11UFWThjm/', type: 'reel', caption: 'Ready to transform yourself? Every rep brings you closer.', thumb: '/images/instagram/De11UFWThjm.webp' },
+  { id: 'De1I4jmzX6R', url: 'https://www.instagram.com/p/De1I4jmzX6R/', type: 'post', caption: 'Rise to a new standard of fitness. Phoenix Gym, est. 2026.', thumb: '/images/instagram/De1I4jmzX6R.webp' },
 ]

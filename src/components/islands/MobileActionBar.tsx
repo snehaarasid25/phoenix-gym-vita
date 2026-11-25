@@ -34,7 +34,7 @@ export default function MobileActionBar() {
             <a href={enquiry.href} target="_blank" rel="noopener noreferrer" className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full border border-bone/15 font-mono text-[0.68rem] font-semibold tracking-[0.14em] text-bone uppercase">
               <Icon className="size-4" /> {enquiry.channel === 'whatsapp' ? 'WhatsApp' : 'Message'}
             </a>
-            <a href="#membership" className="btn-primary flex h-12 flex-1 items-center justify-center rounded-full font-mono text-[0.68rem] font-semibold tracking-[0.14em] uppercase">
+            <a href="/contact#enquire" data-enquire="" className="btn-primary flex h-12 flex-1 items-center justify-center rounded-full font-mono text-[0.68rem] font-semibold tracking-[0.14em] uppercase">
               {cta.short}
             </a>
           </div>

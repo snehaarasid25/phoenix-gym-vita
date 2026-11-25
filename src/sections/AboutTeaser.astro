@@ -1,0 +1,48 @@
+---
+/** Home-page "About" in brief: one photo + creed, a short story and the three values. Full story: /about. */
+import { images } from '../config/images'
+import { site } from '../config/site'
+import ButtonLink from '../components/ButtonLink.astro'
+import SectionHeader from '../components/SectionHeader.astro'
+import { Img } from '../components/ui/Img'
+---
+
+<section id="about" aria-labelledby="about-title" class="section-y relative isolate overflow-hidden">
+  <div class="bg-dots pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="glow-orb-soft top-1/4 -right-60 size-[40rem]" aria-hidden="true" />
+  <div class="container-x relative grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
+    <div data-theme="dark" class="reveal-img relative aspect-[4/3] overflow-hidden rounded-[1.75rem] lg:col-span-6">
+      <div data-parallax data-parallax-y="6,-6" class="absolute inset-x-0 -inset-y-[8%]">
+        <Img image={images.aboutPrimary} sizes="(min-width:1024px) 50vw, 100vw" className="size-full object-cover" />
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-t from-ash-950/75 via-transparent to-transparent" aria-hidden="true" />
+      <figure class="absolute right-5 bottom-5 left-5 sm:right-8 sm:bottom-8 sm:left-8">
+        <blockquote class="font-display text-3xl leading-[0.95] uppercase sm:text-5xl">“{site.tagline}.”</blockquote>
+        <figcaption class="eyebrow mt-3 text-brand-300">— The Phoenix creed</figcaption>
+      </figure>
+    </div>
+
+    <div class="lg:col-span-6">
+      <SectionHeader
+        id="about-title"
+        eyebrow="About Phoenix Gym"
+        lines={['More than a gym.', { text: 'A place to rise.', class: 'text-brand-gradient' }]}
+        align="left"
+      />
+      <p class="reveal mt-6 max-w-xl text-lg leading-relaxed text-ash-300" style="--d:0.1s">
+        <span class="text-bone">The name says it all.</span> Every session is a chance to burn away who you were yesterday and rise a little stronger. Established in {site.foundingYear}, Phoenix Gym brings a premium training experience to {site.location.city}.
+      </p>
+      <ul class="reveal mt-7 flex flex-wrap items-center gap-x-4 gap-y-2" style="--d:0.15s" aria-label="Our values">
+        {site.values.map((v, i) => (
+          <li class="flex items-center gap-4">
+            {i > 0 && <span class="text-brand-500" aria-hidden="true">✦</span>}
+            <span class="font-display text-3xl uppercase sm:text-4xl">{v}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="reveal mt-9" style="--d:0.2s">
+        <ButtonLink href="/about" variant="outline">Read our story</ButtonLink>
+      </div>
+    </div>
+  </div>
+</section>

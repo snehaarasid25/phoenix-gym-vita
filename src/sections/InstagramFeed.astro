@@ -1,15 +1,15 @@
 ---
 /**
- * Latest posts from @phoenix_gym_03 via OFFICIAL Instagram embeds (real
- * thumbnails, playable on the site). The list itself is curated in
- * data/content.ts; a fully automatic feed would need the Instagram Graph API.
+ * Latest posts from @phoenix_gym_03 as theme-matched cards (cover image + caption; tap opens the post on
+ * Instagram). Curated in data/content.ts. Instagram's own embed can't be restyled (white card, likes,
+ * comment box), so we show our own card instead and link out.
  */
-import { CaretLeft, CaretRight, InstagramLogo, PaperPlaneTilt, Play } from '@phosphor-icons/react'
+import { ArrowUpRight, CaretLeft, CaretRight, InstagramLogo, PaperPlaneTilt, Play } from '@phosphor-icons/react'
 import { site } from '../config/site'
-import { INSTAGRAM_EMBED_COUNT, instagramPosts } from '../data/content'
+import { INSTAGRAM_FEED_COUNT, instagramPosts } from '../data/content'
 import SectionHeader from '../components/SectionHeader.astro'
 
-const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
+const featured = instagramPosts.slice(0, INSTAGRAM_FEED_COUNT)
 ---
 
 <section id="instagram" aria-labelledby="instagram-title" class="section-y relative overflow-hidden">
@@ -23,71 +23,67 @@ const featured = instagramPosts.slice(0, INSTAGRAM_EMBED_COUNT)
       lines={[{ text: `@${site.social.instagramHandle}`, class: 'lg:text-[0.78em] xl:text-[1em]' }]}
     >
       <Fragment slot="intro">
-        The latest reels and posts from the floor, straight from our Instagram. Follow along and be part of the journey from day one.
+        The latest reels and posts from the floor. Tap any card to watch it on Instagram, and follow along to be part of the journey from day one.
       </Fragment>
     </SectionHeader>
   </div>
 
-  <!--
-    ALL latest posts as official Instagram embeds in a swipeable carousel.
-    Each <blockquote> is a styled placeholder + link (works without JS);
-    Instagram's embed.js (loaded by scripts/site.ts only when this section is
-    near) upgrades it to the real, playable post. Instagram's own card UI
-    can't be restyled, so the presentation lives in the frame around it.
-  -->
-  <div class="container-x mt-12 flex items-end justify-between gap-6 sm:mt-16">
+  <div class="container-x mt-12 sm:mt-16">
     <p class="eyebrow flex items-center gap-3 text-ash-400">
       <InstagramLogo className="size-4 text-brand-400" />
       Latest from @{site.social.instagramHandle}
       <span class="whitespace-nowrap text-brand-400 tabular-nums" data-carousel-count="ig-track">01 / {String(featured.length).padStart(2, '0')}</span>
     </p>
-  </div>
+    <div class="relative mt-6">
+      <button type="button" data-carousel-prev="ig-track" aria-label="Previous posts" class="carousel-arrow -left-2 sm:-left-3 lg:-left-6">
+        <CaretLeft className="size-4" weight="bold" />
+      </button>
+      <button type="button" data-carousel-next="ig-track" aria-label="Next posts" class="carousel-arrow -right-2 sm:-right-3 lg:-right-6">
+        <CaretRight className="size-4" weight="bold" />
+      </button>
+      <div id="ig-track" data-carousel class="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pt-2 pb-4 sm:gap-5">
+        {featured.map((post, i) => (
+          <a
+            href={post.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-theme="dark"
+            aria-label={`${post.type === 'reel' ? 'Watch reel' : 'View post'} on Instagram: ${post.caption}`}
+            class="ig-post reveal group relative isolate block aspect-[4/5] w-[78%] shrink-0 snap-start overflow-hidden rounded-[1.5rem] bg-ash-900 sm:w-[44%] lg:w-[calc((100%-3.75rem)/4)]"
+            style={`--d:${(Math.min(i, 3) * 0.08).toFixed(2)}s`}
+          >
+            {post.thumb ? (
+              <img src={post.thumb} alt="" width="640" height="800" loading="lazy" decoding="async" class="absolute inset-0 -z-10 size-full object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] group-hover:scale-[1.06]" />
+            ) : (
+              <span class="absolute inset-0 -z-10 grid place-items-center bg-[radial-gradient(circle_at_50%_40%,color-mix(in_srgb,var(--color-brand-500)_22%,transparent),transparent_65%)]" aria-hidden="true">
+                <img src="/brand/phoenix-emblem.png" alt="" width="171" height="218" class="h-24 w-auto opacity-40" />
+              </span>
+            )}
+            <span class="absolute inset-0 -z-10 bg-gradient-to-t from-ash-950 via-ash-950/25 to-ash-950/30" aria-hidden="true"></span>
 
-  <!-- Track stays inside the page's content width (clips at the column edges, never the window) -->
-  <div class="container-x mt-6">
-    <div class="relative">
-    <button type="button" data-carousel-prev="ig-track" aria-label="Previous posts" class="carousel-arrow -left-2 sm:-left-3 lg:-left-6">
-      <CaretLeft className="size-4" weight="bold" />
-    </button>
-    <button type="button" data-carousel-next="ig-track" aria-label="Next posts" class="carousel-arrow -right-2 sm:-right-3 lg:-right-6">
-      <CaretRight className="size-4" weight="bold" />
-    </button>
-    <div
-      id="ig-track"
-      data-instagram-embeds
-      data-carousel
-      class="flex snap-x snap-mandatory items-start gap-5 overflow-x-auto pt-2 pb-6 no-scrollbar"
-    >
-    {
-      featured.map((post, i) => (
-        <article class="reveal w-[326px] shrink-0 snap-start" style={`--d:${(Math.min(i, 3) * 0.08).toFixed(2)}s`}>
-          <p class="eyebrow mb-3 flex items-center gap-3 text-ash-400">
-            <span class="h-px w-6 bg-brand-500/50" aria-hidden="true" />
-            {post.type === 'reel' ? 'Reel' : 'Post'}
-          </p>
-          <!-- Gold-edged frame: our presentation around Instagram's (unmodified) embed -->
-          <div class="rounded-[1.9rem] bg-[linear-gradient(160deg,color-mix(in_srgb,var(--color-brand-400)_55%,transparent),transparent_45%,color-mix(in_srgb,var(--color-brand-500)_35%,transparent))] p-[5px] shadow-[0_30px_70px_-40px_rgba(21,17,13,0.6)]">
-            <blockquote class="instagram-media ig-embed" data-instgrm-permalink={`${post.url}?utm_source=ig_embed`} data-instgrm-version="14">
-              <a
-                href={post.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="card-lux group flex aspect-[4/5] w-full flex-col items-center justify-center gap-4 rounded-[1.5rem] p-6 text-center"
-              >
-                <span class="icon-well size-14 rounded-2xl">
-                  {post.type === 'reel' ? <Play className="size-6" weight="fill" /> : <InstagramLogo className="size-6" />}
-                </span>
-                <span class="font-display text-3xl leading-none uppercase">{post.caption}</span>
-                <span class="eyebrow text-brand-400 group-hover:underline">View on Instagram</span>
-              </a>
-            </blockquote>
-          </div>
-        </article>
-      ))
-    }
+            <span class="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-bone/15 bg-ash-950/55 px-3 py-1.5 font-mono text-[0.6rem] tracking-[0.16em] text-bone uppercase backdrop-blur-md">
+              <InstagramLogo className="size-3.5 text-brand-300" weight="bold" />
+              {post.type === 'reel' ? 'Reel' : 'Post'}
+            </span>
+            {post.type === 'reel' && (
+              <span class="absolute top-1/2 left-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-brand-300/60 bg-ash-950/45 text-brand-200 shadow-[0_0_40px_-8px_rgba(196,159,110,0.7)] backdrop-blur-md transition-transform duration-500 group-hover:scale-110" aria-hidden="true">
+                <Play className="ml-0.5 size-6" weight="fill" />
+              </span>
+            )}
+
+            <span class="absolute inset-x-0 bottom-0 p-5">
+              <span class="line-clamp-2 block font-semibold leading-snug text-bone">{post.caption}</span>
+              <span class="mt-3 inline-flex items-center gap-1.5 font-mono text-[0.62rem] font-semibold tracking-[0.16em] text-brand-300 uppercase transition-colors group-hover:text-brand-200">
+                {post.type === 'reel' ? 'Watch on Instagram' : 'View on Instagram'} <ArrowUpRight className="size-3.5" weight="bold" />
+              </span>
+            </span>
+            <!-- Gold edge that brightens on hover -->
+            <span class="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-brand-400/25 ring-inset transition-[box-shadow] duration-500 group-hover:ring-brand-400/70" aria-hidden="true"></span>
+          </a>
+        ))}
+      </div>
     </div>
-    </div>
-    <div data-carousel-dots="ig-track" class="mt-2 flex justify-center gap-2" aria-label="Choose a post"></div>
+    <div data-carousel-dots="ig-track" class="mt-3 flex justify-center gap-2" aria-label="Choose a post"></div>
   </div>
 
   <!-- Instagram CTA card: orbiting IG-gradient border, story-ring avatar, flowing "Follow" + glass "DM" on one line -->

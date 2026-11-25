@@ -19,16 +19,19 @@ interface Props {
   align?: 'left' | 'split'
   id?: string
   class?: string
+  /** 1 when the section opens its own page (/about, /contact, /faq), so that page has an <h1>. */
+  level?: 1 | 2
 }
 
-const { eyebrow, lines, intro, align = 'split', id, class: className } = Astro.props
+const { eyebrow, lines, intro, align = 'split', id, class: className, level = 2 } = Astro.props
+const Heading = level === 1 ? 'h1' : 'h2'
 const hasIntroSlot = Astro.slots.has('intro')
 const norm = (l: Line) => (typeof l === 'string' ? { text: l, class: '' } : { class: '', ...l })
 ---
 
 <header class={cn('grid gap-8 lg:gap-12', align === 'split' && 'lg:grid-cols-12 lg:items-end', className)}>
   <div class={cn(align === 'split' && 'lg:col-span-7')}>
-    <h2 id={id} class="reveal-lines display-lg text-balance">
+    <Heading id={id} class="reveal-lines display-lg text-balance">
       <!-- Descriptive eyebrow lives INSIDE the heading: visible, and tells search engines what the section is about -->
       <span class="reveal eyebrow mb-6 flex items-center gap-4 leading-normal text-brand-400">
         <span class="h-px w-10 bg-brand-500/60" aria-hidden="true"></span>
@@ -41,7 +44,7 @@ const norm = (l: Line) => (typeof l === 'string' ? { text: l, class: '' } : { cl
           </span>
         ))
       }
-    </h2>
+    </Heading>
   </div>
   {
     (intro || hasIntroSlot) && (

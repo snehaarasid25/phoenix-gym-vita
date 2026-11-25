@@ -1,0 +1,13 @@
+---
+/** FAQ page (with FAQPage structured data matching the visible questions). */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { pages } from '../config/seo'
+import Faq from '../sections/Faq.astro'
+import FinalCta from '../sections/FinalCta.astro'
+---
+
+<BaseLayout meta={pages.faq} faqData>
+  <div class="page-top" aria-hidden="true"></div>
+  <Faq />
+  <FinalCta />
+</BaseLayout>

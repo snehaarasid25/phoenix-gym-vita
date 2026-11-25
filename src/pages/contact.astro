@@ -1,0 +1,13 @@
+---
+/** Contact & visit: enquiry form, quick actions, address/hours, map, then Instagram. */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { pages } from '../config/seo'
+import Contact from '../sections/Contact.astro'
+import InstagramFeed from '../sections/InstagramFeed.astro'
+---
+
+<BaseLayout meta={pages.contact}>
+  <div class="page-top" aria-hidden="true"></div>
+  <Contact />
+  <InstagramFeed />
+</BaseLayout>
