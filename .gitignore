@@ -4,3 +4,6 @@ dist
 *.local
 .env
 .DS_Store
+
+# Personal source photos stay local; only processed web versions are published
+photos/originals/testimonial-*

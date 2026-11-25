@@ -32,6 +32,16 @@ export const pillars: Pillar[] = [
  * and set `isSample: false`.
  */
 export const testimonials: Testimonial[] = [
+  // ✅ Real review (shared by Sneha, with her photo, for the website)
+  {
+    id: 'sneha',
+    quote:
+      'Vita has never had a gym like this. The space looks stunning, and having HYROX training, a steam bath and a calm yoga area under one roof is a game changer. I’ve pre-booked my membership and I’m honestly counting down the days to my first session!',
+    name: 'Sneha A.',
+    detail: 'Pre-booked member',
+    photo: '/images/testimonials/sneha-160.webp',
+    isSample: false,
+  },
   {
     id: 's1',
     quote: 'Sample review: the energy on the floor keeps you coming back. You walk in tired and leave fired up.',

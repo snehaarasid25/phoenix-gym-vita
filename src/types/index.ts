@@ -68,6 +68,8 @@ export interface Testimonial {
   quote: string
   name: string
   detail: string
+  /** Optional profile photo path under /public (square, e.g. 320px). Falls back to the initial. */
+  photo?: string
   /** Sample testimonials are only rendered in development. */
   isSample: boolean
 }
