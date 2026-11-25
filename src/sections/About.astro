@@ -79,7 +79,10 @@ const principles = [
     </div>
 
     <!-- Three principles: a centred creed. Phones/tablets stack with a gold ✦ between; desktop = three centred columns -->
-    <ol class="mt-20 grid text-center sm:mt-28 lg:grid-cols-3 lg:border-y lg:border-bone/10">
+    <div class="relative isolate mt-20 sm:mt-28">
+    <!-- Phones/tablets: very faint phoenix watermark behind the creed -->
+    <img src="/brand/phoenix-emblem.png" alt="" width="171" height="218" loading="lazy" decoding="async" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-1/2 -z-10 w-[78%] max-w-sm -translate-x-1/2 -translate-y-1/2 opacity-[0.07] select-none lg:hidden" />
+    <ol class="grid text-center lg:grid-cols-3 lg:border-y lg:border-bone/10">
       {principles.map((p, i) => (
         <li class="reveal group relative px-4 py-10 lg:border-r lg:border-bone/10 lg:px-8 lg:py-12 lg:last:border-r-0" style={`--d:${i * 0.1}s`}>
           {i > 0 && <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-lg text-brand-500 lg:hidden" aria-hidden="true">✦</span>}
@@ -89,5 +92,6 @@ const principles = [
         </li>
       ))}
     </ol>
+    </div>
   </div>
 </section>
