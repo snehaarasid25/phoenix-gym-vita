@@ -116,3 +116,9 @@ export const navItems: NavItem[] = [
 
 /** In development, unverified content shows a visible "Placeholder" badge. */
 export const SHOW_PLACEHOLDER_BADGES = import.meta.env.DEV
+
+/**
+ * TEMPORARY (owner's request): show the sample reviews on the live site too, so the reviews row isn't a
+ * single card. They stay clearly labelled "Sample — not real". Set to false once real reviews are in.
+ */
+export const SHOW_SAMPLE_REVIEWS_LIVE = true

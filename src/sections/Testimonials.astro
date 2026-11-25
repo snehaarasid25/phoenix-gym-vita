@@ -5,13 +5,12 @@
  * shows a founding-member invitation, so no fictional reviews reach visitors.
  */
 import { CalendarCheck, CaretLeft, CaretRight } from '@phosphor-icons/react'
-import { SHOW_PLACEHOLDER_BADGES, site } from '../config/site'
+import { SHOW_PLACEHOLDER_BADGES, SHOW_SAMPLE_REVIEWS_LIVE, site } from '../config/site'
 import { testimonials } from '../data/content'
 import ButtonLink from '../components/ButtonLink.astro'
 import SectionHeader from '../components/SectionHeader.astro'
-import { PlaceholderBadge } from '../components/ui/PlaceholderBadge'
 
-const visible = testimonials.filter((t) => !t.isSample || SHOW_PLACEHOLDER_BADGES)
+const visible = testimonials.filter((t) => !t.isSample || SHOW_PLACEHOLDER_BADGES || SHOW_SAMPLE_REVIEWS_LIVE)
 /** Split a quote around its highlighted phrase (if any) so that phrase can be set in gold. */
 const parts = (quote: string, hl?: string) => {
   const at = hl ? quote.indexOf(hl) : -1
@@ -35,7 +34,8 @@ const parts = (quote: string, hl?: string) => {
       }
     />
 
-    <!-- One review: a single, wider centred card. Two or more: a swipeable row (1 card on phones, ~1.5 on tablets,
+    <!-- Sample reviews are always labelled "Sample — not a real review", on the live site too (never presented as real).
+         One review: a single, wider centred card. Two or more: a swipeable row (1 card on phones, ~1.5 on tablets,
          3 on desktop) with gold dots + arrows, so the section stays compact however many reviews come in. -->
     {visible.length > 0 ? (
       <>
@@ -69,11 +69,17 @@ const parts = (quote: string, hl?: string) => {
             {!t.isSample && <span class="plan-ring opacity-70" aria-hidden="true" />}
 
             <div class="relative flex items-center justify-between gap-3">
-              <span class="inline-flex items-center gap-1.5 rounded-full border border-brand-500/35 bg-brand-500/10 px-3 py-1 font-mono text-[0.62rem] font-semibold tracking-[0.16em] text-brand-300 uppercase">
-                <CalendarCheck className="size-3.5" weight="fill" />
-                {t.detail}
-              </span>
-              {t.isSample && <PlaceholderBadge label="Sample — not real" />}
+              {t.isSample ? (
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-dashed border-bone/25 px-3 py-1 font-mono text-[0.62rem] font-semibold tracking-[0.16em] text-ash-300 uppercase">
+                  <span class="size-1.5 rounded-full bg-ash-400" aria-hidden="true"></span>
+                  Sample — not a real review
+                </span>
+              ) : (
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-brand-500/35 bg-brand-500/10 px-3 py-1 font-mono text-[0.62rem] font-semibold tracking-[0.16em] text-brand-300 uppercase">
+                  <CalendarCheck className="size-3.5" weight="fill" />
+                  {t.detail}
+                </span>
+              )}
             </div>
 
             <blockquote class:list={["relative mt-7 flex-1 text-lg leading-relaxed text-bone/90 sm:text-xl sm:leading-relaxed", visible.length > 1 && "lg:text-lg"]}>
