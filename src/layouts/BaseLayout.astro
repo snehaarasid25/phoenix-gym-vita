@@ -8,7 +8,9 @@ import '../styles/index.css'
 import { absoluteUrl, ogImage, type PageMeta } from '../config/seo'
 import { site } from '../config/site'
 import { faqSchema, localBusinessSchema, websiteSchema } from '../utils/structuredData'
+import { X } from '@phosphor-icons/react'
 import Footer from '../components/Footer.astro'
+import InstagramCard from '../components/InstagramCard.astro'
 import Navbar from '../components/islands/Navbar'
 import MobileActionBar from '../components/islands/MobileActionBar'
 import EnquiryModal from '../components/islands/EnquiryModal'
@@ -26,9 +28,11 @@ interface Props {
   preloadImage?: string
   /** Show the branded intro curtain (home page, first visit per session). */
   intro?: boolean
+  /** First-visit welcome pop-up (Instagram card). Off on legal pages. */
+  welcome?: boolean
 }
 
-const { meta, structuredData = false, faqData = false, preloadImage, intro = false } = Astro.props
+const { meta, structuredData = false, faqData = false, preloadImage, intro = false, welcome = true } = Astro.props
 const canonical = absoluteUrl(meta.path)
 const image = absoluteUrl(ogImage)
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/'
@@ -136,6 +140,35 @@ const jsonLd = schemas.length ? JSON.stringify(schemas).replace(/</g, '\\u003c')
     <Footer pathname={pathname} />
 
     <MobileActionBar client:idle />
+
+    <!-- First-visit welcome pop-up (scripts/site.ts): the Instagram card, after 30 s on the page, once a week at most -->
+    {
+      welcome && (
+        <dialog
+          id="welcome-popup"
+          aria-labelledby="welcome-title"
+          data-lenis-prevent
+          class="site-dialog fixed inset-0 m-0 h-full max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-transparent p-0 text-bone backdrop:bg-ash-950/80 backdrop:backdrop-blur-sm"
+        >
+          <div data-backdrop class="flex min-h-full items-center justify-center px-4 py-8">
+            <div class="dialog-card w-full max-w-xl">
+              <div class="mb-4 flex items-center justify-between gap-4">
+                <p id="welcome-title" class="eyebrow flex items-center gap-3 text-brand-300">
+                  <span class="h-px w-8 bg-brand-500/60" aria-hidden="true" />
+                  Welcome to Phoenix Gym
+                </p>
+                <form method="dialog">
+                  <button aria-label="Close" class="grid size-11 place-items-center rounded-full border border-bone/20 bg-ash-950/60 text-bone backdrop-blur transition-colors hover:border-brand-400 hover:text-brand-300">
+                    <X className="size-5" />
+                  </button>
+                </form>
+              </div>
+              <InstagramCard reveal={false} stacked />
+            </div>
+          </div>
+        </dialog>
+      )
+    }
 
     <!-- "Get early access" / "Enquire" buttons on every page open this pop-up form -->
     <EnquiryModal client:idle />

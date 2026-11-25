@@ -39,10 +39,10 @@ export default function EnquiryModal() {
       // Full-screen, transparent and scrollable, so the card's gold glow is never cut off at the edges.
       // A click on the empty area around the card (the dialog itself or the centring wrapper) closes it.
       onClick={(e) => (e.target === e.currentTarget || (e.target as HTMLElement).dataset.backdrop !== undefined) && close()}
-      className="enquiry-dialog fixed inset-0 m-0 h-full max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-transparent p-0 text-bone backdrop:bg-ash-950/80 backdrop:backdrop-blur-sm"
+      className="site-dialog fixed inset-0 m-0 h-full max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-transparent p-0 text-bone backdrop:bg-ash-950/80 backdrop:backdrop-blur-sm"
     >
       <div data-backdrop className="flex min-h-full items-center justify-center px-4 py-8 sm:p-8">
-        <div className="enquiry-card card-lux relative w-full max-w-2xl rounded-[1.75rem] p-6 pt-8 sm:p-10 [&_h3]:pr-12">
+        <div className="dialog-card enquiry-card card-lux relative w-full max-w-2xl rounded-[1.75rem] p-6 pt-8 sm:p-10 [&_h3]:pr-12">
           <button
             type="button"
             onClick={close}

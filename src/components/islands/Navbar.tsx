@@ -73,10 +73,11 @@ export default function Navbar({ pathname }: { pathname: string }) {
             </a>
 
             <ul className="hidden items-center gap-1 lg:flex">
-              {navItems.slice(1).map((item) => {
+              {navItems.map((item) => {
                 const current = isActive(item.href)
                 return (
-                  <li key={item.href}>
+                  // "Home" only from 1280px: on smaller laptops seven links don't fit (the logo links home there)
+                  <li key={item.href} className={item.href === '#home' ? 'max-xl:hidden' : undefined}>
                     <a
                       href={resolve(item.href)}
                       aria-current={current ? (item.href.startsWith('#') ? 'true' : 'page') : undefined}

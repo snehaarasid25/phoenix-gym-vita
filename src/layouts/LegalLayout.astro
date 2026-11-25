@@ -15,7 +15,7 @@ interface Props {
 const { meta, title, updated } = Astro.props
 ---
 
-<BaseLayout meta={meta}>
+<BaseLayout meta={meta} welcome={false}>
   <article class="container-x max-w-3xl pt-40 pb-32">
     <a href="/" class="eyebrow text-brand-400 hover:text-brand-300">← Back to home</a>
     <h1 class="display-lg mt-6 uppercase">{title}</h1>

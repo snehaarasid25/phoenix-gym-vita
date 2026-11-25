@@ -169,6 +169,50 @@ document.addEventListener('click', (event) => {
   requestEnquiry(trigger.dataset.enquire ?? '')
 })
 
+/* ── First-visit welcome pop-up (layouts/BaseLayout.astro) ─────────────────────────────────────────────
+   Shown after the visitor has spent WELCOME_DELAY_MS on the page (scrolling doesn't trigger it). At most once every WELCOME_EVERY_DAYS per browser; never over another
+   open pop-up or the phone menu. Closes with ✕, Esc, a tap outside, or any button/link inside it. */
+const WELCOME_DELAY_MS = 30_000
+const WELCOME_EVERY_DAYS = 7
+const welcome = document.getElementById('welcome-popup') as HTMLDialogElement | null
+if (welcome) {
+  welcome.addEventListener('close', () => window.__lenis?.start())
+  welcome.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement
+    if (t === welcome || t.dataset.backdrop !== undefined || t.closest('a')) welcome.close()
+  })
+  let last = 0
+  try {
+    last = Number(localStorage.getItem('phoenix-welcome') || 0)
+  } catch {
+    /* storage blocked: it can still show once for this page view */
+  }
+  if (Date.now() - last > WELCOME_EVERY_DAYS * 864e5) {
+    const show = () => {
+      // Busy (enquiry form or menu open)? Try again a little later instead of stacking pop-ups
+      if (document.querySelector('dialog[open]') || document.getElementById('mobile-menu')) return void window.setTimeout(show, 4000)
+      welcome.showModal()
+      window.__lenis?.stop()
+      try {
+        localStorage.setItem('phoenix-welcome', String(Date.now()))
+      } catch {
+        /* ignore */
+      }
+    }
+    const arm = () => window.setTimeout(show, WELCOME_DELAY_MS)
+    // Start counting only once the page is shown (after the intro curtain on first visits)
+    if (root.classList.contains('is-ready')) arm()
+    else {
+      const watch = new MutationObserver(() => {
+        if (!root.classList.contains('is-ready')) return
+        watch.disconnect()
+        arm()
+      })
+      watch.observe(root, { attributes: true, attributeFilter: ['class'] })
+    }
+  }
+}
+
 /* ── Cursor spotlight on cards (.spotlight) ──────────────────────────── */
 if (finePointer) {
   document.addEventListener(
