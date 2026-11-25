@@ -40,6 +40,8 @@ export interface Program {
   tagline: string
   description: string
   focus: string[]
+  /** Extra detail shown under "More": a short intro and a few titled points. */
+  more?: { intro: string; points: { title: string; text: string }[] }
   image: ImageAsset
   verified: boolean
 }

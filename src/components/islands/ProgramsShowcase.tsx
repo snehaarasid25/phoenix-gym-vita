@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowRight, Plus } from '@phosphor-icons/react'
+import { ArrowRight, CaretDown, Plus } from '@phosphor-icons/react'
 import { programs } from '../../data/programs'
 import { requestEnquiry } from '../../utils/enquiry'
 import { Button } from '../ui/Button'
@@ -99,7 +99,29 @@ function DesktopShowcase() {
   )
 }
 
+/** Extra programme detail ("More"): intro + titled points with gold markers. */
+function ProgramMore({ program }: { program: Program }) {
+  if (!program.more) return null
+  return (
+    <div className="border-t border-bone/10 pt-5">
+      <p className="text-[0.95rem] leading-relaxed text-bone/85 sm:text-base">{program.more.intro}</p>
+      <ul className="mt-4 space-y-3.5">
+        {program.more.points.map((pt) => (
+          <li key={pt.title} className="flex gap-3">
+            <span className="mt-2 size-1.5 shrink-0 rotate-45 bg-brand-400" aria-hidden />
+            <p className="text-sm leading-relaxed text-ash-300">
+              <span className="font-semibold text-bone">{pt.title}.</span> {pt.text}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function ProgramDetail({ program, onEnquire }: { program: Program; onEnquire: () => void }) {
+  // Remounted per programme (keyed parent), so "More" starts closed for each one
+  const [more, setMore] = useState(false)
   return (
     <>
       <p className="font-display text-3xl text-brand-gradient uppercase">{program.tagline}</p>
@@ -111,9 +133,41 @@ function ProgramDetail({ program, onEnquire }: { program: Program; onEnquire: ()
           </li>
         ))}
       </ul>
-      <Button onClick={onEnquire} className="mt-8">
-        Enquire about this
-      </Button>
+      {program.more && (
+        <>
+          <AnimatePresence initial={false}>
+            {more && (
+              <motion.div
+                id={`more-${program.id}`}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.45, ease }}
+                className="overflow-hidden"
+              >
+                <div className="pt-6">
+                  <ProgramMore program={program} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <button
+            type="button"
+            onClick={() => setMore((v) => !v)}
+            aria-expanded={more}
+            aria-controls={`more-${program.id}`}
+            className="mt-5 inline-flex items-center gap-2 font-mono text-xs font-semibold tracking-[0.16em] text-brand-300 uppercase transition-colors hover:text-brand-200"
+          >
+            {more ? 'Show less' : 'More about this programme'}
+            <CaretDown className={cn('size-3.5 transition-transform duration-300', more && 'rotate-180')} weight="bold" />
+          </button>
+        </>
+      )}
+      <div>
+        <Button onClick={onEnquire} className="mt-8">
+          Enquire about this
+        </Button>
+      </div>
     </>
   )
 }
@@ -179,7 +233,10 @@ function MobileCards() {
               <AnimatePresence initial={false}>
                 {isOpen && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.4, ease }} className="overflow-hidden">
-                    <ul className="flex flex-wrap gap-2 pt-4">
+                    <div className="pt-5">
+                      <ProgramMore program={p} />
+                    </div>
+                    <ul className="flex flex-wrap gap-2 pt-5">
                       {p.focus.map((f) => (
                         <li key={f} className="rounded-full border border-bone/12 px-3 py-1 font-mono text-[0.62rem] tracking-[0.1em] text-ash-300 uppercase">
                           {f}
