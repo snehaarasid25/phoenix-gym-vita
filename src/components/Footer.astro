@@ -33,30 +33,30 @@ const rowIcon = 'grid size-9 shrink-0 place-items-center rounded-full bg-brand-5
   </Marquee>
 
   <div class="container-x grid gap-10 py-14 sm:gap-14 sm:py-20 md:grid-cols-2 md:gap-x-10 xl:grid-cols-12 xl:gap-8">
-    <div class="xl:col-span-4">
-      <Logo />
-      <p class="mt-6 max-w-xs text-sm leading-relaxed text-ash-400">
+    <div class="text-center md:text-left xl:col-span-4">
+      <div class="flex justify-center md:justify-start"><Logo /></div>
+      <p class="mx-auto mt-6 max-w-xs text-sm leading-relaxed text-ash-400 md:mx-0">
         {site.brandLine}. A premium gym in {site.location.city}, {site.location.state}, built on {site.values.join(', ').toLowerCase()}.
       </p>
-      <div class="mt-8 flex gap-3">
-        <a href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on Instagram" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+      <div class="mt-8 flex justify-center gap-3 md:justify-start">
+        <a href={site.social.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on Instagram" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300 hover:shadow-[0_0_20px_-6px_rgba(196,159,110,0.8)]">
           <InstagramLogo className="size-5" />
         </a>
-        <a href={site.social.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on Facebook" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+        <a href={site.social.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on Facebook" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300 hover:shadow-[0_0_20px_-6px_rgba(196,159,110,0.8)]">
           <FacebookLogo className="size-5" />
         </a>
-        <a href={site.social.youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on YouTube" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+        <a href={site.social.youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="Phoenix Gym on YouTube" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300 hover:shadow-[0_0_20px_-6px_rgba(196,159,110,0.8)]">
           <YoutubeLogo className="size-5" />
         </a>
         {wa && (
-          <a href={wa} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-colors hover:border-brand-400 hover:text-brand-300">
+          <a href={wa} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" class="grid size-11 place-items-center rounded-full border border-bone/15 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300 hover:shadow-[0_0_20px_-6px_rgba(196,159,110,0.8)]">
             <WhatsappLogo className="size-5" />
           </a>
         )}
       </div>
     </div>
 
-    <nav aria-label="Footer" class="xl:col-span-2 xl:col-start-5">
+    <nav aria-label="Footer" class="border-t border-bone/10 pt-8 md:border-0 md:pt-0 xl:col-span-2 xl:col-start-5">
       <p class="eyebrow mb-5 text-ash-400 sm:mb-6">Explore</p>
       <ul class="grid grid-cols-2 gap-x-6 gap-y-3.5 xl:grid-cols-1 xl:gap-y-3">
         {navItems.map((n) => (
@@ -72,7 +72,7 @@ const rowIcon = 'grid size-9 shrink-0 place-items-center rounded-full bg-brand-5
       </ul>
     </nav>
 
-    <div class="xl:col-span-3">
+    <div class="border-t border-bone/10 pt-8 md:border-0 md:pt-0 xl:col-span-3">
       <p class="eyebrow mb-6 text-ash-400">Visit</p>
       <ul class="space-y-4 text-sm text-ash-300">
         <li class="flex gap-3">
@@ -105,7 +105,7 @@ const rowIcon = 'grid size-9 shrink-0 place-items-center rounded-full bg-brand-5
       </ul>
     </div>
 
-    <div class="xl:col-span-3">
+    <div class="border-t border-bone/10 pt-8 md:border-0 md:pt-0 xl:col-span-3">
       <p class="eyebrow mb-5 text-ash-400 sm:mb-6">Hours</p>
       {site.hours ? (
         <ul class={`${card} space-y-2 p-4 text-sm text-ash-300`}>
@@ -134,10 +134,31 @@ const rowIcon = 'grid size-9 shrink-0 place-items-center rounded-full bg-brand-5
     </div>
   </div>
 
-  <div class="container-x flex flex-col gap-4 border-t hairline py-8 text-xs text-ash-400 lg:flex-row lg:items-center lg:justify-between">
-    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-5">
+  <!-- Phones / tablets: centred, ordered stack -->
+  <div class="container-x flex flex-col items-center gap-4 border-t border-bone/10 py-8 text-center text-xs text-ash-400 lg:hidden">
+    <a href={resolve('#home')} class="inline-flex items-center gap-2 rounded-full border border-brand-500/40 bg-brand-500/10 px-4 py-2 font-mono text-[0.65rem] font-semibold tracking-[0.16em] text-brand-300 uppercase transition-colors hover:border-brand-400 hover:bg-brand-500/15">
+      <ArrowUp className="size-3.5" weight="bold" /> Back to top
+    </a>
+    <nav aria-label="Legal" class="mt-1 flex items-center gap-3 text-[0.8rem] text-ash-300">
+      <a href="/privacy" class="hover:text-bone">Privacy Policy</a>
+      <span class="text-brand-500" aria-hidden="true">·</span>
+      <a href="/terms" class="hover:text-bone">Terms &amp; Conditions</a>
+    </nav>
+    <p>© {YEAR} {site.legalName}{site.foundingYear && <> · Est. {site.foundingYear}</>}. All rights reserved.</p>
+    <p>
+      Designed &amp; developed by{' '}
+      <a href={credit.url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-semibold text-brand-300 transition-colors hover:text-brand-400">
+        {credit.name}
+        <GithubLogo className="size-3.5" weight="fill" />
+      </a>
+    </p>
+  </div>
+
+  <!-- Desktop: one row -->
+  <div class="container-x hidden items-center justify-between gap-4 border-t border-bone/10 py-8 text-xs text-ash-400 lg:flex">
+    <div class="flex items-center gap-5">
       <p>© {YEAR} {site.legalName}{site.foundingYear && <> · Est. {site.foundingYear}</>}. All rights reserved.</p>
-      <span class="hidden h-3 w-px bg-bone/15 sm:block" aria-hidden="true"></span>
+      <span class="h-3 w-px bg-bone/15" aria-hidden="true"></span>
       <p>
         Designed &amp; developed by{' '}
         <a
