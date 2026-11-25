@@ -16,7 +16,7 @@ export default defineConfig({
   integrations: [
     // React is used only for interactive islands; everything else ships as plain HTML
     react(),
-    sitemap({ filter: (page) => !page.includes('/404') }),
+    sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/admin') }),
   ],
   vite: {
     plugins: [tailwindcss()],

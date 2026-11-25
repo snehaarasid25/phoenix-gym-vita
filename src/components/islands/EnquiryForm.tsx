@@ -4,6 +4,7 @@ import { plans } from '../../data/membership'
 import { programs } from '../../data/programs'
 import { getEnquiry, setEnquiry, subscribeEnquiry } from '../../utils/enquiry'
 import { primaryEnquiry } from '../../utils/contact'
+import { saveEnquiry } from '../../utils/supabase'
 import { Button } from '../ui/Button'
 import { Select, type SelectGroup } from '../ui/Select'
 
@@ -15,8 +16,9 @@ const interestGroups: SelectGroup[] = [
 const knownOptions = interestGroups.flatMap((g) => g.options)
 
 /**
- * Enquiry form (React island). No backend: composes a WhatsApp message
- * (or copies text + opens Instagram DM when no WhatsApp number is set).
+ * Enquiry form (React island). Saves the enquiry to Supabase (when configured) and composes a WhatsApp
+ * message (or copies text + opens an Instagram DM when no WhatsApp number is set).
+ * WhatsApp always opens, even if saving fails, so no lead is lost.
  */
 export default function EnquiryForm() {
   // Shared with "Enquire" buttons elsewhere on the page (see utils/enquiry.ts)
@@ -24,6 +26,8 @@ export default function EnquiryForm() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [message, setMessage] = useState('')
+  const [consent, setConsent] = useState(false)
+  const [trap, setTrap] = useState('') // hidden honeypot: real visitors never fill it
   const [sent, setSent] = useState(false)
 
   const channel = primaryEnquiry().channel
@@ -39,6 +43,14 @@ export default function EnquiryForm() {
     ]
       .filter(Boolean)
       .join('\n')
+
+    // Bots fill hidden fields: pretend success, save nothing
+    if (trap) {
+      setSent(true)
+      return
+    }
+    // Fire-and-forget save (keepalive), then open WhatsApp straight away inside the click so it isn't blocked
+    void saveEnquiry({ name, phone, interest: interest || null, message: message || null, consent: true })
 
     const target = primaryEnquiry(text)
     if (target.channel === 'instagram') {
@@ -73,8 +85,8 @@ export default function EnquiryForm() {
           <label htmlFor="enquiry-name" className={label}>Name *</label>
         </div>
         <div className="relative">
-          <input id="enquiry-phone" type="tel" inputMode="tel" autoComplete="tel" pattern="[0-9+\s\-]{7,15}" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className={field} />
-          <label htmlFor="enquiry-phone" className={label}>Phone</label>
+          <input id="enquiry-phone" required type="tel" inputMode="tel" autoComplete="tel" pattern="[0-9+\s\-]{7,15}" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" className={field} />
+          <label htmlFor="enquiry-phone" className={label}>Phone *</label>
         </div>
         <div className="relative sm:col-span-2">
           <Select
@@ -93,6 +105,27 @@ export default function EnquiryForm() {
           <textarea id="enquiry-message" rows={4} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message" className={`${field} resize-none`} />
           <label htmlFor="enquiry-message" className={label}>Message</label>
         </div>
+        {/* Honeypot (hidden from people and screen readers) */}
+        <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden>
+          <label htmlFor="enquiry-website">Website</label>
+          <input id="enquiry-website" tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} />
+        </div>
+        <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-ash-300 sm:col-span-2">
+          <input
+            type="checkbox"
+            required
+            checked={consent}
+            onChange={(e) => setConsent(e.target.checked)}
+            className="mt-0.5 size-4 shrink-0 cursor-pointer accent-[var(--color-brand-500)]"
+          />
+          <span>
+            I agree to Phoenix Gym contacting me about my enquiry by phone or WhatsApp. See our{' '}
+            <a href="/privacy" className="text-brand-300 underline underline-offset-2 hover:text-brand-200">
+              Privacy Policy
+            </a>
+            .
+          </span>
+        </label>
       </div>
 
       <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

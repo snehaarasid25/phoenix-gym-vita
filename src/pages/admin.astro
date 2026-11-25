@@ -1,0 +1,23 @@
+---
+/**
+ * Owner admin (not linked from the site, hidden from search engines).
+ * Everything runs in the browser against Supabase; access is enforced by row-level security.
+ */
+import '../styles/index.css'
+import AdminApp from '../components/islands/AdminApp'
+---
+
+<!doctype html>
+<html lang="en-IN" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#070605" />
+    <title>Admin | Phoenix Gym Vita</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+  </head>
+  <body class="min-h-svh bg-ash-950 font-sans text-bone antialiased">
+    <AdminApp client:only="react" />
+  </body>
+</html>
