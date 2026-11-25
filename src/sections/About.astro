@@ -83,12 +83,7 @@ const principles = [
       {principles.map((p, i) => (
         <li class="reveal group relative px-4 py-10 lg:border-r lg:border-bone/10 lg:px-8 lg:py-12 lg:last:border-r-0" style={`--d:${i * 0.1}s`}>
           {i > 0 && <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-lg text-brand-500 lg:hidden" aria-hidden="true">✦</span>}
-          <p class="flex items-center justify-center gap-3 font-mono text-xs tracking-[0.2em] text-brand-400" aria-hidden="true">
-            <span class="h-px w-8 bg-gradient-to-r from-transparent to-brand-500/70"></span>
-            0{i + 1}
-            <span class="h-px w-8 bg-gradient-to-l from-transparent to-brand-500/70"></span>
-          </p>
-          <h3 class="mt-4 font-display text-5xl uppercase transition-colors duration-500 group-hover:text-brand-400 sm:text-6xl">{p.word}</h3>
+          <h3 class="font-display text-5xl uppercase transition-colors duration-500 group-hover:text-brand-400 sm:text-6xl">{p.word}</h3>
           <span class="mx-auto mt-4 block h-px w-10 bg-brand-500/60 transition-[width] duration-500 group-hover:w-20" aria-hidden="true"></span>
           <p class="mx-auto mt-4 max-w-xs text-ash-300">{p.copy}</p>
         </li>
