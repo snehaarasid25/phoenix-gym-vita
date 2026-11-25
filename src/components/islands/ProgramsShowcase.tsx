@@ -263,7 +263,7 @@ function MobileCards() {
                   }
                 }}
                 aria-expanded={isOpen}
-                className="mt-1 min-h-11 font-mono text-xs font-semibold tracking-[0.16em] text-brand-300 uppercase underline decoration-brand-500/60 underline-offset-[6px] transition-colors hover:text-brand-200"
+                className="mt-2 block py-1 font-mono text-xs leading-none font-semibold tracking-[0.16em] text-brand-300 uppercase underline decoration-brand-500/60 underline-offset-[6px] transition-colors hover:text-brand-200"
               >
                 {isOpen ? 'Less' : 'More'}
               </button>
